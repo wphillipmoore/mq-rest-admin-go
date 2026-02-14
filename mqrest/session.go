@@ -571,8 +571,3 @@ func flattenNestedObjects(parent map[string]any, objects []any) []map[string]any
 
 	return result
 }
-
-// stringPtr is a helper that returns a pointer to the given string.
-func stringPtr(value string) *string {
-	return &value
-}
