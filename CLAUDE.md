@@ -61,9 +61,11 @@ go tool cover -html=coverage.out                # View coverage in browser
 ```
 
 - **Framework**: stdlib `testing` package
-- **Coverage**: Target 99% line coverage (Go's coverage tool reports 0% for
-  empty function bodies such as `sealed()` and no-op interface methods, making
-  true 100% unattainable without adding dead code)
+- **Coverage**: Target 100% line coverage, enforced in CI via `go-ignore-cov`.
+  Structurally untestable lines (e.g., `json.Marshal` on `map[string]any`,
+  embedded JSON parse errors) are annotated with `//coverage:ignore` and
+  excluded from measurement. This keeps the gate tight — new untested code
+  cannot slip through.
 
 ## Architecture
 
