@@ -155,19 +155,19 @@ func TestBuildHeaders_GatewayQmgr(t *testing.T) {
 	}
 }
 
-func TestSealed_BasicAuth(t *testing.T) {
+func TestSealed_BasicAuth(_ *testing.T) {
 	auth := BasicAuth{}
-	auth.sealed() // should not panic
+	auth.sealed()
 }
 
-func TestSealed_LTPAAuth(t *testing.T) {
+func TestSealed_LTPAAuth(_ *testing.T) {
 	auth := LTPAAuth{}
-	auth.sealed() // should not panic
+	auth.sealed()
 }
 
-func TestSealed_CertificateAuth(t *testing.T) {
+func TestSealed_CertificateAuth(_ *testing.T) {
 	auth := CertificateAuth{}
-	auth.sealed() // should not panic
+	auth.sealed()
 }
 
 func TestLoadTLSCertificate_Success(t *testing.T) {
@@ -188,7 +188,8 @@ func TestLoadTLSCertificate_Success(t *testing.T) {
 
 func TestLoadTLSCertificate_CombinedFile(t *testing.T) {
 	certPEM, keyPEM := generateSelfSignedCert(t)
-	combined := append(certPEM, keyPEM...)
+	combined := certPEM
+	combined = append(combined, keyPEM...)
 	combinedFile := writeTempFile(t, "combined-*.pem", combined)
 
 	auth := CertificateAuth{CertPath: combinedFile}

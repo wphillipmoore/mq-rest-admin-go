@@ -678,7 +678,7 @@ func TestMapResponseList_ObjectIndexInListIssues(t *testing.T) {
 	}
 }
 
-func TestMapResponseParameterNames_UnknownQualifier_ViaSession(t *testing.T) {
+func TestMapResponseParameterNames_UnknownQualifier_ViaSession(_ *testing.T) {
 	transport := newMockTransport()
 	transport.addSuccessResponse()
 	session := newTestSessionWithMapping(transport)
