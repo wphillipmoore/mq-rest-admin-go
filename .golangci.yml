@@ -10,16 +10,15 @@ linters:
     - ineffassign
     - gocritic
     - revive
-
-linters-settings:
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - style
-      - performance
-  revive:
-    rules:
-      - name: blank-imports
-      - name: exported
-      - name: unreachable-code
-      - name: unused-parameter
+  settings:
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+    revive:
+      rules:
+        - name: blank-imports
+        - name: exported
+        - name: unreachable-code
+        - name: unused-parameter
