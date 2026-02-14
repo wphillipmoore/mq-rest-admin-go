@@ -1,4 +1,4 @@
-package mqrest
+package mqrestadmin
 
 import (
 	"crypto/tls"

@@ -65,7 +65,7 @@ mq-rest-admin-go/
 ├── docs/
 │   ├── decisions/
 │   └── standards-and-conventions.md
-├── mqrest/                    # Main package
+├── mqrestadmin/                    # Main package
 │   ├── session.go             # Session type, builder/options, core dispatch
 │   ├── session_commands.go    # MQSC command methods (display, define, alter, delete, etc.)
 │   ├── session_ensure.go      # Idempotent ensure methods
@@ -79,7 +79,7 @@ mq-rest-admin-go/
 │   ├── ensure.go              # EnsureResult, EnsureAction
 │   ├── sync.go                # SyncConfig, SyncResult, SyncOperation
 │   └── doc.go                 # Package documentation
-├── mqrest/mqresttest/         # Optional test-helper subpackage
+├── mqrestadmin/mqresttest/         # Optional test-helper subpackage
 │   └── mock_transport.go      # Mock transport for consumer tests
 ├── examples/
 │   └── basic/
@@ -97,7 +97,7 @@ mq-rest-admin-go/
 
 #### 1. Single package, multiple files
 
-Go favours flat package structures. All public types live in `mqrest`. Split
+Go favours flat package structures. All public types live in `mqrestadmin`. Split
 across files by concern (session, commands, ensure, sync, mapping, auth,
 errors, transport) mirroring the Python module structure without introducing
 sub-packages.
@@ -108,13 +108,13 @@ Go does not have builders or default parameter values. Use the functional
 options pattern:
 
 ```go
-session, err := mqrest.NewSession(
+session, err := mqrestadmin.NewSession(
     "https://host:9443/ibmmq/rest/v2",
     "QM1",
-    mqrest.WithBasicAuth("user", "pass"),
-    mqrest.WithTimeout(30 * time.Second),
-    mqrest.WithGatewayQmgr("GATEWAY"),
-    mqrest.WithMappingStrict(true),
+    mqrestadmin.WithBasicAuth("user", "pass"),
+    mqrestadmin.WithTimeout(30 * time.Second),
+    mqrestadmin.WithGatewayQmgr("GATEWAY"),
+    mqrestadmin.WithMappingStrict(true),
 )
 ```
 
@@ -186,7 +186,7 @@ All implement `error` interface. Callers use `errors.As()` for type-specific
 handling:
 
 ```go
-var cmdErr *mqrest.CommandError
+var cmdErr *mqrestadmin.CommandError
 if errors.As(err, &cmdErr) {
     fmt.Println(cmdErr.Payload)
 }

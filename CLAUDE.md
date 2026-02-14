@@ -22,7 +22,7 @@ This is a Go port of `pymqrest`, providing a Go wrapper for the IBM MQ administr
 
 **Module path**: `github.com/wphillipmoore/mq-rest-admin-go`
 
-**Package name**: `mqrest`
+**Package name**: `mqrestadmin`
 
 **Canonical Standards**: This repository follows standards at <https://github.com/wphillipmoore/standards-and-conventions> (local path: `../standards-and-conventions` if available)
 
@@ -115,7 +115,7 @@ MappingError     — attribute translation failures (strict mode)
 ### Package Structure
 
 ```text
-mqrest/                        # Single flat package
+mqrestadmin/                   # Single flat package
     session.go                 # Session struct, NewSession, functional options, core dispatch
     session_commands.go        # MQSC command methods (display, define, alter, delete, etc.)
     session_ensure.go          # Idempotent ensure methods
