@@ -573,6 +573,124 @@ func TestMapResponseList_StrictWithIssues(t *testing.T) {
 	}
 }
 
+func TestMergeNestedStringMap_ExistingKey(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Find an existing key in some qualifier's response_value_map
+	var existingKey string
+	for key := range mapper.data.Qualifiers["queue"].ResponseValueMap {
+		existingKey = key
+		break
+	}
+	if existingKey == "" {
+		t.Skip("no existing response value map keys for queue")
+	}
+
+	overrides := map[string]any{
+		"qualifiers": map[string]any{
+			"queue": map[string]any{
+				"response_value_map": map[string]any{
+					existingKey: map[string]any{
+						"CUSTOM_OVERRIDE_VAL": "custom_override",
+					},
+				},
+			},
+		},
+	}
+
+	mergedMapper, err := newAttributeMapperWithOverrides(overrides, MappingOverrideMerge)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	qualifierData := mergedMapper.data.Qualifiers["queue"]
+	if qualifierData.ResponseValueMap[existingKey]["CUSTOM_OVERRIDE_VAL"] != "custom_override" {
+		t.Error("expected merged value in existing key")
+	}
+}
+
+func TestMapResponseList_ObjectIndexInIssues(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Find a key with value mappings and use an unknown value through mapResponseList
+	var valueMapKey string
+	for key := range mapper.data.Qualifiers["queue"].ResponseValueMap {
+		valueMapKey = key
+		break
+	}
+	if valueMapKey == "" {
+		t.Skip("no response value map keys")
+	}
+
+	// Use unknown value to trigger MappingUnknownValue with objectIndex set
+	objects := []map[string]any{
+		{valueMapKey: "UNKNOWN_TEST_VALUE_XYZ"},
+	}
+
+	_, issues := mapper.mapResponseList("queue", objects, true)
+	foundWithIndex := false
+	for _, issue := range issues {
+		if issue.ObjectIndex != nil && *issue.ObjectIndex == 0 {
+			foundWithIndex = true
+			break
+		}
+	}
+	if !foundWithIndex {
+		t.Error("expected issue with ObjectIndex = 0")
+	}
+}
+
+func TestMapResponseList_ObjectIndexInListIssues(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	var valueMapKey string
+	for key := range mapper.data.Qualifiers["queue"].ResponseValueMap {
+		valueMapKey = key
+		break
+	}
+	if valueMapKey == "" {
+		t.Skip("no response value map keys")
+	}
+
+	objects := []map[string]any{
+		{valueMapKey: []any{"UNKNOWN_LIST_VAL_XYZ"}},
+	}
+
+	_, issues := mapper.mapResponseList("queue", objects, true)
+	foundWithIndex := false
+	for _, issue := range issues {
+		if issue.ObjectIndex != nil {
+			foundWithIndex = true
+			break
+		}
+	}
+	if !foundWithIndex {
+		t.Error("expected issue with ObjectIndex set for list value")
+	}
+}
+
+func TestMapResponseParameterNames_UnknownQualifier_ViaSession(t *testing.T) {
+	transport := newMockTransport()
+	transport.addSuccessResponse()
+	session := newTestSessionWithMapping(transport)
+	session.mappingStrict = false
+
+	// Call mqscCommand with a known command but unknown qualifier to trigger
+	// mapResponseParameterNames returning early for unknown qualifier
+	name := "TEST"
+	_, _ = session.mqscCommand(context.Background(), "DISPLAY", "QUEUE", &name,
+		nil, []string{"unknown_param"}, nil, true)
+}
+
 func TestMapValue_ListMapping(t *testing.T) {
 	mapper, err := newAttributeMapper()
 	if err != nil {

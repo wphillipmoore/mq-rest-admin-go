@@ -155,6 +155,60 @@ func TestBuildHeaders_GatewayQmgr(t *testing.T) {
 	}
 }
 
+func TestSealed_BasicAuth(t *testing.T) {
+	auth := BasicAuth{}
+	auth.sealed() // should not panic
+}
+
+func TestSealed_LTPAAuth(t *testing.T) {
+	auth := LTPAAuth{}
+	auth.sealed() // should not panic
+}
+
+func TestSealed_CertificateAuth(t *testing.T) {
+	auth := CertificateAuth{}
+	auth.sealed() // should not panic
+}
+
+func TestLoadTLSCertificate_Success(t *testing.T) {
+	certPEM, keyPEM := generateSelfSignedCert(t)
+
+	certFile := writeTempFile(t, "cert-*.pem", certPEM)
+	keyFile := writeTempFile(t, "key-*.pem", keyPEM)
+
+	auth := CertificateAuth{CertPath: certFile, KeyPath: keyFile}
+	cert, err := auth.loadTLSCertificate()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if cert == nil {
+		t.Fatal("expected non-nil certificate")
+	}
+}
+
+func TestLoadTLSCertificate_CombinedFile(t *testing.T) {
+	certPEM, keyPEM := generateSelfSignedCert(t)
+	combined := append(certPEM, keyPEM...)
+	combinedFile := writeTempFile(t, "combined-*.pem", combined)
+
+	auth := CertificateAuth{CertPath: combinedFile}
+	cert, err := auth.loadTLSCertificate()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if cert == nil {
+		t.Fatal("expected non-nil certificate")
+	}
+}
+
+func TestLoadTLSCertificate_InvalidPath(t *testing.T) {
+	auth := CertificateAuth{CertPath: "/nonexistent/cert.pem", KeyPath: "/nonexistent/key.pem"}
+	_, err := auth.loadTLSCertificate()
+	if err == nil {
+		t.Fatal("expected error for nonexistent certificate files")
+	}
+}
+
 func ptrString(value string) *string {
 	return &value
 }

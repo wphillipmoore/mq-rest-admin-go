@@ -102,6 +102,27 @@ func TestBuildClient_WithTLSConfig(t *testing.T) {
 	}
 }
 
+func TestHTTPTransport_PostJSON_InvalidURL(t *testing.T) {
+	transport := &HTTPTransport{}
+
+	_, err := transport.PostJSON(
+		context.Background(),
+		"://invalid-url",
+		map[string]any{"key": "value"},
+		nil,
+		1*time.Second,
+		false,
+	)
+	if err == nil {
+		t.Fatal("expected error for invalid URL")
+	}
+
+	var transportErr *TransportError
+	if !errors.As(err, &transportErr) {
+		t.Fatalf("expected TransportError, got %T: %v", err, err)
+	}
+}
+
 func TestBuildClient_VerifyTLSFalse(t *testing.T) {
 	transport := &HTTPTransport{}
 	client := transport.buildClient(10*time.Second, false)

@@ -493,6 +493,58 @@ func TestStopListenerSync_InactiveStatus(t *testing.T) {
 	}
 }
 
+func TestRestartChannel_StartPhaseError(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// STOP succeeds
+	transport.addSuccessResponse()
+	// Poll: channel stopped
+	transport.addCommandErrorResponse(2, 2085)
+	// START fails
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.RestartChannel(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error when start phase fails during restart")
+	}
+}
+
+func TestQueryStatus_NonCommandError(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// START succeeds
+	transport.addSuccessResponse()
+	// Status poll returns transport error (non-command)
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+	// Next poll returns running
+	transport.addSuccessResponse(map[string]any{
+		"CHANNEL": "TO.REMOTE",
+		"STATUS":  "RUNNING",
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	result, err := session.StartChannelSync(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Operation != SyncStarted {
+		t.Errorf("Operation = %v, want SyncStarted", result.Operation)
+	}
+}
+
 func TestHasStatus_NonStringValue(t *testing.T) {
 	rows := []map[string]any{{"STATUS": 42}}
 	result := hasStatus(rows, []string{"STATUS"}, runningValues)
