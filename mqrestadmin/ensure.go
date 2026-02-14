@@ -1,4 +1,4 @@
-package mqrest
+package mqrestadmin
 
 // EnsureAction describes the action taken by an ensure operation.
 type EnsureAction int

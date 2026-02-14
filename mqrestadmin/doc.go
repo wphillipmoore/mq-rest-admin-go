@@ -1,4 +1,4 @@
-// Package mqrest provides a Go client for the IBM MQ administrative REST API.
+// Package mqrestadmin provides a Go client for the IBM MQ administrative REST API.
 //
 // It wraps the IBM MQ 9.4 runCommandJSON endpoint, providing typed Go methods
 // for every MQSC command (DISPLAY, DEFINE, ALTER, DELETE, START, STOP, etc.)
@@ -12,11 +12,11 @@
 //
 // Create a session with functional options:
 //
-//	session, err := mqrest.NewSession(
+//	session, err := mqrestadmin.NewSession(
 //	    "https://host:9443/ibmmq/rest/v2",
 //	    "QM1",
-//	    mqrest.WithBasicAuth("user", "pass"),
-//	    mqrest.WithTimeout(30 * time.Second),
+//	    mqrestadmin.WithBasicAuth("user", "pass"),
+//	    mqrestadmin.WithTimeout(30 * time.Second),
 //	)
 //
 // # Command Methods
@@ -41,4 +41,4 @@
 //
 //	result, err := session.StartChannelSync(ctx, "TO.REMOTE", syncConfig)
 //	// result.Operation is SyncStarted
-package mqrest
+package mqrestadmin

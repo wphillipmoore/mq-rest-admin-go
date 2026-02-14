@@ -1,4 +1,4 @@
-package mqrest
+package mqrestadmin
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ type TransportError struct {
 }
 
 func (e *TransportError) Error() string {
-	return fmt.Sprintf("mqrest transport error for %s: %v", e.URL, e.Err)
+	return fmt.Sprintf("mqrestadmin transport error for %s: %v", e.URL, e.Err)
 }
 
 func (e *TransportError) Unwrap() error {
@@ -28,7 +28,7 @@ type ResponseError struct {
 }
 
 func (e *ResponseError) Error() string {
-	return fmt.Sprintf("mqrest response error (HTTP %d): %s", e.StatusCode, e.ResponseText)
+	return fmt.Sprintf("mqrestadmin response error (HTTP %d): %s", e.StatusCode, e.ResponseText)
 }
 
 // AuthError indicates an authentication or authorization failure (HTTP 401 or
@@ -39,7 +39,7 @@ type AuthError struct {
 }
 
 func (e *AuthError) Error() string {
-	return fmt.Sprintf("mqrest auth error (HTTP %d) for %s", e.StatusCode, e.URL)
+	return fmt.Sprintf("mqrestadmin auth error (HTTP %d) for %s", e.StatusCode, e.URL)
 }
 
 // CommandError indicates the MQSC command returned a non-zero completion code
@@ -50,7 +50,7 @@ type CommandError struct {
 }
 
 func (e *CommandError) Error() string {
-	return fmt.Sprintf("mqrest command error (HTTP %d): %v", e.StatusCode, e.Payload)
+	return fmt.Sprintf("mqrestadmin command error (HTTP %d): %v", e.StatusCode, e.Payload)
 }
 
 // TimeoutError indicates a synchronous polling operation exceeded its
@@ -62,7 +62,7 @@ type TimeoutError struct {
 }
 
 func (e *TimeoutError) Error() string {
-	return fmt.Sprintf("mqrest timeout: %s %s after %.1fs", e.Operation, e.Name, e.ElapsedSeconds)
+	return fmt.Sprintf("mqrestadmin timeout: %s %s after %.1fs", e.Operation, e.Name, e.ElapsedSeconds)
 }
 
 // MappingError indicates one or more attribute translation failures in strict
@@ -76,7 +76,7 @@ func (e *MappingError) Error() string {
 	for idx, issue := range e.Issues {
 		descriptions[idx] = issue.String()
 	}
-	return fmt.Sprintf("mqrest mapping error: %s", strings.Join(descriptions, "; "))
+	return fmt.Sprintf("mqrestadmin mapping error: %s", strings.Join(descriptions, "; "))
 }
 
 // MappingIssue describes a single attribute translation failure.

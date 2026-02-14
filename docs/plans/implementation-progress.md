@@ -22,15 +22,15 @@ All foundation files implemented and compiling.
 - `go.mod` — Go 1.25 minimum, zero external dependencies
 - `CLAUDE.md`, `AGENTS.md` — AI agent guidance
 - `docs/` — standards, conventions, plans
-- `mqrest/errors.go` — 6 typed error structs with `errors.As()` support
-- `mqrest/transport.go` — `Transport` interface + `HTTPTransport` implementation
-- `mqrest/auth.go` — sealed `Credentials` interface (Basic, LTPA, Certificate)
-- `mqrest/session.go` — `Session` struct, `NewSession()` with functional options,
+- `mqrestadmin/errors.go` — 6 typed error structs with `errors.As()` support
+- `mqrestadmin/transport.go` — `Transport` interface + `HTTPTransport` implementation
+- `mqrestadmin/auth.go` — sealed `Credentials` interface (Basic, LTPA, Certificate)
+- `mqrestadmin/session.go` — `Session` struct, `NewSession()` with functional options,
   `mqscCommand()` 13-step pipeline, LTPA login, response parsing
-- `mqrest/mapping.go` — 3-layer attribute mapping pipeline with merge/replace
+- `mqrestadmin/mapping.go` — 3-layer attribute mapping pipeline with merge/replace
   overrides
-- `mqrest/mapping_data.go` + `mapping-data.json` — embedded mapping definitions
-- `mqrest/ensure.go` + `mqrest/sync.go` — result types and enums
+- `mqrestadmin/mapping_data.go` + `mapping-data.json` — embedded mapping definitions
+- `mqrestadmin/ensure.go` + `mqrestadmin/sync.go` — result types and enums
 
 ### Phase 2: Attribute Mapping (tested in Phase 5)
 
@@ -42,7 +42,7 @@ Mapping implementation complete and tested:
 - Override merge and replace modes
 - Value mapping (string and list)
 
-### Phase 3: Command Methods (`mqrest/session_commands.go`)
+### Phase 3: Command Methods (`mqrestadmin/session_commands.go`)
 
 144 MQSC command methods implemented:
 
@@ -117,7 +117,7 @@ for meaningful testing.
 
 See `docs/plans/go-port-plan.md` for full rationale. Summary:
 
-1. **Single `mqrest` package** — flat Go package, split by file concern
+1. **Single `mqrestadmin` package** — flat Go package, split by file concern
 2. **Functional options** — `NewSession()` with `With*` option functions
 3. **Sealed credentials** — interface with unexported method
 4. **Typed errors** — structs implementing `error`, used with `errors.As()`
