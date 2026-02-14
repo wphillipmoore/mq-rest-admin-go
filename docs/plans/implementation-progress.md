@@ -2,14 +2,14 @@
 
 ## Table of Contents
 
-- [Status: Phases 1-5 Complete (Core Implementation)](#status-phases-1-5-complete-core-implementation)
+- [Status: Phases 1-7 Complete](#status-phases-1-7-complete)
 - [Completed](#completed)
 - [Remaining Work](#remaining-work)
 - [Key Design Decisions](#key-design-decisions)
 - [Environment](#environment)
 - [Reference Projects](#reference-projects)
 
-## Status: Phases 1-5 Complete (Core Implementation)
+## Status: Phases 1-7 Complete
 
 Last updated: 2026-02-14
 
@@ -89,14 +89,24 @@ wrapper methods (each delegates to an already-tested helper) plus
 `HTTPTransport.PostJSON()` and `loadTLSCertificate()` which require real I/O
 for meaningful testing.
 
+### Phase 6: CI/CD (GitHub Actions)
+
+- `.github/workflows/ci.yml` — multi-job pipeline with docs-only detection
+- `test-and-validate` — Go 1.25 + 1.26 matrix: `go vet`, `golangci-lint`,
+  `go test -race -count=1`
+- `dependency-audit` — `govulncheck`
+- `standards-compliance` — commit message and co-author validation
+- `integration-test` — gated by environment variables, skipped for docs-only
+- `release-gates` — merge-blocking gate aggregating all required checks
+- Git hooks (`scripts/git-hooks/`) — commit-msg and pre-commit validation
+- Linter configuration (`.golangci.yml`, `.markdownlint.json`)
+
+### Phase 7: Package Rename and README
+
+- Renamed package from `mqrest` to `mqrestadmin` for clarity
+- Expanded README with installation, quick start, API overview, and license
+
 ## Remaining Work
-
-### CI/CD (GitHub Actions)
-
-- Go build/test/vet workflow for Go 1.25 and 1.26
-- golangci-lint static analysis
-- govulncheck vulnerability scanning
-- Coverage reporting
 
 ### Integration Tests
 
@@ -105,12 +115,12 @@ for meaningful testing.
 
 ### Documentation
 
-- README expansion with usage examples
 - GoDoc comments review (all public types/functions documented)
 
 ### Future Enhancements
 
 - Coverage improvement for one-liner wrapper methods (if needed)
+- Coverage reporting in CI
 - Examples directory with runnable samples
 
 ## Key Design Decisions
@@ -129,7 +139,7 @@ See `docs/plans/go-port-plan.md` for full rationale. Summary:
 
 - Go 1.26.0 installed via Homebrew
 - go.mod requires Go 1.25.0 (supports 1.25 Tier 3 + 1.26 Tier 1)
-- Branch: `feature/phase1-foundation`
+- Branch: `develop`
 
 ## Reference Projects
 
