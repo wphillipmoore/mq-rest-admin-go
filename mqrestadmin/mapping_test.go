@@ -329,6 +329,250 @@ func TestMapValue_StringMapping(t *testing.T) {
 	}
 }
 
+func TestCopyMap_PermissiveUnknownQualifier(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	input := map[string]any{"key1": "val1", "key2": "val2"}
+	result, issues := mapper.mapRequestAttributes("nonexistent_qualifier", input, false)
+	if len(issues) == 0 {
+		t.Error("expected issues for unknown qualifier")
+	}
+	// In permissive mode, copyMap is used — result should be a copy
+	if result["key1"] != "val1" || result["key2"] != "val2" {
+		t.Errorf("expected values to pass through, got %v", result)
+	}
+}
+
+func TestMergeNestedStringMap_NewKey(t *testing.T) {
+	overrides := map[string]any{
+		"qualifiers": map[string]any{
+			"queue": map[string]any{
+				"response_value_map": map[string]any{
+					"NEW_KEY": map[string]any{
+						"VAL1": "val_one",
+					},
+				},
+			},
+		},
+	}
+
+	mapper, err := newAttributeMapperWithOverrides(overrides, MappingOverrideMerge)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	qualifierData := mapper.data.Qualifiers["queue"]
+	if qualifierData.ResponseValueMap["NEW_KEY"] == nil {
+		t.Error("expected NEW_KEY in response value map after merge")
+	}
+	if qualifierData.ResponseValueMap["NEW_KEY"]["VAL1"] != "val_one" {
+		t.Error("expected VAL1 = val_one")
+	}
+}
+
+func TestMapValue_UnknownStringValue(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Find a key that has a value map in response
+	qualifierData := mapper.data.Qualifiers["queue"]
+	if len(qualifierData.ResponseValueMap) == 0 {
+		t.Skip("no response value mappings for queue qualifier")
+	}
+
+	for key := range qualifierData.ResponseValueMap {
+		input := map[string]any{key: "TOTALLY_UNKNOWN_VALUE_XYZ"}
+		_, issues := mapper.mapResponseAttributes("queue", input, false)
+		foundUnknownValue := false
+		for _, issue := range issues {
+			if issue.Reason == MappingUnknownValue {
+				foundUnknownValue = true
+				break
+			}
+		}
+		if !foundUnknownValue {
+			t.Errorf("expected MappingUnknownValue issue for key %s", key)
+		}
+		break
+	}
+}
+
+func TestMapValue_ListWithNonStringItems(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	qualifierData := mapper.data.Qualifiers["queue"]
+	if len(qualifierData.ResponseValueMap) == 0 {
+		t.Skip("no response value mappings")
+	}
+
+	for key := range qualifierData.ResponseValueMap {
+		input := map[string]any{key: []any{42, true}}
+		result, _ := mapper.mapResponseAttributes("queue", input, false)
+		mappedKey := key
+		if snakeName, found := qualifierData.ResponseKeyMap[key]; found {
+			mappedKey = snakeName
+		}
+		if resultList, isList := result[mappedKey].([]any); isList {
+			if resultList[0] != 42 || resultList[1] != true {
+				t.Errorf("non-string items should pass through, got %v", resultList)
+			}
+		}
+		break
+	}
+}
+
+func TestMapValue_ListWithUnknownString(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	qualifierData := mapper.data.Qualifiers["queue"]
+	if len(qualifierData.ResponseValueMap) == 0 {
+		t.Skip("no response value mappings")
+	}
+
+	for key := range qualifierData.ResponseValueMap {
+		input := map[string]any{key: []any{"TOTALLY_UNKNOWN_XYZ"}}
+		_, issues := mapper.mapResponseAttributes("queue", input, false)
+		foundUnknownValue := false
+		for _, issue := range issues {
+			if issue.Reason == MappingUnknownValue {
+				foundUnknownValue = true
+				break
+			}
+		}
+		if !foundUnknownValue {
+			t.Errorf("expected MappingUnknownValue issue for list item in key %s", key)
+		}
+		break
+	}
+}
+
+func TestMapValue_NonStringNonList(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	qualifierData := mapper.data.Qualifiers["queue"]
+	if len(qualifierData.ResponseValueMap) == 0 {
+		t.Skip("no response value mappings")
+	}
+
+	for key := range qualifierData.ResponseValueMap {
+		input := map[string]any{key: 42}
+		result, _ := mapper.mapResponseAttributes("queue", input, false)
+		mappedKey := key
+		if snakeName, found := qualifierData.ResponseKeyMap[key]; found {
+			mappedKey = snakeName
+		}
+		if result[mappedKey] != 42 {
+			t.Errorf("non-string/non-list value should pass through, got %v", result[mappedKey])
+		}
+		break
+	}
+}
+
+func TestNewAttributeMapperWithOverrides_MergeNewQualifier(t *testing.T) {
+	overrides := map[string]any{
+		"qualifiers": map[string]any{
+			"brand_new_qualifier": map[string]any{
+				"request_key_map": map[string]any{
+					"my_attr": "MYATTR",
+				},
+			},
+		},
+	}
+
+	mapper, err := newAttributeMapperWithOverrides(overrides, MappingOverrideMerge)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	input := map[string]any{"my_attr": "value"}
+	result, _ := mapper.mapRequestAttributes("brand_new_qualifier", input, false)
+	if result["MYATTR"] != "value" {
+		t.Errorf("expected MYATTR in result, got %v", result)
+	}
+}
+
+func TestNewAttributeMapperWithOverrides_RequestKeyValueMap(t *testing.T) {
+	overrides := map[string]any{
+		"qualifiers": map[string]any{
+			"queue": map[string]any{
+				"request_key_value_map": map[string]any{
+					"custom_flag": map[string]any{
+						"key":   "FLAGATTR",
+						"value": "YES",
+					},
+				},
+			},
+		},
+	}
+
+	mapper, err := newAttributeMapperWithOverrides(overrides, MappingOverrideMerge)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	input := map[string]any{"custom_flag": "ignored"}
+	result, _ := mapper.mapRequestAttributes("queue", input, false)
+	if result["FLAGATTR"] != "YES" {
+		t.Errorf("expected FLAGATTR=YES from key-value map, got %v", result)
+	}
+}
+
+func TestResolveResponseParameterMacros_NoMacros(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// A non-existent command should return params unchanged
+	result := mapper.resolveResponseParameterMacros("NONEXISTENT", "THING", []string{"all"})
+	if len(result) != 1 || result[0] != "all" {
+		t.Errorf("expected unchanged params, got %v", result)
+	}
+}
+
+func TestResolveResponseParameterMacros_NotAll(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Specific params (not "all") should not trigger macro expansion
+	result := mapper.resolveResponseParameterMacros("DISPLAY", "QUEUE", []string{"MAXDEPTH"})
+	if len(result) != 1 || result[0] != "MAXDEPTH" {
+		t.Errorf("expected unchanged params, got %v", result)
+	}
+}
+
+func TestMapResponseList_StrictWithIssues(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	objects := []map[string]any{
+		{"UNKNOWN_ATTR_XYZ": "val"},
+	}
+
+	_, issues := mapper.mapResponseList("queue", objects, true)
+	if len(issues) == 0 {
+		t.Error("expected issues for unknown attribute in strict mode")
+	}
+}
+
 func TestMapValue_ListMapping(t *testing.T) {
 	mapper, err := newAttributeMapper()
 	if err != nil {
