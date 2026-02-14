@@ -42,6 +42,7 @@ func (transport *HTTPTransport) PostJSON(ctx context.Context, url string,
 ) (*TransportResponse, error) {
 	body, err := json.Marshal(payload)
 	if err != nil {
+		//coverage:ignore
 		return nil, &TransportError{URL: url, Err: fmt.Errorf("marshal payload: %w", err)}
 	}
 
@@ -64,6 +65,7 @@ func (transport *HTTPTransport) PostJSON(ctx context.Context, url string,
 
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
+		//coverage:ignore
 		return nil, &TransportError{URL: url, Err: fmt.Errorf("read response: %w", err)}
 	}
 

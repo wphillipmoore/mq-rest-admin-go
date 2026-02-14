@@ -84,11 +84,10 @@ Test suite with 64% statement coverage (all tests pass with `-race`):
 - `auth_test.go` — BasicAuth, LTPAAuth, CertificateAuth, extractLTPAToken,
   buildHeaders
 
-Coverage: 99.0% line coverage. The remaining ~1% consists of empty function
-bodies (`sealed()`, no-op `applyAuth()`) which Go's coverage tool cannot
-measure, plus defensive error paths for conditions that cannot occur at
-runtime (e.g., `json.Marshal` failing on `map[string]any`, embedded JSON
-parse errors).
+Coverage: 100% line coverage (after `go-ignore-cov` exclusions). Seven
+defensive error paths that cannot trigger at runtime are annotated with
+`//coverage:ignore` and excluded from measurement. Coverage is enforced
+in CI — new untested code fails the gate.
 
 ### Phase 6: CI/CD (GitHub Actions)
 

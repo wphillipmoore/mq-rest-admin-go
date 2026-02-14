@@ -362,10 +362,9 @@ const (
 
 ### Coverage
 
-- Enforce no coverage decline (track via CI artifact or Codecov)
-- Target: 99% line coverage (Go's coverage tool reports 0% for empty function
-  bodies such as `sealed()` and no-op interface methods, making true 100%
-  unattainable without adding dead code)
+- Enforce 100% line coverage in CI via `go-ignore-cov` post-processing
+- Structurally untestable lines annotated with `//coverage:ignore`
+- New untested code fails the gate — no exceptions without explicit annotation
 
 ## Key Differences from Python/Java
 

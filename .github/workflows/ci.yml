@@ -131,6 +131,22 @@ jobs:
         if: needs.docs-only.outputs.docs-only != 'true'
         run: go test -race -count=1 -coverprofile=coverage.out ./...
 
+      - name: Install go-ignore-cov
+        if: needs.docs-only.outputs.docs-only != 'true'
+        run: go install github.com/hexira/go-ignore-cov@v0.3.0
+
+      - name: Enforce 100% coverage (excluding annotated lines)
+        if: needs.docs-only.outputs.docs-only != 'true'
+        run: |
+          go-ignore-cov --file coverage.out
+          COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | tr -d '%')
+          echo "Coverage after exclusions: ${COVERAGE}%"
+          if [ "$(echo "$COVERAGE < 100.0" | bc)" -eq 1 ]; then
+            echo "FAIL: coverage is ${COVERAGE}%, required 100%"
+            go tool cover -func=coverage.out | grep -v '100.0%'
+            exit 1
+          fi
+
   integration-test:
     name: integration-test
     runs-on: ubuntu-latest

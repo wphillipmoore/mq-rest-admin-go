@@ -194,6 +194,7 @@ func NewSession(restBaseURL, qmgrName string, credentials Credentials, opts ...O
 			mapper, err = newAttributeMapper()
 		}
 		if err != nil {
+			//coverage:ignore
 			return nil, fmt.Errorf("initialize attribute mapper: %w", err)
 		}
 	}
