@@ -61,7 +61,9 @@ go tool cover -html=coverage.out                # View coverage in browser
 ```
 
 - **Framework**: stdlib `testing` package
-- **Coverage**: Target 100% line coverage (matching Java port standard)
+- **Coverage**: Target 99% line coverage (Go's coverage tool reports 0% for
+  empty function bodies such as `sealed()` and no-op interface methods, making
+  true 100% unattainable without adding dead code)
 
 ## Architecture
 

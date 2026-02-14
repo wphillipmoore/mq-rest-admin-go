@@ -84,10 +84,11 @@ Test suite with 64% statement coverage (all tests pass with `-race`):
 - `auth_test.go` — BasicAuth, LTPAAuth, CertificateAuth, extractLTPAToken,
   buildHeaders
 
-Coverage notes: The remaining ~36% is dominated by ~100 one-liner command
-wrapper methods (each delegates to an already-tested helper) plus
-`HTTPTransport.PostJSON()` and `loadTLSCertificate()` which require real I/O
-for meaningful testing.
+Coverage: 99.0% line coverage. The remaining ~1% consists of empty function
+bodies (`sealed()`, no-op `applyAuth()`) which Go's coverage tool cannot
+measure, plus defensive error paths for conditions that cannot occur at
+runtime (e.g., `json.Marshal` failing on `map[string]any`, embedded JSON
+parse errors).
 
 ### Phase 6: CI/CD (GitHub Actions)
 
