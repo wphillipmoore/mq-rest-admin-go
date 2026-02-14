@@ -1,2 +1,9 @@
 # mq-rest-admin-go
-Go implementation of the IBM MQ administrative REST API wrappers
+
+## Table of Contents
+
+- [Overview](#overview)
+
+## Overview
+
+Go implementation of the IBM MQ administrative REST API wrappers.

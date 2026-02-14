@@ -54,51 +54,51 @@ var stoppedValues = map[string]bool{
 
 // StartChannelSync starts a channel and polls until it is running.
 func (session *Session) StartChannelSync(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.startAndPoll(ctx, name, channelConfig, config)
+	return session.startAndPoll(ctx, name, &channelConfig, config)
 }
 
 // StopChannelSync stops a channel and polls until it is stopped.
 func (session *Session) StopChannelSync(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.stopAndPoll(ctx, name, channelConfig, config)
+	return session.stopAndPoll(ctx, name, &channelConfig, config)
 }
 
 // RestartChannel stops and then starts a channel, polling at each step.
 func (session *Session) RestartChannel(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.restartObject(ctx, name, channelConfig, config)
+	return session.restartObject(ctx, name, &channelConfig, config)
 }
 
 // StartListenerSync starts a listener and polls until it is running.
 func (session *Session) StartListenerSync(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.startAndPoll(ctx, name, listenerConfig, config)
+	return session.startAndPoll(ctx, name, &listenerConfig, config)
 }
 
 // StopListenerSync stops a listener and polls until it is stopped.
 func (session *Session) StopListenerSync(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.stopAndPoll(ctx, name, listenerConfig, config)
+	return session.stopAndPoll(ctx, name, &listenerConfig, config)
 }
 
 // RestartListener stops and then starts a listener, polling at each step.
 func (session *Session) RestartListener(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.restartObject(ctx, name, listenerConfig, config)
+	return session.restartObject(ctx, name, &listenerConfig, config)
 }
 
 // StartServiceSync starts a service and polls until it is running.
 func (session *Session) StartServiceSync(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.startAndPoll(ctx, name, serviceConfig, config)
+	return session.startAndPoll(ctx, name, &serviceConfig, config)
 }
 
 // StopServiceSync stops a service and polls until it is stopped.
 func (session *Session) StopServiceSync(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.stopAndPoll(ctx, name, serviceConfig, config)
+	return session.stopAndPoll(ctx, name, &serviceConfig, config)
 }
 
 // RestartService stops and then starts a service, polling at each step.
 func (session *Session) RestartService(ctx context.Context, name string, config SyncConfig) (SyncResult, error) {
-	return session.restartObject(ctx, name, serviceConfig, config)
+	return session.restartObject(ctx, name, &serviceConfig, config)
 }
 
 func (session *Session) startAndPoll(ctx context.Context, name string,
-	objectConfig objectTypeConfig, syncConfig SyncConfig,
+	objectConfig *objectTypeConfig, syncConfig SyncConfig,
 ) (SyncResult, error) {
 	syncConfig = normalizeSyncConfig(syncConfig)
 
@@ -136,7 +136,7 @@ func (session *Session) startAndPoll(ctx context.Context, name string,
 }
 
 func (session *Session) stopAndPoll(ctx context.Context, name string,
-	objectConfig objectTypeConfig, syncConfig SyncConfig,
+	objectConfig *objectTypeConfig, syncConfig SyncConfig,
 ) (SyncResult, error) {
 	syncConfig = normalizeSyncConfig(syncConfig)
 
@@ -180,7 +180,7 @@ func (session *Session) stopAndPoll(ctx context.Context, name string,
 }
 
 func (session *Session) restartObject(ctx context.Context, name string,
-	objectConfig objectTypeConfig, syncConfig SyncConfig,
+	objectConfig *objectTypeConfig, syncConfig SyncConfig,
 ) (SyncResult, error) {
 	stopResult, err := session.stopAndPoll(ctx, name, objectConfig, syncConfig)
 	if err != nil {
@@ -199,7 +199,7 @@ func (session *Session) restartObject(ctx context.Context, name string,
 	}, nil
 }
 
-func (session *Session) queryStatus(ctx context.Context, name string, objectConfig objectTypeConfig) []map[string]any {
+func (session *Session) queryStatus(ctx context.Context, name string, objectConfig *objectTypeConfig) []map[string]any {
 	rows, err := session.mqscCommand(ctx, "DISPLAY", objectConfig.statusQualifier, &name,
 		nil, []string{"all"}, nil, true)
 	if err != nil {

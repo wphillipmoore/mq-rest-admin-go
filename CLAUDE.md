@@ -24,13 +24,13 @@ This is a Go port of `pymqrest`, providing a Go wrapper for the IBM MQ administr
 
 **Package name**: `mqrest`
 
-**Canonical Standards**: This repository follows standards at https://github.com/wphillipmoore/standards-and-conventions (local path: `../standards-and-conventions` if available)
+**Canonical Standards**: This repository follows standards at <https://github.com/wphillipmoore/standards-and-conventions> (local path: `../standards-and-conventions` if available)
 
 ## Development Commands
 
 ### Environment Setup
 
-- **Go**: 1.22+ (install via `brew install go` or https://go.dev/dl/)
+- **Go**: 1.22+ (install via `brew install go` or <https://go.dev/dl/>)
 - **golangci-lint**: `brew install golangci-lint`
 - **govulncheck**: `go install golang.org/x/vuln/cmd/govulncheck@latest`
 
@@ -103,7 +103,7 @@ Direct port of `pymqrest`'s architecture, adapted to Go idioms. Uses the
 
 Go typed errors (not exception hierarchy), used with `errors.As()`:
 
-```
+```text
 TransportError   — network/connection failures
 ResponseError    — malformed JSON, unexpected structure
 AuthError        — authentication/authorization failures
@@ -114,7 +114,7 @@ MappingError     — attribute translation failures (strict mode)
 
 ### Package Structure
 
-```
+```text
 mqrest/                        # Single flat package
     session.go                 # Session struct, NewSession, functional options, core dispatch
     session_commands.go        # MQSC command methods (display, define, alter, delete, etc.)
@@ -133,7 +133,8 @@ mqrest/                        # Single flat package
 
 ## Key References
 
-**Canonical Standards**: https://github.com/wphillipmoore/standards-and-conventions
+**Canonical Standards**: <https://github.com/wphillipmoore/standards-and-conventions>
+
 - Local path (preferred): `../standards-and-conventions`
 - Load all skills from: `<standards-repo-path>/skills/**/SKILL.md`
 
@@ -142,6 +143,7 @@ mqrest/                        # Single flat package
 **Java port reference**: `../mq-rest-admin` (Java version)
 
 **External Documentation**:
+
 - IBM MQ 9.4 administrative REST API
 - MQSC command reference
 

@@ -167,9 +167,8 @@ func (session *Session) ensureObject(ctx context.Context, name string,
 // diffAttributes compares desired attributes against current values and
 // returns the list of changed attribute names and a map of only the changed
 // key-value pairs.
-func diffAttributes(desired, current map[string]any) ([]string, map[string]any) {
-	var changed []string
-	changedParams := make(map[string]any)
+func diffAttributes(desired, current map[string]any) (changed []string, changedParams map[string]any) {
+	changedParams = make(map[string]any)
 
 	for key, desiredValue := range desired {
 		currentValue, exists := current[key]

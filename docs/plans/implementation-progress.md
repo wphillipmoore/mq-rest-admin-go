@@ -1,5 +1,14 @@
 # Implementation Progress
 
+## Table of Contents
+
+- [Status: Phases 1-5 Complete (Core Implementation)](#status-phases-1-5-complete-core-implementation)
+- [Completed](#completed)
+- [Remaining Work](#remaining-work)
+- [Key Design Decisions](#key-design-decisions)
+- [Environment](#environment)
+- [Reference Projects](#reference-projects)
+
 ## Status: Phases 1-5 Complete (Core Implementation)
 
 Last updated: 2026-02-14
@@ -26,6 +35,7 @@ All foundation files implemented and compiling.
 ### Phase 2: Attribute Mapping (tested in Phase 5)
 
 Mapping implementation complete and tested:
+
 - Round-trip mapping (snake_case <-> MQSC)
 - Strict mode error collection
 - Permissive mode passthrough
@@ -35,6 +45,7 @@ Mapping implementation complete and tested:
 ### Phase 3: Command Methods (`mqrest/session_commands.go`)
 
 144 MQSC command methods implemented:
+
 - 2 wildcard-default DISPLAY (Queue, Channel)
 - 3 singleton DISPLAY (Qmgr, Qmstatus, Cmdserv)
 - 39 optional-name DISPLAY via `displayList()` helper

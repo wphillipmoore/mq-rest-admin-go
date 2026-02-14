@@ -1,5 +1,16 @@
 # Go Port Plan: IBM MQ REST Admin Client
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Source Analysis](#source-analysis)
+- [Go Port Architecture](#go-port-architecture)
+- [Implementation Phases](#implementation-phases)
+- [CI/CD Gates (per standards)](#cicd-gates-per-standards)
+- [Key Differences from Python/Java](#key-differences-from-pythonjava)
+- [Resolved Decisions](#resolved-decisions)
+- [Open Questions](#open-questions)
+
 ## Overview
 
 Port the pymqrest Python library to Go, using the mq-rest-admin Java port as a
@@ -49,7 +60,7 @@ a `-go` suffix to distinguish the language.
 
 ### Project Structure
 
-```
+```text
 mq-rest-admin-go/
 ├── docs/
 │   ├── decisions/
@@ -244,7 +255,7 @@ Test dependencies only: `testify` (or stdlib `testing` only, per preference).
 ### Type Mapping: Python/Java to Go
 
 | Concept | Python | Java | Go |
-|---------|--------|------|----|
+| ------------- | ---------------------- | ------------------------ | --------------------------------- |
 | Session | `MQRESTSession` class | `MqRestSession` class | `Session` struct |
 | Construction | `__init__` kwargs | Builder pattern | Functional options |
 | Auth types | Union type | Sealed interface | Interface with unexported method |
@@ -311,35 +322,35 @@ const (
 
 ### Phase 2: Attribute Mapping
 
-6. **Mapping data** (`mapping_data.json`, `mapping_data.go`) -- embed and
+1. **Mapping data** (`mapping_data.json`, `mapping_data.go`) -- embed and
    parse the JSON mapping definitions
-7. **Attribute mapper** (`mapping.go`) -- 3-layer pipeline, strict/permissive
+2. **Attribute mapper** (`mapping.go`) -- 3-layer pipeline, strict/permissive
    modes, request and response mapping, `MappingIssue` collection
 
 ### Phase 3: Command Methods
 
-8. **DISPLAY commands** (`session_commands.go`) -- 44 display methods
-9. **DEFINE commands** -- 19 define methods
-10. **ALTER commands** -- 17 alter methods
-11. **DELETE commands** -- 16 delete methods
-12. **Other commands** -- START, STOP, CLEAR, RESET, SUSPEND, RESUME, etc.
+1. **DISPLAY commands** (`session_commands.go`) -- 44 display methods
+2. **DEFINE commands** -- 19 define methods
+3. **ALTER commands** -- 17 alter methods
+4. **DELETE commands** -- 16 delete methods
+5. **Other commands** -- START, STOP, CLEAR, RESET, SUSPEND, RESUME, etc.
 
 ### Phase 4: Ensure and Sync
 
-13. **Ensure methods** (`session_ensure.go`) -- 15 idempotent ensure methods
-    returning `EnsureResult`
-14. **Sync methods** (`session_sync.go`) -- 9 polling methods returning
-    `SyncResult`, `SyncConfig`
+1. **Ensure methods** (`session_ensure.go`) -- 15 idempotent ensure methods
+   returning `EnsureResult`
+2. **Sync methods** (`session_sync.go`) -- 9 polling methods returning
+   `SyncResult`, `SyncConfig`
 
 ### Phase 5: Quality and Documentation
 
-15. **Unit tests** -- mock transport, test all command methods, mapping,
-    ensure logic, sync polling, auth, error handling
-16. **Integration tests** -- against live MQ (gated by env var)
-17. **Examples** -- basic usage, ensure, sync, auth types
-18. **CI/CD** -- GitHub Actions: `go vet`, `golangci-lint`, `govulncheck`,
-    `go test -race -cover`, coverage enforcement
-19. **Documentation** -- README, package doc comments, ADRs for key decisions
+1. **Unit tests** -- mock transport, test all command methods, mapping,
+   ensure logic, sync polling, auth, error handling
+2. **Integration tests** -- against live MQ (gated by env var)
+3. **Examples** -- basic usage, ensure, sync, auth types
+4. **CI/CD** -- GitHub Actions: `go vet`, `golangci-lint`, `govulncheck`,
+   `go test -race -cover`, coverage enforcement
+5. **Documentation** -- README, package doc comments, ADRs for key decisions
 
 ## CI/CD Gates (per standards)
 
@@ -357,7 +368,7 @@ const (
 ## Key Differences from Python/Java
 
 | Aspect | Go approach |
-|--------|-------------|
+| -------------------- | ----------------------------------------------------------------- |
 | No inheritance | Composition via embedding not needed; single Session struct |
 | No generics needed | `map[string]any` for dynamic attributes |
 | Context propagation | `context.Context` on all I/O methods |

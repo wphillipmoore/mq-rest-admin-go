@@ -149,8 +149,8 @@ func WithMappingOverrides(overrides map[string]any, mode MappingOverrideMode) Op
 }
 
 // WithBasicAuth configures HTTP Basic authentication.
-func WithBasicAuth(username, password string) Option {
-	return func(config *sessionConfig) {
+func WithBasicAuth(_, _ string) Option {
+	return func(_ *sessionConfig) {
 		// Credentials are set via a special path; see NewSession.
 	}
 }
@@ -238,7 +238,7 @@ func (session *Session) GatewayQmgr() string {
 // names.
 func (session *Session) mqscCommand(ctx context.Context, command, mqscQualifier string,
 	name *string, requestParameters map[string]any, responseParameters []string,
-	whereClause *string, isDisplay bool,
+	_ *string, isDisplay bool,
 ) ([]map[string]any, error) {
 	upperCommand := strings.ToUpper(command)
 	upperQualifier := strings.ToUpper(mqscQualifier)
