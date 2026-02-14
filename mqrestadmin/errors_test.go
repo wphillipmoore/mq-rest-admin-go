@@ -164,6 +164,9 @@ func TestMappingDirection_String(t *testing.T) {
 	if MappingResponse.String() != "response" {
 		t.Errorf("MappingResponse.String() = %q", MappingResponse.String())
 	}
+	if MappingDirection(99).String() != "unknown" {
+		t.Errorf("MappingDirection(99).String() = %q, want unknown", MappingDirection(99).String())
+	}
 }
 
 func TestMappingReason_String(t *testing.T) {
@@ -175,6 +178,9 @@ func TestMappingReason_String(t *testing.T) {
 	}
 	if MappingUnknownQualifier.String() != "unknown_qualifier" {
 		t.Errorf("MappingUnknownQualifier.String() = %q", MappingUnknownQualifier.String())
+	}
+	if MappingReason(99).String() != "unknown" {
+		t.Errorf("MappingReason(99).String() = %q, want unknown", MappingReason(99).String())
 	}
 }
 
@@ -188,6 +194,9 @@ func TestEnsureAction_String(t *testing.T) {
 	if EnsureUnchanged.String() != "unchanged" {
 		t.Errorf("EnsureUnchanged.String() = %q", EnsureUnchanged.String())
 	}
+	if EnsureAction(99).String() != "unknown" {
+		t.Errorf("EnsureAction(99).String() = %q, want unknown", EnsureAction(99).String())
+	}
 }
 
 func TestSyncOperation_String(t *testing.T) {
@@ -199,5 +208,8 @@ func TestSyncOperation_String(t *testing.T) {
 	}
 	if SyncRestarted.String() != "restarted" {
 		t.Errorf("SyncRestarted.String() = %q", SyncRestarted.String())
+	}
+	if SyncOperation(99).String() != "unknown" {
+		t.Errorf("SyncOperation(99).String() = %q, want unknown", SyncOperation(99).String())
 	}
 }

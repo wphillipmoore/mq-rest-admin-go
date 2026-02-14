@@ -809,6 +809,259 @@ func TestNewSession_WithMappingOverrides(t *testing.T) {
 	}
 }
 
+func TestNewSession_CertificateAuth_WithTransport(t *testing.T) {
+	transport := newMockTransport()
+
+	session, err := NewSession(
+		"https://localhost:9443/ibmmq/rest/v2",
+		"QM1",
+		CertificateAuth{CertPath: "/path/to/cert.pem"},
+		WithTransport(transport),
+	)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if session == nil {
+		t.Fatal("expected non-nil session")
+	}
+}
+
+func TestNewSession_CertificateAuth_NoTransport_InvalidCert(t *testing.T) {
+	_, err := NewSession(
+		"https://localhost:9443/ibmmq/rest/v2",
+		"QM1",
+		CertificateAuth{CertPath: "/nonexistent/cert.pem", KeyPath: "/nonexistent/key.pem"},
+	)
+	if err == nil {
+		t.Fatal("expected error for invalid certificate path")
+	}
+}
+
+func TestNewSession_CertificateAuth_NoTransport_ValidCert(t *testing.T) {
+	certPEM, keyPEM := generateSelfSignedCert(&testing.T{})
+	// Use a real *testing.T for TempDir
+	certFile := writeTempFile(t, "cert.pem", certPEM)
+	keyFile := writeTempFile(t, "key.pem", keyPEM)
+
+	session, err := NewSession(
+		"https://localhost:9443/ibmmq/rest/v2",
+		"QM1",
+		CertificateAuth{CertPath: certFile, KeyPath: keyFile},
+		WithMapAttributes(false),
+	)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if session == nil {
+		t.Fatal("expected non-nil session")
+	}
+}
+
+func TestWithBasicAuth_Option(t *testing.T) {
+	transport := newMockTransport()
+
+	session, err := NewSession(
+		"https://localhost:9443/ibmmq/rest/v2",
+		"QM1",
+		BasicAuth{Username: "admin", Password: "pass"},
+		WithTransport(transport),
+		WithBasicAuth("user", "pass"),
+	)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if session == nil {
+		t.Fatal("expected non-nil session")
+	}
+}
+
+func TestSystemClock_Now(t *testing.T) {
+	clock := systemClock{}
+	before := time.Now()
+	result := clock.now()
+	after := time.Now()
+
+	if result.Before(before) || result.After(after) {
+		t.Errorf("systemClock.now() = %v, expected between %v and %v", result, before, after)
+	}
+}
+
+func TestSystemClock_Sleep(t *testing.T) {
+	clock := systemClock{}
+	start := time.Now()
+	clock.sleep(1 * time.Millisecond)
+	elapsed := time.Since(start)
+
+	if elapsed < 1*time.Millisecond {
+		t.Errorf("systemClock.sleep() returned too quickly: %v", elapsed)
+	}
+}
+
+func TestPerformLTPALogin_TransportError(t *testing.T) {
+	transport := newMockTransport()
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+
+	_, err := NewSession(
+		"https://localhost:9443/ibmmq/rest/v2",
+		"QM1",
+		LTPAAuth{Username: "admin", Password: "pass"},
+		WithTransport(transport),
+	)
+	if err == nil {
+		t.Fatal("expected error for transport failure during LTPA login")
+	}
+}
+
+func TestMapResponseParameterNames_UnknownQualifier(t *testing.T) {
+	session := newTestSessionWithMapping(newMockTransport())
+
+	// Call mapResponseParameterNames directly with unknown qualifier
+	result := session.mapResponseParameterNames("nonexistent_qualifier", []string{"param1", "param2"})
+	if len(result) != 2 || result[0] != "param1" || result[1] != "param2" {
+		t.Errorf("expected params to pass through unchanged, got %v", result)
+	}
+}
+
+func TestDisplayQmstatus_Error(t *testing.T) {
+	transport := newMockTransport()
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+	session := newTestSession(transport)
+
+	_, err := session.DisplayQmstatus(context.Background())
+	if err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestDisplayCmdserv_Error(t *testing.T) {
+	transport := newMockTransport()
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+	session := newTestSession(transport)
+
+	_, err := session.DisplayCmdserv(context.Background())
+	if err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestExtractCommandResponseObjects_NonListCommandResponse(t *testing.T) {
+	payload := map[string]any{
+		"commandResponse": "not a list",
+	}
+	result := extractCommandResponseObjects(payload)
+	if result != nil {
+		t.Errorf("expected nil for non-list commandResponse, got %v", result)
+	}
+}
+
+func TestExtractCommandResponseObjects_NonMapItem(t *testing.T) {
+	payload := map[string]any{
+		"commandResponse": []any{"not a map"},
+	}
+	result := extractCommandResponseObjects(payload)
+	if len(result) != 0 {
+		t.Errorf("expected 0 results for non-map item, got %d", len(result))
+	}
+}
+
+func TestExtractCommandResponseObjects_MissingParameters(t *testing.T) {
+	payload := map[string]any{
+		"commandResponse": []any{
+			map[string]any{"completionCode": float64(0)},
+		},
+	}
+	result := extractCommandResponseObjects(payload)
+	if len(result) != 0 {
+		t.Errorf("expected 0 results when parameters missing, got %d", len(result))
+	}
+}
+
+func TestExtractCommandResponseObjects_NonMapParameters(t *testing.T) {
+	payload := map[string]any{
+		"commandResponse": []any{
+			map[string]any{
+				"completionCode": float64(0),
+				"parameters":     "not a map",
+			},
+		},
+	}
+	result := extractCommandResponseObjects(payload)
+	if len(result) != 0 {
+		t.Errorf("expected 0 results for non-map parameters, got %d", len(result))
+	}
+}
+
+func TestFlattenNestedObjects_NonMapChild(t *testing.T) {
+	transport := newMockTransport()
+	transport.addSuccessResponse(map[string]any{
+		"CONN":    "CONN1",
+		"objects": []any{"not a map", map[string]any{"OBJNAME": "Q1"}},
+	})
+	session := newTestSession(transport)
+
+	name := "*"
+	objects, err := session.mqscCommand(context.Background(), "DISPLAY", "CONN", &name,
+		nil, []string{"all"}, nil, true)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	// Only the valid map should be flattened
+	if len(objects) != 1 {
+		t.Errorf("expected 1 flattened object, got %d", len(objects))
+	}
+}
+
+func TestIsNonZeroNumber_Nil(t *testing.T) {
+	if isNonZeroNumber(nil) {
+		t.Error("expected nil to not be a non-zero number")
+	}
+}
+
+func TestIsNonZeroNumber_Float64NonZero(t *testing.T) {
+	if !isNonZeroNumber(float64(42)) {
+		t.Error("expected float64(42) to be non-zero")
+	}
+}
+
+func TestExtractLTPAToken_MultipleHeaders(t *testing.T) {
+	headers := map[string]string{
+		"Content-Type": "application/json",
+		"Set-Cookie":   "LtpaToken2=abc123; Path=/; Secure",
+	}
+	result := extractLTPAToken(headers)
+	if result != "abc123" {
+		t.Errorf("extractLTPAToken() = %q, want abc123", result)
+	}
+}
+
+func TestMqscCommand_MappingPermissiveRequest(t *testing.T) {
+	transport := newMockTransport()
+	transport.addSuccessResponse(map[string]any{"QUEUE": "Q1"})
+	session := newTestSessionWithMapping(transport)
+	session.mappingStrict = false
+
+	_, err := session.DisplayQueue(context.Background(), "Q1",
+		WithRequestParameters(map[string]any{"unknown_attr": "value"}))
+	if err != nil {
+		t.Fatalf("expected no error in permissive mode, got %v", err)
+	}
+}
+
+func TestIsNonZeroNumber_Float64Zero(t *testing.T) {
+	if isNonZeroNumber(float64(0)) {
+		t.Error("expected float64(0) to be zero")
+	}
+}
+
 func TestIsNonZeroNumber_IntType(t *testing.T) {
 	if !isNonZeroNumber(42) {
 		t.Error("expected 42 (int) to be non-zero")

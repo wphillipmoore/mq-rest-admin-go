@@ -364,3 +364,191 @@ func TestStartServiceSync_Success(t *testing.T) {
 		t.Errorf("Operation = %v, want SyncStarted", result.Operation)
 	}
 }
+
+func TestStartListenerSync_Success(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	transport.addSuccessResponse()
+	transport.addSuccessResponse(map[string]any{
+		"LISTENER": "LIS1",
+		"STATUS":   "RUNNING",
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	result, err := session.StartListenerSync(context.Background(), "LIS1",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Operation != SyncStarted {
+		t.Errorf("Operation = %v, want SyncStarted", result.Operation)
+	}
+}
+
+func TestStopServiceSync_Success(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	transport.addSuccessResponse()
+	transport.addSuccessResponse(map[string]any{
+		"SERVICE": "SVC1",
+		"STATUS":  "STOPPED",
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	result, err := session.StopServiceSync(context.Background(), "SVC1",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Operation != SyncStopped {
+		t.Errorf("Operation = %v, want SyncStopped", result.Operation)
+	}
+}
+
+func TestRestartListener_Success(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// STOP succeeds
+	transport.addSuccessResponse()
+	// Poll: stopped
+	transport.addSuccessResponse(map[string]any{
+		"LISTENER": "LIS1",
+		"STATUS":   "STOPPED",
+	})
+	// START succeeds
+	transport.addSuccessResponse()
+	// Poll: running
+	transport.addSuccessResponse(map[string]any{
+		"LISTENER": "LIS1",
+		"STATUS":   "RUNNING",
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	result, err := session.RestartListener(context.Background(), "LIS1",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Operation != SyncRestarted {
+		t.Errorf("Operation = %v, want SyncRestarted", result.Operation)
+	}
+}
+
+func TestRestartService_Success(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// STOP succeeds
+	transport.addSuccessResponse()
+	// Poll: stopped
+	transport.addSuccessResponse(map[string]any{
+		"SERVICE": "SVC1",
+		"STATUS":  "STOPPED",
+	})
+	// START succeeds
+	transport.addSuccessResponse()
+	// Poll: running
+	transport.addSuccessResponse(map[string]any{
+		"SERVICE": "SVC1",
+		"STATUS":  "RUNNING",
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	result, err := session.RestartService(context.Background(), "SVC1",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Operation != SyncRestarted {
+		t.Errorf("Operation = %v, want SyncRestarted", result.Operation)
+	}
+}
+
+func TestStopListenerSync_InactiveStatus(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	transport.addSuccessResponse()
+	transport.addSuccessResponse(map[string]any{
+		"LISTENER": "LIS1",
+		"status":   "inactive",
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	result, err := session.StopListenerSync(context.Background(), "LIS1",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Operation != SyncStopped {
+		t.Errorf("Operation = %v, want SyncStopped", result.Operation)
+	}
+}
+
+func TestRestartChannel_StartPhaseError(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// STOP succeeds
+	transport.addSuccessResponse()
+	// Poll: channel stopped
+	transport.addCommandErrorResponse(2, 2085)
+	// START fails
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.RestartChannel(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error when start phase fails during restart")
+	}
+}
+
+func TestQueryStatus_NonCommandError(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// START succeeds
+	transport.addSuccessResponse()
+	// Status poll returns transport error (non-command)
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+	// Next poll returns running
+	transport.addSuccessResponse(map[string]any{
+		"CHANNEL": "TO.REMOTE",
+		"STATUS":  "RUNNING",
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	result, err := session.StartChannelSync(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Operation != SyncStarted {
+		t.Errorf("Operation = %v, want SyncStarted", result.Operation)
+	}
+}
+
+func TestHasStatus_NonStringValue(t *testing.T) {
+	rows := []map[string]any{{"STATUS": 42}}
+	result := hasStatus(rows, []string{"STATUS"}, runningValues)
+	if result {
+		t.Error("expected false for non-string status value")
+	}
+}

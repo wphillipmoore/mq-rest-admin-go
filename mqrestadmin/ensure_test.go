@@ -277,6 +277,73 @@ func TestEnsureQmgr_AlterError(t *testing.T) {
 	}
 }
 
+func TestEnsureWrappers_Created(t *testing.T) {
+	type ensureEntry struct {
+		name string
+		call func(*Session, context.Context, string, map[string]any) (EnsureResult, error)
+	}
+
+	entries := []ensureEntry{
+		{"EnsureQremote", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureQremote(ctx, name, params) }},
+		{"EnsureQalias", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureQalias(ctx, name, params) }},
+		{"EnsureQmodel", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureQmodel(ctx, name, params) }},
+		{"EnsureChannel", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureChannel(ctx, name, params) }},
+		{"EnsureAuthinfo", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureAuthinfo(ctx, name, params) }},
+		{"EnsureListener", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureListener(ctx, name, params) }},
+		{"EnsureNamelist", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureNamelist(ctx, name, params) }},
+		{"EnsureProcess", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureProcess(ctx, name, params) }},
+		{"EnsureService", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureService(ctx, name, params) }},
+		{"EnsureTopic", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureTopic(ctx, name, params) }},
+		{"EnsureSub", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureSub(ctx, name, params) }},
+		{"EnsureStgclass", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureStgclass(ctx, name, params) }},
+		{"EnsureComminfo", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureComminfo(ctx, name, params) }},
+		{"EnsureCfstruct", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureCfstruct(ctx, name, params) }},
+	}
+
+	for _, entry := range entries {
+		t.Run(entry.name, func(t *testing.T) {
+			transport := newMockTransport()
+			// DISPLAY returns command error (not found)
+			transport.addCommandErrorResponse(2, 2085)
+			// DEFINE succeeds
+			transport.addSuccessResponse()
+
+			session := newTestSession(transport)
+
+			result, err := entry.call(session, context.Background(), "NEW.OBJ",
+				map[string]any{"DESCR": "test"})
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if result.Action != EnsureCreated {
+				t.Errorf("Action = %v, want EnsureCreated", result.Action)
+			}
+			if transport.callCount() != 2 {
+				t.Errorf("expected 2 transport calls, got %d", transport.callCount())
+			}
+		})
+	}
+}
+
+func TestEnsureQmgr_Unchanged(t *testing.T) {
+	transport := newMockTransport()
+	transport.addSuccessResponse(map[string]any{
+		"QMNAME": "QM1",
+		"DESCR":  "same",
+	})
+
+	session := newTestSession(transport)
+
+	result, err := session.EnsureQmgr(context.Background(),
+		map[string]any{"DESCR": "same"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Action != EnsureUnchanged {
+		t.Errorf("Action = %v, want EnsureUnchanged", result.Action)
+	}
+}
+
 func TestDiffAttributes(t *testing.T) {
 	desired := map[string]any{
 		"MAXDEPTH": "10000",

@@ -38,7 +38,7 @@ providing typed Go functions for every MQSC command exposed by the
 - Gson for JSON; JDK `HttpClient` for HTTP
 - Sealed interfaces for credentials and exceptions
 - Records for DTOs (TransportResponse, SyncResult, EnsureResult, etc.)
-- 100% test coverage enforced
+- 99%+ test coverage enforced
 
 ### Key decisions from the Java port
 
@@ -363,7 +363,9 @@ const (
 ### Coverage
 
 - Enforce no coverage decline (track via CI artifact or Codecov)
-- Target: 100% line coverage (matching Java port standard)
+- Target: 99% line coverage (Go's coverage tool reports 0% for empty function
+  bodies such as `sealed()` and no-op interface methods, making true 100%
+  unattainable without adding dead code)
 
 ## Key Differences from Python/Java
 
