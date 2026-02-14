@@ -27,8 +27,8 @@ type mappingData struct {
 }
 
 type commandMapping struct {
-	Qualifier             string     `json:"qualifier"`
-	ResponseParameterMacros map[string][]string `json:"response_parameter_macros,omitempty"`
+	Qualifier               string   `json:"qualifier"`
+	ResponseParameterMacros []string `json:"response_parameter_macros,omitempty"`
 }
 
 type qualifierMapping struct {
@@ -216,8 +216,9 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 			}
 		}
 
-		// Layer 3: Value map
-		mappedValue := mapper.mapValue(mappedKey, value, valueMap, direction, qualifier, objectIndex, &issues)
+		// Layer 3: Value map (lookup uses original key, since value map keys
+		// are in the same namespace as the input attributes)
+		mappedValue := mapper.mapValue(key, value, valueMap, direction, qualifier, objectIndex, &issues)
 
 		result[mappedKey] = mappedValue
 	}
@@ -287,26 +288,27 @@ func (mapper *attributeMapper) mapValue(key string, value any,
 	}
 }
 
-// resolveResponseParameterMacros expands macro names in response parameters
-// (e.g., "all", "CLUSINFO") to their full attribute lists.
+// resolveResponseParameterMacros returns the command's defined response
+// parameter macros if the caller requested "all", otherwise returns the
+// caller's list as-is. The macros are additional parameter names to include
+// in the response.
 func (mapper *attributeMapper) resolveResponseParameterMacros(command, mqscQualifier string,
 	responseParameters []string,
 ) []string {
 	key := command + " " + mqscQualifier
 	cmdMapping, exists := mapper.data.Commands[key]
-	if !exists || cmdMapping.ResponseParameterMacros == nil {
+	if !exists || len(cmdMapping.ResponseParameterMacros) == 0 {
 		return responseParameters
 	}
 
-	var expanded []string
+	// If "all" is requested, append the macro parameters
 	for _, param := range responseParameters {
-		if attrs, found := cmdMapping.ResponseParameterMacros[strings.ToLower(param)]; found {
-			expanded = append(expanded, attrs...)
-		} else {
-			expanded = append(expanded, param)
+		if strings.EqualFold(param, "all") {
+			return append(responseParameters, cmdMapping.ResponseParameterMacros...)
 		}
 	}
-	return expanded
+
+	return responseParameters
 }
 
 func mergeStringMap(target, source map[string]string) {
