@@ -2,6 +2,7 @@ package mqrest
 
 import (
 	"context"
+	"errors"
 	"testing"
 )
 
@@ -171,6 +172,108 @@ func TestValuesMatch_CaseInsensitive(t *testing.T) {
 			t.Errorf("valuesMatch(%v, %v) = %v, want %v",
 				test.desired, test.current, result, test.expected)
 		}
+	}
+}
+
+func TestEnsureQlocal_DisplayNonCommandError(t *testing.T) {
+	transport := newMockTransport()
+	// DISPLAY returns a transport error (not a CommandError)
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+
+	session := newTestSession(transport)
+
+	_, err := session.EnsureQlocal(context.Background(), "NEW.QUEUE",
+		map[string]any{"MAXDEPTH": "5000"})
+	if err == nil {
+		t.Fatal("expected error for transport failure")
+	}
+
+	// Should propagate the transport error, not treat as "not found"
+	var transportErr *TransportError
+	if !errors.As(err, &transportErr) {
+		t.Errorf("expected TransportError to be wrapped, got: %v", err)
+	}
+}
+
+func TestEnsureQlocal_DefineError(t *testing.T) {
+	transport := newMockTransport()
+	// DISPLAY returns command error (object not found)
+	transport.addCommandErrorResponse(2, 2085)
+	// DEFINE fails
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection lost"),
+	})
+
+	session := newTestSession(transport)
+
+	_, err := session.EnsureQlocal(context.Background(), "NEW.QUEUE",
+		map[string]any{"MAXDEPTH": "5000"})
+	if err == nil {
+		t.Fatal("expected error when DEFINE fails")
+	}
+}
+
+func TestEnsureQlocal_AlterError(t *testing.T) {
+	transport := newMockTransport()
+	// DISPLAY returns existing object with different attributes
+	transport.addSuccessResponse(map[string]any{
+		"QNAME":    "EXISTING.QUEUE",
+		"MAXDEPTH": "5000",
+	})
+	// ALTER fails
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection lost"),
+	})
+
+	session := newTestSession(transport)
+
+	_, err := session.EnsureQlocal(context.Background(), "EXISTING.QUEUE",
+		map[string]any{"MAXDEPTH": "10000"})
+	if err == nil {
+		t.Fatal("expected error when ALTER fails")
+	}
+}
+
+func TestEnsureQmgr_DisplayError(t *testing.T) {
+	transport := newMockTransport()
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+
+	session := newTestSession(transport)
+
+	_, err := session.EnsureQmgr(context.Background(),
+		map[string]any{"DESCR": "new"})
+	if err == nil {
+		t.Fatal("expected error when DISPLAY QMGR fails")
+	}
+}
+
+func TestEnsureQmgr_AlterError(t *testing.T) {
+	transport := newMockTransport()
+	// DISPLAY succeeds
+	transport.addSuccessResponse(map[string]any{
+		"QMNAME": "QM1",
+		"DESCR":  "old",
+	})
+	// ALTER fails
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection lost"),
+	})
+
+	session := newTestSession(transport)
+
+	_, err := session.EnsureQmgr(context.Background(),
+		map[string]any{"DESCR": "new"})
+	if err == nil {
+		t.Fatal("expected error when ALTER QMGR fails")
 	}
 }
 

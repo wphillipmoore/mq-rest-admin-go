@@ -243,6 +243,103 @@ func TestHasStatus(t *testing.T) {
 	}
 }
 
+func TestStopChannelSync_Timeout(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// STOP command succeeds
+	transport.addSuccessResponse()
+	// All polls return running status
+	for range 50 {
+		transport.addSuccessResponse(map[string]any{
+			"CHANNEL": "TO.REMOTE",
+			"STATUS":  "RUNNING",
+		})
+	}
+
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.StopChannelSync(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 3 * time.Second, PollInterval: 1 * time.Second})
+	if err == nil {
+		t.Fatal("expected timeout error")
+	}
+
+	var timeoutErr *TimeoutError
+	if !errors.As(err, &timeoutErr) {
+		t.Fatalf("expected TimeoutError, got %T: %v", err, err)
+	}
+	if timeoutErr.Operation != SyncStopped {
+		t.Errorf("Operation = %v, want SyncStopped", timeoutErr.Operation)
+	}
+}
+
+func TestRestartChannel_StopTimeout(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// STOP command succeeds
+	transport.addSuccessResponse()
+	// All polls return running - stop will timeout
+	for range 50 {
+		transport.addSuccessResponse(map[string]any{
+			"CHANNEL": "TO.REMOTE",
+			"STATUS":  "RUNNING",
+		})
+	}
+
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.RestartChannel(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 3 * time.Second, PollInterval: 1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error when stop phase times out")
+	}
+
+	var timeoutErr *TimeoutError
+	if !errors.As(err, &timeoutErr) {
+		t.Fatalf("expected TimeoutError, got %T: %v", err, err)
+	}
+}
+
+func TestStartChannelSync_StartCommandError(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// START command fails with transport error
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.StartChannelSync(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error when START command fails")
+	}
+}
+
+func TestStopChannelSync_StopCommandError(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// STOP command fails
+	transport.addErrorResponse(&TransportError{
+		URL: "https://localhost:9443",
+		Err: errors.New("connection refused"),
+	})
+
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.StopChannelSync(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error when STOP command fails")
+	}
+}
+
 func TestStartServiceSync_Success(t *testing.T) {
 	transport := newMockTransport()
 	clock := newMockClock()
