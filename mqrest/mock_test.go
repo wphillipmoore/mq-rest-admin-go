@@ -136,11 +136,6 @@ func (clock *mockClock) sleep(duration time.Duration) {
 	clock.currentTime = clock.currentTime.Add(duration)
 }
 
-// advance moves the clock forward without recording a sleep call.
-func (clock *mockClock) advance(duration time.Duration) {
-	clock.currentTime = clock.currentTime.Add(duration)
-}
-
 // newTestSession creates a Session with a mock transport for testing.
 // The session has mapping disabled by default to simplify test assertions.
 func newTestSession(transport *mockTransport) *Session {
