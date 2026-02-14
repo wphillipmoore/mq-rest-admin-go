@@ -45,7 +45,7 @@ govulncheck ./...               # Vulnerability scanning
 
 Required for daily workflow:
 
-- Go 1.22+ (`brew install go` or https://go.dev/dl/)
+- Go 1.22+ (`brew install go` or <https://go.dev/dl/>)
 - `golangci-lint` (`brew install golangci-lint`)
 - `govulncheck` (`go install golang.org/x/vuln/cmd/govulncheck@latest`)
 - `markdownlint` (required for docs validation and PR pre-submission)
