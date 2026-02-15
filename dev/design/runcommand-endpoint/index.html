@@ -2366,6 +2366,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    runCommandJSON Endpoint
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -2382,6 +2400,47 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#nested-object-flattening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested object flattening
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-implementation-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go implementation notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -2641,6 +2700,36 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#nested-object-flattening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested object flattening
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-implementation-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go implementation notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2657,7 +2746,6 @@
 
 
 <h1 id="the-runcommandjson-endpoint">The runCommandJSON Endpoint<a class="headerlink" href="#the-runcommandjson-endpoint" title="Permanent link">&para;</a></h1>
-<h1 id="the-runcommandjson-endpoint_1">The runCommandJSON Endpoint<a class="headerlink" href="#the-runcommandjson-endpoint_1" title="Permanent link">&para;</a></h1>
 <h2 id="nested-object-flattening">Nested object flattening<a class="headerlink" href="#nested-object-flattening" title="Permanent link">&para;</a></h2>
 <p>Some commands (<code>DISPLAY CONN TYPE(HANDLE)</code>, <code>DISPLAY QSTATUS
 TYPE(HANDLE)</code>) return responses where each <code>commandResponse</code> item
@@ -2669,29 +2757,6 @@ these structures so that every command returns uniform flat maps:</p>
 <p>See <a href="../nested-object-flattening/">nested object flattening</a> for the full algorithm, edge cases,
 and before/after examples.</p>
 <h2 id="go-implementation-notes">Go implementation notes<a class="headerlink" href="#go-implementation-notes" title="Permanent link">&para;</a></h2>
-<p>In <code>mqrestadmin</code>, the error handling described above is implemented using
-typed error structs:</p>
-<ul>
-<li>Non-zero overall codes produce a <code>*CommandError</code> with the full response
-  payload attached.</li>
-<li>DISPLAY commands with no matches (reason code 2085) return an empty
-  slice and nil error.</li>
-<li>The CSRF token defaults to <code>"local"</code> and can be overridden via
-  <code>WithCSRFToken(&amp;token)</code>, or omitted with <code>WithCSRFToken(nil)</code>.</li>
-<li>Authentication is configured via credential structs passed to <code>NewSession()</code>:
-  <code>BasicAuth{}</code>, <code>CertificateAuth{}</code>, or <code>LTPAAuth{}</code>.</li>
-</ul>
-<h2 id="nested-object-flattening_1">Nested object flattening<a class="headerlink" href="#nested-object-flattening_1" title="Permanent link">&para;</a></h2>
-<p>Some commands (<code>DISPLAY CONN TYPE(HANDLE)</code>, <code>DISPLAY QSTATUS
-TYPE(HANDLE)</code>) return responses where each <code>commandResponse</code> item
-contains an <code>objects</code> array of per-handle attributes alongside
-parent-scoped attributes. <code>mqrestadmin</code> automatically detects and flattens
-these structures so that every command returns uniform flat maps:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span><span class="nt">&quot;conn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A1B2C3D4E5F6&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;objname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MY.QUEUE&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;hstate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ACTIVE&quot;</span><span class="p">}</span>
-</code></pre></div>
-<p>See <a href="../nested-object-flattening/">nested object flattening</a> for the full algorithm, edge cases,
-and before/after examples.</p>
-<h2 id="go-implementation-notes_1">Go implementation notes<a class="headerlink" href="#go-implementation-notes_1" title="Permanent link">&para;</a></h2>
 <p>In <code>mqrestadmin</code>, the error handling described above is implemented using
 typed error structs:</p>
 <ul>

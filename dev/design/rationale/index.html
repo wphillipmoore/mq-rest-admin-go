@@ -2338,6 +2338,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rationale
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -2354,6 +2372,119 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#go-specific-design-choices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go-specific design choices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Go-specific design choices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zero-external-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero external dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-flat-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single flat package
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functional-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functional options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contextcontext-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        context.Context integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errors-as-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors as values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-naming-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method naming conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Return shapes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -2641,6 +2772,108 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#go-specific-design-choices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go-specific design choices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Go-specific design choices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zero-external-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero external dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-flat-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single flat package
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functional-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functional options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contextcontext-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        context.Context integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errors-as-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors as values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-naming-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method naming conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Return shapes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2657,7 +2890,6 @@
 
 
 <h1 id="design-rationale">Design Rationale<a class="headerlink" href="#design-rationale" title="Permanent link">&para;</a></h1>
-<h1 id="design-rationale_1">Design Rationale<a class="headerlink" href="#design-rationale_1" title="Permanent link">&para;</a></h1>
 <h2 id="go-specific-design-choices">Go-specific design choices<a class="headerlink" href="#go-specific-design-choices" title="Permanent link">&para;</a></h2>
 <h3 id="zero-external-dependencies">Zero external dependencies<a class="headerlink" href="#zero-external-dependencies" title="Permanent link">&para;</a></h3>
 <p><code>mqrestadmin</code> has zero external runtime dependencies. The entire package is
@@ -2739,94 +2971,6 @@ pattern is <code>&lt;Verb&gt;&lt;Qualifier&gt;</code>:</p>
 </tbody>
 </table>
 <h3 id="return-shapes">Return shapes<a class="headerlink" href="#return-shapes" title="Permanent link">&para;</a></h3>
-<p><strong>DISPLAY commands</strong> return <code>([]map[string]any, error)</code>. An empty slice
-means no objects matched -- this is not an error. The caller can range
-over the result without nil checks.</p>
-<p><strong>Queue manager singletons</strong> (<code>DisplayQmgr</code>, <code>DisplayQmstatus</code>, etc.)
-return <code>(map[string]any, error)</code>. A nil map means no result was returned.</p>
-<p><strong>Non-DISPLAY commands</strong> (<code>Define</code>, <code>Delete</code>, <code>Alter</code>, etc.) return
-<code>error</code> only. A nil error means success.</p>
-<h2 id="go-specific-design-choices_1">Go-specific design choices<a class="headerlink" href="#go-specific-design-choices_1" title="Permanent link">&para;</a></h2>
-<h3 id="zero-external-dependencies_1">Zero external dependencies<a class="headerlink" href="#zero-external-dependencies_1" title="Permanent link">&para;</a></h3>
-<p><code>mqrestadmin</code> has zero external runtime dependencies. The entire package is
-built on the Go standard library:</p>
-<ul>
-<li><code>net/http</code> for HTTP communication</li>
-<li><code>encoding/json</code> for JSON serialization</li>
-<li><code>crypto/tls</code> for TLS and mutual TLS</li>
-<li><code>embed</code> for mapping data resources</li>
-</ul>
-<p>This keeps the dependency tree empty and avoids version conflicts in
-downstream projects.</p>
-<h3 id="single-flat-package_1">Single flat package<a class="headerlink" href="#single-flat-package_1" title="Permanent link">&para;</a></h3>
-<p>The entire public API lives in one package: <code>mqrestadmin</code>. There are no
-sub-packages to import. This follows the Go convention of small, focused
-packages and keeps the import path simple:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/wphillipmoore/mq-rest-admin-go/mqrestadmin&quot;</span>
-</code></pre></div>
-<h3 id="functional-options_1">Functional options<a class="headerlink" href="#functional-options_1" title="Permanent link">&para;</a></h3>
-<p>Session configuration uses the functional options pattern rather than a
-configuration struct or builder:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nx">session</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">NewSession</span><span class="p">(</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="s">&quot;https://localhost:9443/ibmmq/rest/v2&quot;</span><span class="p">,</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="s">&quot;QM1&quot;</span><span class="p">,</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">LTPAAuth</span><span class="p">{</span><span class="nx">Username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mqadmin&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">Password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mqadmin&quot;</span><span class="p">},</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">WithVerifyTLS</span><span class="p">(</span><span class="kc">false</span><span class="p">),</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">WithTimeout</span><span class="p">(</span><span class="mi">30</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">),</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">)</span>
-</code></pre></div>
-<p>This provides a clean API with sensible defaults, optional parameters
-without nil checks, and backward-compatible extensibility.</p>
-<h3 id="contextcontext-integration_1">context.Context integration<a class="headerlink" href="#contextcontext-integration_1" title="Permanent link">&para;</a></h3>
-<p>All I/O methods accept <code>context.Context</code> as their first parameter:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nx">results</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">DisplayQueue</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MY.QUEUE&quot;</span><span class="p">)</span>
-</code></pre></div>
-<p>This enables cancellation, deadline propagation, and tracing integration
-without inventing a custom mechanism.</p>
-<h3 id="errors-as-values_1">Errors as values<a class="headerlink" href="#errors-as-values_1" title="Permanent link">&para;</a></h3>
-<p>Go errors follow the standard <code>error</code> interface with typed error structs
-for classification:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nx">results</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">DisplayQueue</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MY.QUEUE&quot;</span><span class="p">)</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">cmdErr</span><span class="w"> </span><span class="o">*</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">CommandError</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">errors</span><span class="p">.</span><span class="nx">As</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">cmdErr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;status: %d, payload: %v\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">cmdErr</span><span class="p">.</span><span class="nx">StatusCode</span><span class="p">,</span><span class="w"> </span><span class="nx">cmdErr</span><span class="p">.</span><span class="nx">Payload</span><span class="p">)</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">}</span>
-</code></pre></div>
-<p>There is no exception hierarchy. Errors are values that can be inspected
-with <code>errors.As()</code> and <code>errors.Is()</code>.</p>
-<h3 id="method-naming-conventions_1">Method naming conventions<a class="headerlink" href="#method-naming-conventions_1" title="Permanent link">&para;</a></h3>
-<p>Command methods use <code>PascalCase</code> following Go export conventions. The
-pattern is <code>&lt;Verb&gt;&lt;Qualifier&gt;</code>:</p>
-<table>
-<thead>
-<tr>
-<th>MQSC command</th>
-<th>Go method</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>DISPLAY QUEUE</code></td>
-<td><code>DisplayQueue()</code></td>
-</tr>
-<tr>
-<td><code>DEFINE QLOCAL</code></td>
-<td><code>DefineQlocal()</code></td>
-</tr>
-<tr>
-<td><code>DELETE CHANNEL</code></td>
-<td><code>DeleteChannel()</code></td>
-</tr>
-<tr>
-<td><code>ALTER QMGR</code></td>
-<td><code>AlterQmgr()</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="return-shapes_1">Return shapes<a class="headerlink" href="#return-shapes_1" title="Permanent link">&para;</a></h3>
 <p><strong>DISPLAY commands</strong> return <code>([]map[string]any, error)</code>. An empty slice
 means no objects matched -- this is not an error. The caller can range
 over the result without nil checks.</p>
