@@ -7,9 +7,9 @@ components are:
 
 - **`Session`**: The main entry point. A single struct that owns connection
   details, authentication, mapping configuration, diagnostic state, and all
-  ~144 command methods plus 15 ensure methods and 9 sync methods. Created
+  ~144 command methods plus 16 ensure methods and 9 sync methods. Created
   via `NewSession` with functional options.
-- **Command methods**: Exported methods on `Session` (e.g. `DisplayQlocal()`,
+- **Command methods**: Exported methods on `Session` (e.g. `DisplayQueue()`,
   `DefineQlocal()`, `DeleteChannel()`). Each method is a thin wrapper that
   calls the internal `mqscCommand()` dispatcher with the correct verb and
   qualifier.
@@ -21,7 +21,7 @@ components are:
 
 ## Request lifecycle
 
-When you call a command method like `session.DisplayQlocal(ctx, "*")`:
+When you call a command method like `session.DisplayQueue(ctx, "*")`:
 
 1. The method delegates to the internal `mqscCommand()` dispatcher with the
    verb (`DISPLAY`), qualifier (`QLOCAL`), and name.
@@ -35,7 +35,7 @@ When you call a command method like `session.DisplayQlocal(ctx, "*")`:
 6. The session retains diagnostic state from the most recent command.
 
 ```go
-session.DisplayQlocal(ctx, "MY.QUEUE")
+session.DisplayQueue(ctx, "MY.QUEUE")
 
 session.LastCommandPayload    // the JSON sent to MQ
 session.LastResponsePayload   // the parsed JSON response

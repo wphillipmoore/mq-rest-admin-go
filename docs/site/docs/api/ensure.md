@@ -2,7 +2,7 @@
 
 ## Overview
 
-The ensure methods provide 15 idempotent ensure operations on `Session`. These
+The ensure methods provide 16 idempotent ensure operations on `Session`. These
 methods implement a declarative upsert pattern: DEFINE if the object does not
 exist, ALTER only attributes that differ, or no-op if the object already matches
 the desired state.

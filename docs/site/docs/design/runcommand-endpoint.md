@@ -27,6 +27,6 @@ typed error structs:
 - DISPLAY commands with no matches (reason code 2085) return an empty
   slice and nil error.
 - The CSRF token defaults to `"local"` and can be overridden via
-  `WithCSRFToken()`, or omitted with `WithCSRFToken("")`.
-- Authentication is configured via functional options: `WithBasicAuth()`,
-  `WithCertificateAuth()`, or `WithLTPAToken()`.
+  `WithCSRFToken(&token)`, or omitted with `WithCSRFToken(nil)`.
+- Authentication is configured via credential structs passed to `NewSession()`:
+  `BasicAuth{}`, `CertificateAuth{}`, or `LTPAAuth{}`.
