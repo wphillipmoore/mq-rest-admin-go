@@ -36,7 +36,7 @@ configuration struct or builder:
 session, err := mqrestadmin.NewSession(
     "https://localhost:9443/ibmmq/rest/v2",
     "QM1",
-    mqrestadmin.WithBasicAuth("mqadmin", "mqadmin"),
+    mqrestadmin.LTPAAuth{Username: "mqadmin", Password: "mqadmin"},
     mqrestadmin.WithVerifyTLS(false),
     mqrestadmin.WithTimeout(30 * time.Second),
 )
@@ -50,7 +50,7 @@ without nil checks, and backward-compatible extensibility.
 All I/O methods accept `context.Context` as their first parameter:
 
 ```go
-results, err := session.DisplayQlocal(ctx, "MY.QUEUE")
+results, err := session.DisplayQueue(ctx, "MY.QUEUE")
 ```
 
 This enables cancellation, deadline propagation, and tracing integration
@@ -62,11 +62,11 @@ Go errors follow the standard `error` interface with typed error structs
 for classification:
 
 ```go
-results, err := session.DisplayQlocal(ctx, "MY.QUEUE")
+results, err := session.DisplayQueue(ctx, "MY.QUEUE")
 if err != nil {
     var cmdErr *mqrestadmin.CommandError
     if errors.As(err, &cmdErr) {
-        fmt.Printf("reason code: %d\n", cmdErr.ReasonCode)
+        fmt.Printf("status: %d, payload: %v\n", cmdErr.StatusCode, cmdErr.Payload)
     }
     return err
 }

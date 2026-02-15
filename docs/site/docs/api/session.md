@@ -5,7 +5,7 @@
 The main entry point for interacting with an IBM MQ queue manager's
 administrative REST API. A `Session` encapsulates connection details,
 authentication, attribute mapping configuration, and diagnostic state. It
-provides ~144 command methods covering all MQSC verbs and qualifiers, plus 15
+provides ~144 command methods covering all MQSC verbs and qualifiers, plus 16
 idempotent ensure methods and 9 synchronous sync methods.
 
 The Go implementation uses functional options for construction, following
@@ -114,7 +114,7 @@ err = session.DeleteQueue(ctx, "MY.QUEUE")
 
 ## Ensure methods
 
-The session provides 15 ensure methods for declarative object management. Each
+The session provides 16 ensure methods for declarative object management. Each
 method implements an idempotent upsert: DEFINE if the object does not exist,
 ALTER only the attributes that differ, or no-op if already correct.
 

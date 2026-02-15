@@ -50,7 +50,7 @@ follow the pattern `VerbQualifier` in PascalCase:
 ctx := context.Background()
 
 // DISPLAY QUEUE — returns a slice of maps
-queues, err := session.DisplayQlocal(ctx, "*")
+queues, err := session.DisplayQueue(ctx, "*")
 if err != nil {
     panic(err)
 }
@@ -73,7 +73,7 @@ err := session.DefineQlocal(ctx, "APP.REQUESTS", map[string]any{
 })
 
 // Response: MQSC → snake_case
-queues, _ := session.DisplayQlocal(ctx, "APP.REQUESTS")
+queues, _ := session.DisplayQueue(ctx, "APP.REQUESTS")
 fmt.Println(queues[0]["max_queue_depth"])      // "50000"
 fmt.Println(queues[0]["default_persistence"])  // "persistent"
 ```

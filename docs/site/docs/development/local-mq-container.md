@@ -123,7 +123,7 @@ curl -k -u mqadmin:mqadmin \
 session, err := mqrestadmin.NewSession(
     "https://localhost:9443/ibmmq/rest/v2",
     "QM2",
-    mqrestadmin.WithBasicAuth("mqadmin", "mqadmin"),
+    mqrestadmin.LTPAAuth{Username: "mqadmin", Password: "mqadmin"},
     mqrestadmin.WithGatewayQmgr("QM1"),
     mqrestadmin.WithVerifyTLS(false),
 )
