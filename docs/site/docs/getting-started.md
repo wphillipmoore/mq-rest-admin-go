@@ -81,6 +81,31 @@ fmt.Println(queues[0]["default_persistence"])  // "persistent"
 Disable mapping per-session with `WithMapAttributes(false)` to work with
 raw MQSC parameter names.
 
+### Strict and lenient modes
+
+By default, the mapper runs in **lenient** mode — unrecognized attributes pass
+through unchanged. Switch to **strict** mode to get errors on unmapped keys:
+
+```go
+session, err := mqrestadmin.NewSession(
+    "https://localhost:9443/ibmmq/rest/v2", "QM1",
+    mqrestadmin.LTPAAuth{Username: "mqadmin", Password: "mqadmin"},
+    mqrestadmin.WithStrictMapping(true),
+)
+```
+
+### Custom mapping overrides
+
+Override or extend the built-in mapping data:
+
+```go
+session, err := mqrestadmin.NewSession(
+    "https://localhost:9443/ibmmq/rest/v2", "QM1",
+    mqrestadmin.LTPAAuth{Username: "mqadmin", Password: "mqadmin"},
+    mqrestadmin.WithMappingOverride(overrideData, mqrestadmin.MergeOverride),
+)
+```
+
 See [mapping pipeline](mapping-pipeline.md) for a detailed explanation of
 how mapping works.
 
@@ -101,6 +126,33 @@ fmt.Println(result.Action) // created, updated, or unchanged
 ```
 
 See [ensure methods](ensure-methods.md) for details.
+
+## Gateway routing
+
+Route commands to a remote queue manager through a local gateway:
+
+```go
+session, err := mqrestadmin.NewSession(
+    "https://localhost:9443/ibmmq/rest/v2",
+    "QM2",                                     // target (remote) queue manager
+    mqrestadmin.LTPAAuth{Username: "mqadmin", Password: "mqadmin"},
+    mqrestadmin.WithGatewayQmgr("QM1"),        // local gateway queue manager
+    mqrestadmin.WithVerifyTLS(false),
+)
+```
+
+## Diagnostic state
+
+After every command, the session retains diagnostic state for debugging:
+
+```go
+queues, err := session.DisplayQueue(ctx, "MY.QUEUE")
+
+fmt.Println(session.LastHTTPStatus)        // HTTP status code
+fmt.Println(session.LastCommandPayload)    // JSON sent to MQ
+fmt.Println(session.LastResponsePayload)   // parsed JSON response
+fmt.Println(session.LastResponseText)      // raw response body
+```
 
 ## Error handling
 

@@ -19,18 +19,18 @@ theme:
     - search.highlight
     - search.suggest
   palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
     - scheme: slate
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
 
 plugins:
   - search
@@ -118,6 +118,7 @@ nav:
       - Rationale: design/rationale.md
       - runCommandJSON Endpoint: design/runcommand-endpoint.md
       - Nested Object Flattening: design/nested-object-flattening.md
+  - AI Engineering: ai-engineering.md
   - Development:
       - development/index.md
       - Developer Setup: development/developer-setup.md
