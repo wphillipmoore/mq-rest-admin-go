@@ -30,7 +30,7 @@ func (auth BasicAuth) applyAuth(request *http.Request, _ *Session) {
 	request.Header.Set("Authorization", "Basic "+encoded)
 }
 
-func (BasicAuth) sealed() {}
+func (BasicAuth) sealed() {} //coverage:ignore
 
 // LTPAAuth provides LTPA token-based authentication. The session performs a
 // login at construction time to obtain an LtpaToken2 cookie, which is
@@ -46,7 +46,7 @@ func (auth LTPAAuth) applyAuth(request *http.Request, session *Session) {
 	}
 }
 
-func (LTPAAuth) sealed() {}
+func (LTPAAuth) sealed() {} //coverage:ignore
 
 // CertificateAuth provides mutual TLS (mTLS) authentication using a client
 // certificate. The certificate is configured on the transport's TLS settings.
@@ -58,11 +58,11 @@ type CertificateAuth struct {
 	KeyPath string
 }
 
-func (CertificateAuth) applyAuth(_ *http.Request, _ *Session) {
+func (CertificateAuth) applyAuth(_ *http.Request, _ *Session) { //coverage:ignore
 	// Certificate auth is handled at the TLS transport level, not per-request.
 }
 
-func (CertificateAuth) sealed() {}
+func (CertificateAuth) sealed() {} //coverage:ignore
 
 // loadTLSCertificate loads the client certificate for mTLS authentication.
 func (auth CertificateAuth) loadTLSCertificate() (*tls.Certificate, error) {
