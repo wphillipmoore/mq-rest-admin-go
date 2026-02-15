@@ -60,15 +60,16 @@ nav:
   - Mapping Pipeline: mapping-pipeline.md
   - Ensure Methods: ensure-methods.md
   - Sync Methods: sync-methods.md
+  - Examples: examples.md
   - API Reference:
       - api/index.md
       - Session: api/session.md
       - Authentication: api/auth.md
       - Commands: api/commands.md
+      - Transport: api/transport.md
+      - Mapping: api/mapping.md
       - Ensure: api/ensure.md
       - Sync: api/sync.md
-      - Mapping: api/mapping.md
-      - Transport: api/transport.md
       - Errors: api/errors.md
   - Mappings:
       - mappings/index.md
@@ -118,9 +119,9 @@ nav:
       - Rationale: design/rationale.md
       - runCommandJSON Endpoint: design/runcommand-endpoint.md
       - Nested Object Flattening: design/nested-object-flattening.md
-  - AI Engineering: ai-engineering.md
   - Development:
       - development/index.md
       - Developer Setup: development/developer-setup.md
       - Contributing: development/contributing.md
       - Local MQ Container: development/local-mq-container.md
+  - AI Engineering: ai-engineering.md
