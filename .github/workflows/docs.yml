@@ -56,10 +56,9 @@ jobs:
           fi
 
       - name: Deploy docs
-        working-directory: docs/site
         run: |
           if [ -n "${{ steps.version.outputs.alias }}" ]; then
-            mike deploy --push --update-aliases ${{ steps.version.outputs.version }} ${{ steps.version.outputs.alias }}
+            mike deploy -F docs/site/mkdocs.yml --push --update-aliases ${{ steps.version.outputs.version }} ${{ steps.version.outputs.alias }}
           else
-            mike deploy --push ${{ steps.version.outputs.version }}
+            mike deploy -F docs/site/mkdocs.yml --push ${{ steps.version.outputs.version }}
           fi
