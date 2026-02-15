@@ -2,8 +2,9 @@
 
 ## Component overview
 
-`mqrestadmin` is structured as a single flat Go package. The main
-components are:
+--8<-- "architecture/component-overview.md"
+
+In the Go implementation, the core components map to these types:
 
 - **`Session`**: The main entry point. A single struct that owns connection
   details, authentication, mapping configuration, diagnostic state, and all
@@ -21,18 +22,14 @@ components are:
 
 ## Request lifecycle
 
-When you call a command method like `session.DisplayQueue(ctx, "*")`:
+--8<-- "architecture/request-lifecycle.md"
 
-1. The method delegates to the internal `mqscCommand()` dispatcher with the
-   verb (`DISPLAY`), qualifier (`QLOCAL`), and name.
-2. If mapping is enabled, request attributes are translated from `snake_case`
-   to MQSC parameter names.
-3. The dispatcher builds a `runCommandJSON` payload and sends it via the
-   `Transport` interface.
-4. The response JSON is parsed and validated.
-5. If mapping is enabled, response attributes are translated from MQSC back
-   to `snake_case`.
-6. The session retains diagnostic state from the most recent command.
+In Go, the command dispatcher is the internal `mqscCommand()` method on
+`Session`. Every exported command method (e.g. `DisplayQueue()`,
+`DefineQlocal()`) delegates to it with the appropriate verb and qualifier.
+
+The session retains diagnostic state from the most recent command for
+inspection:
 
 ```go
 session.DisplayQueue(ctx, "MY.QUEUE")
@@ -45,7 +42,9 @@ session.LastResponseText      // raw response body
 
 ## Transport abstraction
 
-The `Transport` interface abstracts HTTP communication:
+--8<-- "architecture/transport-abstraction.md"
+
+In Go, the transport is defined by the `Transport` interface:
 
 ```go
 type Transport interface {
@@ -57,6 +56,54 @@ type Transport interface {
 
 The default `HTTPTransport` uses `net/http`. Custom implementations can be
 injected via `WithTransport()` for testing or specialized HTTP handling.
+
+For testing, inject a mock transport:
+
+```go
+type mockTransport struct{}
+
+func (m *mockTransport) PostJSON(ctx context.Context, url string,
+    payload map[string]any, headers map[string]string,
+    timeout time.Duration, verifyTLS bool,
+) (*TransportResponse, error) {
+    return &mqrestadmin.TransportResponse{
+        StatusCode: 200,
+        Body:       responseJSON,
+        Headers:    map[string]string{},
+    }, nil
+}
+
+session, _ := mqrestadmin.NewSession(
+    "https://localhost:9443/ibmmq/rest/v2", "QM1",
+    mqrestadmin.LTPAAuth{Username: "admin", Password: "pass"},
+    mqrestadmin.WithTransport(&mockTransport{}),
+)
+```
+
+This makes the entire command pipeline testable without an MQ server.
+
+## Single-endpoint design
+
+--8<-- "architecture/single-endpoint-design.md"
+
+In Go, this means every command method on `Session` ultimately calls the
+same `PostJSON()` method on the transport with the same URL pattern. The only
+variation is the JSON payload content.
+
+## Gateway routing
+
+--8<-- "architecture/gateway-routing.md"
+
+In Go, configure gateway routing via a functional option:
+
+```go
+session, err := mqrestadmin.NewSession(
+    "https://qm1-host:9443/ibmmq/rest/v2",
+    "QM2",                                      // target (remote) queue manager
+    mqrestadmin.LTPAAuth{Username: "mqadmin", Password: "mqadmin"},
+    mqrestadmin.WithGatewayQmgr("QM1"),         // local gateway queue manager
+)
+```
 
 ## Context support
 

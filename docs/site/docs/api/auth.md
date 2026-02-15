@@ -116,6 +116,12 @@ type BasicAuth struct {
 creds := mqrestadmin.BasicAuth{Username: "mqadmin", Password: "passw0rd"}
 ```
 
+!!! note
+    All examples and documentation in this project use LTPA as the default
+    authentication method. If you see `LTPAAuth{...}` in an example, you
+    can substitute `BasicAuth{...}` or `CertificateAuth{...}` based on
+    your environment.
+
 ## Choosing between LTPA and Basic authentication
 
 Both LTPA and Basic authentication use a username and password. The key
