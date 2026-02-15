@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://wphillipmoore.github.io/mq-rest-admin-go/dev/api/transport/">
+        <link rel="canonical" href="https://wphillipmoore.github.io/mq-rest-admin-go/dev/development/quality-gates/">
       
       
-        <link rel="prev" href="../commands/">
+        <link rel="prev" href="../local-mq-container/">
       
       
-        <link rel="next" href="../mapping/">
+        <link rel="next" href="../../ai-engineering/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Transport - mqrestadmin (Go)</title>
+        <title>Quality Gates - mqrestadmin (Go)</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#transport" class="md-skip">
+        <a href="#quality-gates" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Transport
+              Quality Gates
             
           </span>
         </div>
@@ -360,13 +360,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../api/" class="md-tabs__link">
           
   
   
@@ -422,11 +420,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../development/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -695,31 +695,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -737,7 +732,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -755,7 +750,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../api/" class="md-nav__link">
         
   
   
@@ -783,7 +778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../session/" class="md-nav__link">
+      <a href="../../api/session/" class="md-nav__link">
         
   
   
@@ -811,7 +806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../auth/" class="md-nav__link">
+      <a href="../../api/auth/" class="md-nav__link">
         
   
   
@@ -839,7 +834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/" class="md-nav__link">
+      <a href="../../api/commands/" class="md-nav__link">
         
   
   
@@ -864,37 +859,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Transport
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../api/transport/" class="md-nav__link">
         
   
   
@@ -910,92 +878,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#transport-interface" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Transport interface
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#transportresponse" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TransportResponse
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#httptransport" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HTTPTransport
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#injecting-a-custom-transport" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Injecting a custom transport
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mock-transport-for-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mock transport for testing
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1008,7 +890,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapping/" class="md-nav__link">
+      <a href="../../api/mapping/" class="md-nav__link">
         
   
   
@@ -1036,7 +918,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ensure/" class="md-nav__link">
+      <a href="../../api/ensure/" class="md-nav__link">
         
   
   
@@ -1064,7 +946,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sync/" class="md-nav__link">
+      <a href="../../api/sync/" class="md-nav__link">
         
   
   
@@ -1092,7 +974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../errors/" class="md-nav__link">
+      <a href="../../api/errors/" class="md-nav__link">
         
   
   
@@ -2530,26 +2412,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="">
             
   
   
@@ -2567,7 +2454,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2585,7 +2472,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -2613,7 +2500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/developer-setup/" class="md-nav__link">
+      <a href="../developer-setup/" class="md-nav__link">
         
   
   
@@ -2641,7 +2528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/contributing/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   
@@ -2669,7 +2556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/local-mq-container/" class="md-nav__link">
+      <a href="../local-mq-container/" class="md-nav__link">
         
   
   
@@ -2694,10 +2581,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../development/quality-gates/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality Gates
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2713,6 +2627,192 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#git-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git hooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Git hooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pre-commit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        commit-msg
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CI pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docs-only-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        docs-only detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#standards-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        standards-compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependency-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dependency-audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#release-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        release-gates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-and-validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test-and-validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codeql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CodeQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        integration-tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#go-specific-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go-specific validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2790,10 +2890,143 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#transport-interface" class="md-nav__link">
+  <a href="#git-hooks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Transport interface
+        Git hooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Git hooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pre-commit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-msg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        commit-msg
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CI pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docs-only-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        docs-only detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#standards-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        standards-compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependency-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dependency-audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#release-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        release-gates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-and-validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test-and-validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codeql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CodeQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        integration-tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation deployment
       
     </span>
   </a>
@@ -2801,43 +3034,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#transportresponse" class="md-nav__link">
+  <a href="#go-specific-validation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TransportResponse
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#httptransport" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HTTPTransport
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#injecting-a-custom-transport" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Injecting a custom transport
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mock-transport-for-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mock transport for testing
+        Go-specific validation
       
     </span>
   </a>
@@ -2861,175 +3061,204 @@
 
 
 
-<h1 id="transport">Transport<a class="headerlink" href="#transport" title="Permanent link">&para;</a></h1>
+<h1 id="quality-gates">Quality gates<a class="headerlink" href="#quality-gates" title="Permanent link">&para;</a></h1>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>The transport layer abstracts HTTP communication from the session logic. The
-session builds <code>runCommandJSON</code> payloads and delegates HTTP delivery to a
-transport implementation. This separation enables testing the entire command
-pipeline without an MQ server by injecting a mock transport.</p>
-<h2 id="transport-interface">Transport interface<a class="headerlink" href="#transport-interface" title="Permanent link">&para;</a></h2>
-<p>The <code>Transport</code> interface defines a single method for posting JSON payloads:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">type</span><span class="w"> </span><span class="nx">Transport</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nx">PostJSON</span><span class="p">(</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">        </span><span class="nx">ctx</span><span class="w">       </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="nx">url</span><span class="w">       </span><span class="kt">string</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="nx">payload</span><span class="w">   </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">        </span><span class="nx">headers</span><span class="w">   </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="nx">timeout</span><span class="w">   </span><span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="nx">verifyTLS</span><span class="w"> </span><span class="kt">bool</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">TransportResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
+<p>Every mq-rest-admin repository enforces a layered quality gate system.
+Local git hooks catch issues before code leaves the developer's machine,
+and CI pipelines enforce the same standards (plus additional checks) on
+every pull request. Pull requests cannot merge until all required jobs
+pass.</p>
+<h2 id="git-hooks">Git hooks<a class="headerlink" href="#git-hooks" title="Permanent link">&para;</a></h2>
+<p>Git hooks are stored in <code>scripts/git-hooks/</code> and activated with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>config<span class="w"> </span>core.hooksPath<span class="w"> </span>scripts/git-hooks
 </code></pre></div>
+<h3 id="pre-commit">pre-commit<a class="headerlink" href="#pre-commit" title="Permanent link">&para;</a></h3>
+<p>The <code>pre-commit</code> hook runs before each commit and enforces:</p>
+<p><strong>Protected branch blocking</strong> — Commits directly to <code>main</code>, <code>develop</code>,
+<code>release/*</code>, or a detached HEAD are rejected. All work must go through
+short-lived feature branches and pull requests.</p>
+<p><strong>Branch naming enforcement</strong> — The hook reads the <code>branching_model</code>
+attribute from <code>docs/repository-standards.md</code> and enforces the
+corresponding naming convention:</p>
 <table>
 <thead>
 <tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
+<th>Branching model</th>
+<th>Allowed prefixes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ctx</code></td>
-<td><code>context.Context</code></td>
-<td>Request context for cancellation and deadlines</td>
+<td><code>docs-single-branch</code></td>
+<td><code>feature/*</code>, <code>bugfix/*</code></td>
 </tr>
 <tr>
-<td><code>url</code></td>
-<td><code>string</code></td>
-<td>Fully-qualified endpoint URL</td>
+<td><code>library-release</code></td>
+<td><code>feature/*</code>, <code>bugfix/*</code>, <code>hotfix/*</code></td>
 </tr>
 <tr>
-<td><code>payload</code></td>
-<td><code>map[string]any</code></td>
-<td>The <code>runCommandJSON</code> request body</td>
-</tr>
-<tr>
-<td><code>headers</code></td>
-<td><code>map[string]string</code></td>
-<td>Authentication, CSRF token, and optional gateway headers</td>
-</tr>
-<tr>
-<td><code>timeout</code></td>
-<td><code>time.Duration</code></td>
-<td>Per-request timeout duration</td>
-</tr>
-<tr>
-<td><code>verifyTLS</code></td>
-<td><code>bool</code></td>
-<td>Whether to verify server certificates</td>
+<td><code>application-promotion</code></td>
+<td><code>feature/*</code>, <code>bugfix/*</code>, <code>hotfix/*</code>, <code>promotion/*</code></td>
 </tr>
 </tbody>
 </table>
-<p>Returns <code>*TransportResponse</code> on success or a <code>*TransportError</code> on network
-failures.</p>
-<h2 id="transportresponse">TransportResponse<a class="headerlink" href="#transportresponse" title="Permanent link">&para;</a></h2>
-<p>A struct containing the HTTP response data:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">type</span><span class="w"> </span><span class="nx">TransportResponse</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nx">StatusCode</span><span class="w"> </span><span class="kt">int</span><span class="w">               </span><span class="c1">// HTTP status code</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nx">Body</span><span class="w">       </span><span class="kt">string</span><span class="w">            </span><span class="c1">// Response body (empty string if no body)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nx">Headers</span><span class="w">    </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="w"> </span><span class="c1">// Response headers</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+<h3 id="commit-msg">commit-msg<a class="headerlink" href="#commit-msg" title="Permanent link">&para;</a></h3>
+<p>The <code>commit-msg</code> hook runs after the commit message is written and
+validates two things:</p>
+<p><strong>Conventional Commits format</strong> — The subject line must match:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;type&gt;(optional-scope): &lt;description&gt;
 </code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>StatusCode</code></td>
-<td><code>int</code></td>
-<td>HTTP status code</td>
-</tr>
-<tr>
-<td><code>Body</code></td>
-<td><code>string</code></td>
-<td>Response body text</td>
-</tr>
-<tr>
-<td><code>Headers</code></td>
-<td><code>map[string]string</code></td>
-<td>Response headers (first value per key)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="httptransport">HTTPTransport<a class="headerlink" href="#httptransport" title="Permanent link">&para;</a></h2>
-<p>The default <code>Transport</code> implementation using <code>net/http</code> from the Go standard
-library (zero external dependencies):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">type</span><span class="w"> </span><span class="nx">HTTPTransport</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nx">TLSConfig</span><span class="w"> </span><span class="o">*</span><span class="nx">tls</span><span class="p">.</span><span class="nx">Config</span><span class="w">  </span><span class="c1">// optional TLS configuration for mTLS or custom CAs</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// Default -- verifies TLS certificates</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nx">transport</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">HTTPTransport</span><span class="p">{}</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1">// Custom TLS configuration for mTLS</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nx">transport</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">HTTPTransport</span><span class="p">{</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nx">TLSConfig</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">tls</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="nx">Certificates</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">tls</span><span class="p">.</span><span class="nx">Certificate</span><span class="p">{</span><span class="nx">cert</span><span class="p">},</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">}</span>
-</code></pre></div>
-<p><code>HTTPTransport</code> handles:</p>
+<p>Allowed types: <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code>, <code>chore</code>.</p>
+<p><strong>Co-author identity validation</strong> — If the commit includes
+<code>Co-Authored-By</code> trailers, each trailer is checked against the approved
+identity list in <code>docs/repository-standards.md</code>. Unapproved identities
+are rejected. Commits without co-author trailers (human-only commits)
+are always valid.</p>
+<h2 id="ci-pipeline">CI pipeline<a class="headerlink" href="#ci-pipeline" title="Permanent link">&para;</a></h2>
+<p>The CI pipeline (<code>ci.yml</code>) runs on every pull request and on pushes to
+<code>develop</code> and <code>release/**</code>. It consists of several independent jobs, all
+of which must pass for a PR to merge.</p>
+<h3 id="docs-only-detection">docs-only detection<a class="headerlink" href="#docs-only-detection" title="Permanent link">&para;</a></h3>
+<p>A preliminary job detects whether the changeset is docs-only (as defined
+by the repository). When docs-only is detected, the test-intensive jobs
+(test-and-validate, CodeQL, integration tests) are skipped, while
+standards-compliance and dependency-audit still run.</p>
+<h3 id="standards-compliance">standards-compliance<a class="headerlink" href="#standards-compliance" title="Permanent link">&para;</a></h3>
+<p>Validates repository standards using a shared composite action:</p>
 <ul>
-<li>HTTPS connections with configurable <code>tls.Config</code></li>
-<li>Automatic TLS certificate verification (or disabled via <code>verifyTLS=false</code>)</li>
-<li>Request timeouts via <code>time.Duration</code></li>
-<li>JSON serialization/deserialization with <code>encoding/json</code></li>
-<li>Custom HTTP headers</li>
-<li>Context-aware requests with cancellation support</li>
+<li><strong>Conventional Commits</strong> — All commits in the PR are validated against
+  the <code>type(scope): description</code> format.</li>
+<li><strong>Co-author trailers</strong> — All <code>Co-Authored-By</code> trailers are checked
+  against the approved list.</li>
+<li><strong>PR issue linkage</strong> — The PR body must include <code>Fixes #N</code> or <code>Ref #N</code>
+  linking to a tracking issue. Other GitHub keywords (<code>Closes</code>,
+  <code>Resolves</code>) are rejected.</li>
+<li><strong>Markdown standards</strong> — Documentation files are checked for exactly
+  one H1, no heading level skips, presence of a <code>## Table of Contents</code>
+  section, and markdownlint compliance.</li>
+<li><strong>Repository profile</strong> — The <code>docs/repository-standards.md</code> file is
+  validated for required attributes: <code>repository_type</code>,
+  <code>versioning_scheme</code>, <code>branching_model</code>, <code>release_model</code>, and
+  <code>supported_release_lines</code>.</li>
 </ul>
-<p>When <code>CertificateAuth</code> credentials are provided and no custom transport is set,
-<code>NewSession</code> automatically creates an <code>HTTPTransport</code> with the client
-certificate loaded into <code>TLSConfig</code>.</p>
-<h2 id="injecting-a-custom-transport">Injecting a custom transport<a class="headerlink" href="#injecting-a-custom-transport" title="Permanent link">&para;</a></h2>
-<p>Use <code>WithTransport</code> to provide a custom <code>Transport</code> implementation for testing
-or specialized HTTP handling:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">session</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">NewSession</span><span class="p">(</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="s">&quot;https://localhost:9443/ibmmq/rest/v2&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="s">&quot;QM1&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">BasicAuth</span><span class="p">{</span><span class="nx">Username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">Password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;passw0rd&quot;</span><span class="p">},</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">WithTransport</span><span class="p">(</span><span class="nx">mockTransport</span><span class="p">),</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">)</span>
+<h3 id="dependency-audit">dependency-audit<a class="headerlink" href="#dependency-audit" title="Permanent link">&para;</a></h3>
+<p>Audits runtime dependencies for security vulnerabilities and license
+compliance:</p>
+<table>
+<thead>
+<tr>
+<th>Language</th>
+<th>Vulnerability scanner</th>
+<th>License checker</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java</td>
+<td><code>mvn dependency:tree</code> (resolution verification)</td>
+<td><code>license-maven-plugin</code> with allow-list</td>
+</tr>
+<tr>
+<td>Python</td>
+<td><code>pip-audit</code> against requirements files</td>
+<td><code>pip-licenses</code> with allow-list</td>
+</tr>
+<tr>
+<td>Go</td>
+<td><code>govulncheck ./...</code></td>
+<td><code>go-licenses check</code> with allow-list</td>
+</tr>
+</tbody>
+</table>
+<p>Allowed licenses: Apache-2.0, MIT, BSD-2-Clause, BSD-3-Clause, ISC,
+MPL-2.0, GPL-3.0-or-later, and PSF-2.0.</p>
+<h3 id="release-gates">release-gates<a class="headerlink" href="#release-gates" title="Permanent link">&para;</a></h3>
+<p>Validates version metadata on PRs targeting protected branches:</p>
+<p><strong>PRs targeting main</strong> (release PRs):</p>
+<ul>
+<li>Version must be plain semver (<code>x.y.z</code>) with no pre-release suffix</li>
+<li>Version must not already exist on the package registry</li>
+<li>Changelog must include an entry for the release version</li>
+</ul>
+<p><strong>PRs targeting develop</strong>:</p>
+<ul>
+<li>Version must differ from the version on <code>main</code>, preventing accidental
+  version collisions</li>
+</ul>
+<h3 id="test-and-validate">test-and-validate<a class="headerlink" href="#test-and-validate" title="Permanent link">&para;</a></h3>
+<p>Runs the full validation pipeline across a matrix of language/runtime
+versions:</p>
+<table>
+<thead>
+<tr>
+<th>Language</th>
+<th>Versions tested</th>
+<th>Validation command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java</td>
+<td>17, 21, 25-ea</td>
+<td><code>./mvnw verify</code></td>
+</tr>
+<tr>
+<td>Python</td>
+<td>3.12, 3.13, 3.14</td>
+<td>ruff + mypy + ty + pytest</td>
+</tr>
+<tr>
+<td>Go</td>
+<td>1.25, 1.26</td>
+<td>go vet + golangci-lint + go test</td>
+</tr>
+</tbody>
+</table>
+<p>The validation pipeline includes (in order):</p>
+<ol>
+<li><strong>Formatting check</strong> — Unformatted code fails the build</li>
+<li><strong>Lint and style checks</strong> — Code smell and style rule enforcement</li>
+<li><strong>Type checking</strong> — Strict type analysis (where applicable)</li>
+<li><strong>Unit tests</strong> — Full test suite execution</li>
+<li><strong>Coverage enforcement</strong> — 100% line and branch coverage required</li>
+<li><strong>Static analysis</strong> — Bug pattern and vulnerability detection</li>
+</ol>
+<h3 id="codeql">CodeQL<a class="headerlink" href="#codeql" title="Permanent link">&para;</a></h3>
+<p>GitHub's semantic code analysis runs on every non-docs PR. It detects
+injection flaws, insecure data handling, and other vulnerability classes
+specific to each language.</p>
+<h3 id="integration-tests">integration-tests<a class="headerlink" href="#integration-tests" title="Permanent link">&para;</a></h3>
+<p>End-to-end tests run against containerized IBM MQ queue managers
+provisioned by the <code>mq-dev-environment</code> repository. These tests issue
+real MQSC commands through the REST API and verify that:</p>
+<ul>
+<li>Mapping data correctly translates between friendly names and MQ
+  attribute names</li>
+<li>Command methods produce valid REST API requests</li>
+<li>Response parsing handles real MQ response structures</li>
+</ul>
+<h2 id="documentation-deployment">Documentation deployment<a class="headerlink" href="#documentation-deployment" title="Permanent link">&para;</a></h2>
+<p>A separate <code>docs.yml</code> workflow deploys documentation on pushes to <code>main</code>
+and <code>develop</code> using mike for versioned deployment. Pushes to <code>develop</code>
+deploy the <code>dev</code> version; pushes to <code>main</code> deploy a numbered version
+(read from <code>VERSION</code> or the package metadata) with a <code>latest</code> alias.</p>
+<h2 id="go-specific-validation">Go-specific validation<a class="headerlink" href="#go-specific-validation" title="Permanent link">&para;</a></h2>
+<p>The Go validation pipeline runs as individual commands:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>go<span class="w"> </span>vet<span class="w"> </span>./...
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>golangci-lint<span class="w"> </span>run
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-race<span class="w"> </span>-count<span class="o">=</span><span class="m">1</span><span class="w"> </span>-coverprofile<span class="o">=</span>coverage.out<span class="w"> </span>./...
 </code></pre></div>
-<h2 id="mock-transport-for-testing">Mock transport for testing<a class="headerlink" href="#mock-transport-for-testing" title="Permanent link">&para;</a></h2>
-<p>Because <code>Transport</code> is an interface with a single method, it is straightforward
-to create mock implementations for unit tests:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">type</span><span class="w"> </span><span class="nx">mockTransport</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nx">response</span><span class="w"> </span><span class="o">*</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">TransportResponse</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nx">err</span><span class="w">      </span><span class="kt">error</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">}</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">m</span><span class="w"> </span><span class="o">*</span><span class="nx">mockTransport</span><span class="p">)</span><span class="w"> </span><span class="nx">PostJSON</span><span class="p">(</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">url</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">payload</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">,</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="nx">headers</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">timeout</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span><span class="w"> </span><span class="nx">verifyTLS</span><span class="w"> </span><span class="kt">bool</span><span class="p">,</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">TransportResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">m</span><span class="p">.</span><span class="nx">response</span><span class="p">,</span><span class="w"> </span><span class="nx">m</span><span class="p">.</span><span class="nx">err</span>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">}</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1">// Use in tests</span>
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="nx">mock</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">mockTransport</span><span class="p">{</span>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span><span class="nx">response</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">TransportResponse</span><span class="p">{</span>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">        </span><span class="nx">StatusCode</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">        </span><span class="nx">Body</span><span class="p">:</span><span class="w">       </span><span class="s">`{&quot;commandResponse&quot;:[]}`</span><span class="p">,</span>
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">        </span><span class="nx">Headers</span><span class="p">:</span><span class="w">    </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{},</span>
-<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="p">}</span>
-<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>
-<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="nx">session</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">NewSession</span><span class="p">(</span>
-<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">    </span><span class="s">&quot;https://localhost:9443/ibmmq/rest/v2&quot;</span><span class="p">,</span>
-<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">    </span><span class="s">&quot;QM1&quot;</span><span class="p">,</span>
-<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">    </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">BasicAuth</span><span class="p">{</span><span class="nx">Username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">Password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;passw0rd&quot;</span><span class="p">},</span>
-<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">    </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">WithTransport</span><span class="p">(</span><span class="nx">mock</span><span class="p">),</span>
-<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="p">)</span>
-</code></pre></div>
-<p>This pattern is used extensively in the library's own test suite to verify
-command payload construction, response parsing, and error handling without
-network access.</p>
+<p>This covers:</p>
+<ol>
+<li><strong>go vet</strong> — Standard Go static analysis</li>
+<li><strong>golangci-lint</strong> — Comprehensive linter suite</li>
+<li><strong>go test -race</strong> — Unit tests with race detector enabled</li>
+<li><strong>Coverage enforcement</strong> — 100% coverage after <code>go-ignore-cov</code> exclusions</li>
+<li><strong>govulncheck</strong> — Dependency vulnerability scanning</li>
+<li><strong>go-licenses</strong> — License compliance checking</li>
+</ol>
+<p>The CI matrix tests against Go 1.25 and 1.26. The package uses only the
+Go standard library, so the dependency audit is minimal.</p>
 
 
 
