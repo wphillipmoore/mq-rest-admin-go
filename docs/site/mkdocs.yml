@@ -128,4 +128,5 @@ nav:
       - Developer Setup: development/developer-setup.md
       - Contributing: development/contributing.md
       - Local MQ Container: development/local-mq-container.md
+      - Quality Gates: development/quality-gates.md
   - AI Engineering: ai-engineering.md
