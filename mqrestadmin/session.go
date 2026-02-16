@@ -193,8 +193,7 @@ func NewSession(restBaseURL, qmgrName string, credentials Credentials, opts ...O
 		} else {
 			mapper, err = newAttributeMapper()
 		}
-		if err != nil {
-			//coverage:ignore
+		if err != nil { // coverage-ignore -- mapper init only fails on invalid embedded data
 			return nil, fmt.Errorf("initialize attribute mapper: %w", err)
 		}
 	}
