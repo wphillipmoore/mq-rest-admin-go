@@ -59,6 +59,7 @@ jobs:
         run: |
           if [ -n "${{ steps.version.outputs.alias }}" ]; then
             mike deploy -F docs/site/mkdocs.yml --push --update-aliases ${{ steps.version.outputs.version }} ${{ steps.version.outputs.alias }}
+            mike set-default -F docs/site/mkdocs.yml --push latest
           else
             mike deploy -F docs/site/mkdocs.yml --push ${{ steps.version.outputs.version }}
           fi
