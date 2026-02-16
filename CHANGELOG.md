@@ -7,6 +7,7 @@
 ### ⚙️ Miscellaneous Tasks
 
 - Bump version to 1.1.2 (#61)
+
 ## [develop-v1.1.1] - 2026-02-16
 
 ### 🚀 Features
