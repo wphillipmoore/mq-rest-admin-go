@@ -8,6 +8,7 @@
 
 - Bump version to 1.1.3 (#64)
 - Update CI action versions for next development cycle (#65)
+
 ## [develop-v1.1.2] - 2026-02-16
 
 ### 🐛 Bug Fixes
@@ -17,6 +18,7 @@
 ### ⚙️ Miscellaneous Tasks
 
 - Bump version to 1.1.2 (#61)
+
 ## [develop-v1.1.1] - 2026-02-16
 
 ### 🚀 Features
