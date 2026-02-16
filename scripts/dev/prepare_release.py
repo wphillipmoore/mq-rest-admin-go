@@ -1,0 +1,230 @@
+#!/usr/bin/env python3
+"""Automate release preparation: branch, changelog, PR, auto-merge.
+
+Shared script for library repositories using the library-release branching
+model. Auto-detects the ecosystem to find the version source of truth.
+
+Supported ecosystems:
+  - Python: reads version from pyproject.toml
+  - Maven:  reads version from pom.xml
+  - Go:     reads version from **/version.go
+
+Usage:
+  scripts/dev/prepare_release.py
+"""
+
+from __future__ import annotations
+
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+
+# -- helpers -----------------------------------------------------------------
+
+
+def read_command_output(command: tuple[str, ...]) -> str:
+    """Run a command and return its stdout."""
+    result = subprocess.run(command, check=True, text=True, capture_output=True)  # noqa: S603
+    return result.stdout.strip()
+
+
+def run_command(command: tuple[str, ...]) -> None:
+    """Run a command and raise on failure."""
+    subprocess.run(command, check=True)  # noqa: S603
+
+
+def ensure_tool_available(name: str) -> None:
+    """Fail if a required tool is not on PATH."""
+    if not shutil.which(name):
+        message = f"Required tool '{name}' not found on PATH."
+        raise SystemExit(message)
+
+
+# -- ecosystem detection -----------------------------------------------------
+
+
+def detect_python() -> str | None:
+    """Return the version if pyproject.toml declares one."""
+    path = Path("pyproject.toml")
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8")
+    match = re.search(r'^version\s*=\s*"([^"]+)"', text, re.MULTILINE)
+    if not match:
+        return None
+    return match.group(1)
+
+
+def detect_maven() -> str | None:
+    """Return the version from pom.xml."""
+    path = Path("pom.xml")
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8")
+    match = re.search(
+        r"<artifactId>[^<]+</artifactId>\s*<version>([^<]+)</version>",
+        text,
+    )
+    if not match:
+        return None
+    return match.group(1)
+
+
+def detect_go() -> str | None:
+    """Return the version from **/version.go."""
+    if not Path("go.mod").is_file():
+        return None
+    for path in Path(".").rglob("version.go"):
+        text = path.read_text(encoding="utf-8")
+        match = re.search(r'(?:const\s+)?Version\s*=\s*"([^"]+)"', text)
+        if match:
+            return match.group(1)
+    return None
+
+
+DETECTORS = [
+    ("python", detect_python),
+    ("maven", detect_maven),
+    ("go", detect_go),
+]
+
+
+def detect_ecosystem() -> tuple[str, str]:
+    """Return (ecosystem_name, version) or fail."""
+    for name, detector in DETECTORS:
+        version = detector()
+        if version is not None:
+            return name, version
+    message = (
+        "Could not detect ecosystem. Expected one of:\n"
+        "  - pyproject.toml with version (Python)\n"
+        "  - pom.xml with version (Maven)\n"
+        "  - go.mod + **/version.go (Go)"
+    )
+    raise SystemExit(message)
+
+
+# -- precondition checks ----------------------------------------------------
+
+
+def ensure_on_develop() -> None:
+    """Fail if not on the develop branch."""
+    branch = read_command_output(("git", "rev-parse", "--abbrev-ref", "HEAD"))
+    if branch != "develop":
+        message = f"Must be on develop branch (currently on '{branch}')."
+        raise SystemExit(message)
+
+
+def ensure_clean_tree() -> None:
+    """Fail if the working tree has uncommitted changes."""
+    status = read_command_output(("git", "status", "--porcelain"))
+    if status:
+        message = "Working tree is not clean. Commit or stash changes first."
+        raise SystemExit(message)
+
+
+def branch_exists(name: str) -> bool:
+    """Return True if a branch exists locally or on origin."""
+    for ref in (name, f"origin/{name}"):
+        result = subprocess.run(  # noqa: S603
+            ("git", "rev-parse", "--verify", "--quiet", ref),
+            check=False,
+        )
+        if result.returncode == 0:
+            return True
+    return False
+
+
+# -- release steps -----------------------------------------------------------
+
+
+def create_release_branch(branch: str) -> None:
+    """Create a release branch from the current develop HEAD."""
+    if branch_exists(branch):
+        message = f"Release branch '{branch}' already exists."
+        raise SystemExit(message)
+    print(f"Creating branch: {branch} (from develop)")
+    run_command(("git", "checkout", "-b", branch))
+
+
+def generate_changelog(version: str) -> bool:
+    """Generate changelog via git-cliff if available. Return True if generated."""
+    if not shutil.which("git-cliff"):
+        print("git-cliff not found, skipping changelog generation.")
+        return False
+    tag = f"develop-v{version}"
+    print(f"Generating changelog with boundary tag: {tag}")
+    run_command(("git-cliff", "--tag", tag, "-o", "CHANGELOG.md"))
+    changelog = Path("CHANGELOG.md")
+    changelog.write_text(
+        changelog.read_text(encoding="utf-8").rstrip() + "\n",
+        encoding="utf-8",
+    )
+    run_command(("git", "add", "CHANGELOG.md"))
+    run_command(("git", "commit", "-m", f"chore: prepare release {version}"))
+    return True
+
+
+def push_branch(branch: str) -> None:
+    """Push the release branch to origin."""
+    print(f"Pushing branch: {branch}")
+    run_command(("git", "push", "-u", "origin", branch))
+
+
+def create_pr(version: str) -> str:
+    """Create a PR to main and return the PR URL."""
+    print("Creating pull request to main...")
+    title = f"release: {version}"
+    body = f"## Summary\n\nRelease {version}\n\nGenerated with `prepare_release.py`\n"
+    result = subprocess.run(  # noqa: S603
+        (
+            "gh", "pr", "create",
+            "--base", "main",
+            "--title", title,
+            "--body", body,
+        ),
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    url = result.stdout.strip()
+    print(f"PR created: {url}")
+    return url
+
+
+def enable_auto_merge(url: str) -> None:
+    """Enable auto-merge on the PR (regular merge, not squash)."""
+    print("Enabling auto-merge...")
+    run_command(("gh", "pr", "merge", url, "--auto", "--merge", "--delete-branch"))
+
+
+# -- main --------------------------------------------------------------------
+
+
+def main() -> int:
+    ensure_on_develop()
+    ensure_clean_tree()
+    ensure_tool_available("gh")
+
+    ecosystem, version = detect_ecosystem()
+    branch = f"release/{version}"
+
+    print(f"Preparing release {version} ({ecosystem})")
+
+    create_release_branch(branch)
+    generate_changelog(version)
+    push_branch(branch)
+    url = create_pr(version)
+    enable_auto_merge(url)
+
+    run_command(("git", "checkout", "develop"))
+
+    print(f"Release {version} preparation complete.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
