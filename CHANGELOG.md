@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - sync prepare_release.py with canonical version
 - sync prepare_release.py merge message fix from canonical (#74)
+- add cliff.toml for markdownlint-compliant changelog generation (#78)
+- sync prepare_release.py changelog conflict fix from canonical (#81)
 
 ## [1.1.3] - 2026-02-16
 
