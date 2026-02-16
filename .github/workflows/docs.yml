@@ -48,8 +48,9 @@ jobs:
         id: version
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            echo "version=dev" >> "$GITHUB_OUTPUT"
-            echo "alias=" >> "$GITHUB_OUTPUT"
+            version=$(grep -oP 'Version\s*=\s*"\K[^"]+' mqrestadmin/version.go)
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "alias=latest" >> "$GITHUB_OUTPUT"
           else
             echo "version=dev" >> "$GITHUB_OUTPUT"
             echo "alias=" >> "$GITHUB_OUTPUT"
