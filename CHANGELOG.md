@@ -1,3 +1,38 @@
+## [develop-v1.1.4] - 2026-02-16
+
+### ⚙️ Miscellaneous Tasks
+
+- Merge main into release/1.1.4
+## [1.1.3] - 2026-02-16
+
+### ⚙️ Miscellaneous Tasks
+
+- Merge main into release/1.1.3
+- Re-trigger CI with issue linkage
+## [1.1.2] - 2026-02-16
+
+### ⚙️ Miscellaneous Tasks
+
+- Merge main into release/1.1.2
+- Re-trigger CI with issue linkage
+## [1.1.1] - 2026-02-16
+
+### ⚙️ Miscellaneous Tasks
+
+- Merge main into release/1.1.1
+## [1.1.0] - 2026-02-16
+
+### 🐛 Bug Fixes
+
+- Sync prepare_release.py with canonical version
+- Sync prepare_release.py merge message fix from canonical (#74)
+
+### ⚙️ Miscellaneous Tasks
+
+- Bump version to 1.1.4 (#69)
+- Prepare release 1.1.3
+- Prepare release 1.1.2
+- Prepare release 1.1.1
 ## [develop-v1.1.3] - 2026-02-16
 
 ### 🐛 Bug Fixes
@@ -8,7 +43,6 @@
 
 - Bump version to 1.1.3 (#64)
 - Update CI action versions for next development cycle (#65)
-
 ## [develop-v1.1.2] - 2026-02-16
 
 ### 🐛 Bug Fixes
@@ -18,7 +52,6 @@
 ### ⚙️ Miscellaneous Tasks
 
 - Bump version to 1.1.2 (#61)
-
 ## [develop-v1.1.1] - 2026-02-16
 
 ### 🚀 Features
