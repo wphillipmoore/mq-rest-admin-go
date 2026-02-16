@@ -1,3 +1,3 @@
 module github.com/wphillipmoore/mq-rest-admin-go
 
-go 1.26.0
+go 1.25
