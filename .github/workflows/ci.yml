@@ -195,8 +195,8 @@ jobs:
         with:
           language: golang
 
-  integration-test:
-    name: integration-test
+  integration-tests:
+    name: integration-tests
     runs-on: ubuntu-latest
     needs: docs-only
     if: needs.docs-only.outputs.docs-only != 'true'
