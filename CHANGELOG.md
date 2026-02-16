@@ -1,3 +1,14 @@
+## [develop-v1.1.3] - 2026-02-16
+
+### 🐛 Bug Fixes
+
+- Remove PR_BUMP_TOKEN and add issue linkage to bump PR (#66)
+
+### ⚙️ Miscellaneous Tasks
+
+- Bump version to 1.1.3 (#64)
+- Update CI action versions for next development cycle (#65)
+
 ## [develop-v1.1.2] - 2026-02-16
 
 ### 🐛 Bug Fixes
