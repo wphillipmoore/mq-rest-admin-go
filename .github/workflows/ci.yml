@@ -139,21 +139,13 @@ jobs:
         if: needs.docs-only.outputs.docs-only != 'true'
         run: go test -race -count=1 -coverprofile=coverage.out ./...
 
-      - name: Install go-ignore-cov
+      - name: Install go-test-coverage
         if: needs.docs-only.outputs.docs-only != 'true'
-        run: go install github.com/hexira/go-ignore-cov@v0.3.0
+        run: go install github.com/vladopajic/go-test-coverage/v2@latest
 
       - name: Enforce 100% coverage (excluding annotated lines)
         if: needs.docs-only.outputs.docs-only != 'true'
-        run: |
-          go-ignore-cov --file coverage.out
-          COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | tr -d '%')
-          echo "Coverage after exclusions: ${COVERAGE}%"
-          if [ "$(echo "$COVERAGE < 100.0" | bc)" -eq 1 ]; then
-            echo "FAIL: coverage is ${COVERAGE}%, required 100%"
-            go tool cover -func=coverage.out | grep -v '100.0%'
-            exit 1
-          fi
+        run: go-test-coverage --config .testcoverage.yml
 
   codeql:
     name: codeql
@@ -203,8 +195,8 @@ jobs:
         with:
           language: golang
 
-  integration-test:
-    name: integration-test
+  integration-tests:
+    name: integration-tests
     runs-on: ubuntu-latest
     needs: docs-only
     if: needs.docs-only.outputs.docs-only != 'true'

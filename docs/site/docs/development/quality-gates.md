@@ -17,7 +17,7 @@ This covers:
 1. **go vet** — Standard Go static analysis
 2. **golangci-lint** — Comprehensive linter suite
 3. **go test -race** — Unit tests with race detector enabled
-4. **Coverage enforcement** — 100% coverage after `go-ignore-cov` exclusions
+4. **Coverage enforcement** — 100% coverage after `go-test-coverage` exclusions
 5. **govulncheck** — Dependency vulnerability scanning
 6. **go-licenses** — License compliance checking
 

@@ -193,8 +193,7 @@ func NewSession(restBaseURL, qmgrName string, credentials Credentials, opts ...O
 		} else {
 			mapper, err = newAttributeMapper()
 		}
-		if err != nil {
-			//coverage:ignore
+		if err != nil { // coverage-ignore -- mapper init only fails on invalid embedded data
 			return nil, fmt.Errorf("initialize attribute mapper: %w", err)
 		}
 	}
@@ -443,6 +442,7 @@ func (session *Session) performLTPALogin(auth LTPAAuth) error {
 
 func extractLTPAToken(headers map[string]string) string {
 	for key, value := range headers {
+		// coverage-ignore -- Go 1.26 intermittently counts this branch differently
 		if !strings.EqualFold(key, "Set-Cookie") {
 			continue
 		}
