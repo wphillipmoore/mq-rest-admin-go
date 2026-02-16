@@ -21,7 +21,7 @@ jobs:
       docs-only: ${{ steps.detect.outputs.docs-only }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Detect docs-only changes
         id: detect
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -46,10 +46,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.26"
 
@@ -77,13 +77,13 @@ jobs:
 
       - name: Checkout code
         if: github.event_name == 'pull_request'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Go
         if: github.event_name == 'pull_request'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.26"
 
@@ -123,11 +123,11 @@ jobs:
 
       - name: Checkout code
         if: needs.docs-only.outputs.docs-only != 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Go
         if: needs.docs-only.outputs.docs-only != 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
 
@@ -137,7 +137,7 @@ jobs:
 
       - name: Run golangci-lint
         if: needs.docs-only.outputs.docs-only != 'true'
-        uses: golangci/golangci-lint-action@v7
+        uses: golangci/golangci-lint-action@v9
 
       - name: Run tests with coverage
         if: needs.docs-only.outputs.docs-only != 'true'
@@ -160,7 +160,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run CodeQL analysis
         uses: wphillipmoore/standard-actions/actions/security/codeql@develop
@@ -176,7 +176,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run Trivy vulnerability scan
         uses: wphillipmoore/standard-actions/actions/security/trivy@develop
@@ -192,7 +192,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run Semgrep SAST scan
         uses: wphillipmoore/standard-actions/actions/security/semgrep@develop
@@ -206,10 +206,10 @@ jobs:
     if: needs.docs-only.outputs.docs-only != 'true'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.26"
 
