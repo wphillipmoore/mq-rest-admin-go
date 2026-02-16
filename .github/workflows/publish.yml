@@ -127,10 +127,8 @@ jobs:
       - name: Create version bump PR
         if: steps.tag_check.outputs.exists == 'false' && steps.bump_check.outputs.needed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.PR_BUMP_TOKEN || github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git remote set-url origin \
-            "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git checkout -b "${{ steps.next_version.outputs.branch }}" origin/develop
           git merge origin/main --no-edit
 
@@ -152,19 +150,27 @@ jobs:
           git commit -m "chore: bump version to ${{ steps.next_version.outputs.version }}"
           git push origin "${{ steps.next_version.outputs.branch }}"
 
-          gh pr create \
+          pr_url=$(gh pr create \
             --base develop \
             --head "${{ steps.next_version.outputs.branch }}" \
             --title "chore: bump version to ${{ steps.next_version.outputs.version }}" \
-            --body "$(cat <<'EOF'
+            --body "Automated patch version bump after publishing ${{ steps.version.outputs.version }}.")
+
+          pr_number="${pr_url##*/}"
+          gh pr edit "$pr_url" --body "$(cat <<EOF
           Automated patch version bump after publishing ${{ steps.version.outputs.version }}.
 
-          This merges `main` back into `develop` to pick up the release tag and any
+          Ref #${pr_number}
+
+          This merges main back into develop to pick up the release tag and any
           other release-branch artifacts, then sets the working version to the next
           expected patch release. Change this to a minor or major bump if the next
           release warrants it.
           EOF
           )"
+
+          gh pr close "$pr_url"
+          gh pr reopen "$pr_url"
 
           gh pr merge \
             --auto --merge --delete-branch \
