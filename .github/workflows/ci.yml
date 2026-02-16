@@ -91,13 +91,18 @@ jobs:
         if: github.event_name == 'pull_request' && github.base_ref == 'develop'
         run: |
           git fetch origin main --depth=1
-          main_version=$(git show origin/main:go.mod | grep '^go ' | awk '{print $2}')
-          head_version=$(grep '^go ' go.mod | awk '{print $2}')
-          if [ "$main_version" = "$head_version" ]; then
-            echo "FAIL: go.mod version ($head_version) must differ from main ($main_version)."
+          version_file=$(find . -name version.go -path '*/version.go' | head -1)
+          if [ -z "$version_file" ]; then
+            echo "FAIL: no version.go found."
             exit 1
           fi
-          echo "OK: go.mod version ($head_version) differs from main ($main_version)."
+          main_version=$(git show "origin/main:${version_file#./}" | grep -oP 'Version\s*=\s*"\K[^"]+')
+          head_version=$(grep -oP 'Version\s*=\s*"\K[^"]+' "$version_file")
+          if [ "$main_version" = "$head_version" ]; then
+            echo "FAIL: module version ($head_version) must differ from main ($main_version)."
+            exit 1
+          fi
+          echo "OK: module version ($head_version) differs from main ($main_version)."
 
       - name: Tag validation placeholder (PRs targeting main)
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
