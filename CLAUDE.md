@@ -30,9 +30,10 @@ This is a Go port of `pymqrest`, providing a Go wrapper for the IBM MQ administr
 
 ### Environment Setup
 
-- **Go**: 1.22+ (install via `brew install go` or <https://go.dev/dl/>)
+- **Go**: 1.25+ (CI tests 1.25 and 1.26; go.mod declares 1.26)
 - **golangci-lint**: `brew install golangci-lint`
 - **govulncheck**: `go install golang.org/x/vuln/cmd/govulncheck@latest`
+- **Git hooks**: `git config core.hooksPath scripts/git-hooks` (required before committing)
 
 ### Build
 
@@ -55,17 +56,20 @@ govulncheck ./...               # Vulnerability scanning
 ```bash
 go test ./...                                   # Unit tests
 go test -race -count=1 ./...                    # Unit tests with race detection
-go test -race -count=1 -tags=integration ./...  # Integration tests
-go test -coverprofile=coverage.out ./...        # Coverage report
+go test -run TestFunctionName ./mqrestadmin/...  # Run a single test
+go test -race -count=1 -tags=integration ./...  # Integration tests (needs MQ env)
+go test -coverprofile=coverage.out ./... && go-test-coverage --config .testcoverage.yml  # Coverage gate
 go tool cover -html=coverage.out                # View coverage in browser
 ```
 
 - **Framework**: stdlib `testing` package
-- **Coverage**: Target 100% line coverage, enforced in CI via `go-test-coverage`.
-  Structurally untestable lines (e.g., `json.Marshal` on `map[string]any`,
-  embedded JSON parse errors) are annotated with `// coverage-ignore -- <reason>`
-  on the `{` line and excluded from measurement. This keeps the gate tight —
-  new untested code cannot slip through.
+- **Coverage**: Target 100% line coverage (file, package, and total), enforced in
+  CI via `go-test-coverage` with `.testcoverage.yml`. Structurally untestable
+  lines (e.g., `json.Marshal` on `map[string]any`, embedded JSON parse errors) are
+  annotated with `// coverage-ignore -- <reason>` on the **preceding line** (the
+  `{` line) and excluded from measurement.
+- **Integration tests**: Require `MQ_REST_ADMIN_GO_RUN_INTEGRATION=1` and a running
+  MQ container. CI uses the `wphillipmoore/mq-dev-environment` action.
 
 ## Architecture
 
@@ -118,22 +122,34 @@ MappingError     — attribute translation failures (strict mode)
 
 ### Package Structure
 
-```text
-mqrestadmin/                   # Single flat package
-    session.go                 # Session struct, NewSession, functional options, core dispatch
-    session_commands.go        # MQSC command methods (display, define, alter, delete, etc.)
-    session_ensure.go          # Idempotent ensure methods
-    session_sync.go            # Synchronous polling methods
-    auth.go                    # Credentials interface, BasicAuth, LTPAAuth, CertificateAuth
-    transport.go               # Transport interface, HTTPTransport, TransportResponse
-    mapping.go                 # AttributeMapper, 3-layer pipeline
-    mapping_data.go            # go:embed for mapping-data.json
-    mapping_data.json          # Mapping definitions (shared with Java port)
-    errors.go                  # All error types
-    ensure.go                  # EnsureResult, EnsureAction
-    sync.go                    # SyncConfig, SyncResult, SyncOperation
-    doc.go                     # Package documentation
-```
+Single flat package under `mqrestadmin/`. Key files:
+
+- `session.go` — `Session` struct, `NewSession`, functional options, core `mqscCommand` dispatch
+- `session_commands.go` — All MQSC command methods (DISPLAY, DEFINE, ALTER, DELETE, START, STOP, etc.)
+- `session_ensure.go` / `session_sync.go` — Idempotent ensure and synchronous polling methods
+- `auth.go` — `Credentials` interface (closed set via unexported method), `BasicAuth`, `LTPAAuth`, `CertificateAuth`
+- `transport.go` — `Transport` interface, `HTTPTransport`
+- `mapping.go` + `mapping_data.go` + `mapping_data.json` — 3-layer attribute translation pipeline
+- `errors.go` — All typed error types
+
+### Testing Patterns
+
+Tests use a `mockTransport` (in `mock_test.go`) that records calls and returns
+pre-configured responses. Helper constructors:
+
+- `newTestSession(transport)` — mapping disabled, for simple assertions
+- `newTestSessionWithMapping(transport)` — mapping enabled
+- `newTestSessionWithClock(transport, clock)` — mock clock for sync/polling tests
+- `generateSelfSignedCert(t)` — creates test TLS certificates (in `testhelpers_test.go`)
+
+## Branching and PR Workflow
+
+- **Protected branches**: `main`, `develop`, `release/*` — no direct commits (enforced by pre-commit hook)
+- **Branch naming**: `feature/*`, `bugfix/*`, or `hotfix/*` only
+- **Feature/bugfix PRs** target `develop` with squash merge: `gh pr merge --auto --squash --delete-branch`
+- **Release PRs** target `main` with regular merge: `gh pr merge --auto --merge --delete-branch`
+- **Pre-flight**: Always check branch with `git status -sb` before modifying files. If on `develop`, create a `feature/*` branch first.
+- **Go version gate**: PRs to `develop` must have a `go.mod` version different from `main`
 
 ## Key References
 
