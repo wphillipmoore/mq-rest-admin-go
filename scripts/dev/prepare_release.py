@@ -151,15 +151,19 @@ def create_release_branch(branch: str) -> None:
     run_command(("git", "checkout", "-b", branch))
 
 
-def merge_main() -> None:
+def merge_main(version: str) -> None:
     """Merge main into the release branch to incorporate prior release history.
 
     This prevents CHANGELOG.md merge conflicts by ensuring the release branch
     has main's version of the changelog before git-cliff regenerates it.
+    Uses a conventional commit message to satisfy commit-msg hooks.
     """
     print("Merging main into release branch...")
     run_command(("git", "fetch", "origin", "main"))
-    run_command(("git", "merge", "origin/main", "--no-edit"))
+    run_command((
+        "git", "merge", "origin/main",
+        "-m", f"chore: merge main into release/{version}",
+    ))
 
 
 def generate_changelog(version: str) -> bool:
@@ -246,7 +250,7 @@ def main() -> int:
     print(f"Preparing release {version} ({ecosystem})")
 
     create_release_branch(branch)
-    merge_main()
+    merge_main(version)
     generate_changelog(version)
     push_branch(branch)
     url = create_pr(version, args.issue)
