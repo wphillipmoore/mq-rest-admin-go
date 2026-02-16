@@ -54,8 +54,7 @@ type attributeMapper struct {
 // mapping data.
 func newAttributeMapper() (*attributeMapper, error) {
 	var data mappingData
-	if err := json.Unmarshal(mappingDataJSON, &data); err != nil {
-		//coverage:ignore
+	if err := json.Unmarshal(mappingDataJSON, &data); err != nil { // coverage-ignore -- embedded JSON is valid by construction
 		return nil, fmt.Errorf("parse mapping data: %w", err)
 	}
 	return &attributeMapper{data: &data}, nil
@@ -65,20 +64,17 @@ func newAttributeMapper() (*attributeMapper, error) {
 // overrides applied to the default mapping data.
 func newAttributeMapperWithOverrides(overrides map[string]any, mode MappingOverrideMode) (*attributeMapper, error) {
 	mapper, err := newAttributeMapper()
-	if err != nil {
-		//coverage:ignore
+	if err != nil { // coverage-ignore -- newAttributeMapper only fails on invalid embedded data
 		return nil, err
 	}
 
 	overrideBytes, err := json.Marshal(overrides)
-	if err != nil {
-		//coverage:ignore
+	if err != nil { // coverage-ignore -- json.Marshal on map[string]any cannot fail
 		return nil, fmt.Errorf("marshal mapping overrides: %w", err)
 	}
 
 	var overrideData mappingData
-	if err := json.Unmarshal(overrideBytes, &overrideData); err != nil {
-		//coverage:ignore
+	if err := json.Unmarshal(overrideBytes, &overrideData); err != nil { // coverage-ignore -- re-parsed from valid Marshal output
 		return nil, fmt.Errorf("parse mapping overrides: %w", err)
 	}
 
