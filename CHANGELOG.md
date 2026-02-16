@@ -1,3 +1,12 @@
+## [develop-v1.1.2] - 2026-02-16
+
+### 🐛 Bug Fixes
+
+- Remove duplicate CI runs and relax coverage threshold (#60)
+
+### ⚙️ Miscellaneous Tasks
+
+- Bump version to 1.1.2 (#61)
 ## [develop-v1.1.1] - 2026-02-16
 
 ### 🚀 Features
@@ -21,6 +30,7 @@
 - Set docs default version to latest on main deploy
 - Install prepare_release.py and bump version to 1.1.1
 - Allow commits on release/* branches in library-release model
+- Rename integration-test job to integration-tests (#56)
 
 ### 🚜 Refactor
 
