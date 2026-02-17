@@ -30,15 +30,29 @@
 - branching_model: library-release
 - release_model: artifact-publishing
 - supported_release_lines: current and previous
+- canonical_local_validation_command: scripts/dev/validate_local.sh
 
 ## Local validation
+
+Canonical local validation command:
+
+```bash
+scripts/dev/validate_local.sh
+```
+
+Individual checks (run by the validation script):
 
 ```bash
 go vet ./...                    # Static analysis
 golangci-lint run ./...         # Lint checks
 go test -race -count=1 ./...   # Unit tests with race detection
-go test -race -count=1 -tags=integration ./...  # Integration tests
 govulncheck ./...               # Vulnerability scanning
+```
+
+Integration tests (require MQ environment, not included in validation script):
+
+```bash
+go test -race -count=1 -tags=integration ./...
 ```
 
 ## Tooling requirement
