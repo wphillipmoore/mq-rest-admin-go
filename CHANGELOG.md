@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [1.1.4] - 2026-02-16
+## [1.1.5] - 2026-02-17
 
 ### Bug fixes
 
@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - sync prepare_release.py merge message fix from canonical (#74)
 - add cliff.toml for markdownlint-compliant changelog generation (#78)
 - sync prepare_release.py changelog conflict fix from canonical (#81)
+- truncate docs version to major.minor (#89)
+
+### Features
+
+- use GitHub App token for bump PR to trigger CI (#91)
 
 ## [1.1.3] - 2026-02-16
 
