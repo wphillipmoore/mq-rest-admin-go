@@ -31,8 +31,8 @@ This is a Go port of `pymqrest`, providing a Go wrapper for the IBM MQ administr
 ### Environment Setup
 
 - **Go**: 1.25+ (CI tests 1.25 and 1.26; go.mod declares 1.26)
-- **golangci-lint**: `brew install golangci-lint`
-- **govulncheck**: `go install golang.org/x/vuln/cmd/govulncheck@latest`
+- **golangci-lint**: `brew install golangci-lint` (not in `tools.go` per project recommendation)
+- **Dev tools** (pinned in `tools.go`): `go install golang.org/x/vuln/cmd/govulncheck && go install github.com/vladopajic/go-test-coverage/v2 && go install github.com/fzipp/gocyclo/cmd/gocyclo`
 - **Git hooks**: `git config core.hooksPath scripts/git-hooks` (required before committing)
 
 ### Build
