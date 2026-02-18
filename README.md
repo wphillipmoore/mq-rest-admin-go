@@ -153,9 +153,29 @@ Full documentation will be published at a later date.
 
 ## Development
 
+### Prerequisites
+
+- **Go** 1.25+
+- **golangci-lint**: `brew install golangci-lint`
+- **Dev tools** (govulncheck, go-test-coverage, gocyclo) are pinned in
+  `tools.go` and can be installed from the module:
+
 ```bash
-go vet ./...
-go test -race -count=1 ./...
+go install golang.org/x/vuln/cmd/govulncheck
+go install github.com/vladopajic/go-test-coverage/v2
+go install github.com/fzipp/gocyclo/cmd/gocyclo
+```
+
+Ensure `$(go env GOPATH)/bin` is on your `PATH`.
+
+### Validation
+
+```bash
+scripts/dev/validate_local.sh   # runs all checks
+go vet ./...                    # static analysis
+golangci-lint run ./...         # lint
+go test -race -count=1 ./...   # unit tests
+govulncheck ./...               # vulnerability scan
 ```
 
 ## License
