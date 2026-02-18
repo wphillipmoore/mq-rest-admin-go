@@ -70,7 +70,7 @@ go tool cover -html=coverage.out                # View coverage in browser
   annotated with `// coverage-ignore -- <reason>` on the **preceding line** (the
   `{` line) and excluded from measurement.
 - **Integration tests**: Require `MQ_REST_ADMIN_GO_RUN_INTEGRATION=1` and a running
-  MQ container. CI uses the `wphillipmoore/mq-dev-environment` action.
+  MQ container. CI uses the `wphillipmoore/mq-rest-admin-dev-environment` action.
 
 ## Architecture
 

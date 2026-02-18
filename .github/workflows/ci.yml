@@ -214,7 +214,7 @@ jobs:
           go-version: "1.26"
 
       - name: Setup MQ environment
-        uses: wphillipmoore/mq-dev-environment/.github/actions/setup-mq@main
+        uses: wphillipmoore/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
         with:
           project-name: mq-rest-admin-go
 

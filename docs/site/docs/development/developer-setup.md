@@ -19,7 +19,7 @@ mqrestadmin depends on two sibling repositories:
 | --- | --- |
 | [mq-rest-admin-go](https://github.com/wphillipmoore/mq-rest-admin-go) | This project |
 | [standards-and-conventions](https://github.com/wphillipmoore/standards-and-conventions) | Canonical project standards (referenced by `AGENTS.md` and git hooks) |
-| [mq-dev-environment](https://github.com/wphillipmoore/mq-dev-environment) | Dockerized MQ test infrastructure (local and CI) |
+| [mq-rest-admin-dev-environment](https://github.com/wphillipmoore/mq-rest-admin-dev-environment) | Dockerized MQ test infrastructure (local and CI) |
 
 ## Recommended directory layout
 
@@ -29,14 +29,14 @@ Clone all three repositories as siblings:
 ~/dev/
 ├── mq-rest-admin-go/
 ├── standards-and-conventions/
-└── mq-dev-environment/
+└── mq-rest-admin-dev-environment/
 ```
 
 ```bash
 cd ~/dev
 git clone https://github.com/wphillipmoore/mq-rest-admin-go.git
 git clone https://github.com/wphillipmoore/standards-and-conventions.git
-git clone https://github.com/wphillipmoore/mq-dev-environment.git
+git clone https://github.com/wphillipmoore/mq-rest-admin-dev-environment.git
 ```
 
 ## Building
