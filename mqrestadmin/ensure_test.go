@@ -284,20 +284,48 @@ func TestEnsureWrappers_Created(t *testing.T) {
 	}
 
 	entries := []ensureEntry{
-		{"EnsureQremote", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureQremote(ctx, name, params) }},
-		{"EnsureQalias", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureQalias(ctx, name, params) }},
-		{"EnsureQmodel", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureQmodel(ctx, name, params) }},
-		{"EnsureChannel", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureChannel(ctx, name, params) }},
-		{"EnsureAuthinfo", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureAuthinfo(ctx, name, params) }},
-		{"EnsureListener", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureListener(ctx, name, params) }},
-		{"EnsureNamelist", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureNamelist(ctx, name, params) }},
-		{"EnsureProcess", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureProcess(ctx, name, params) }},
-		{"EnsureService", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureService(ctx, name, params) }},
-		{"EnsureTopic", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureTopic(ctx, name, params) }},
-		{"EnsureSub", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureSub(ctx, name, params) }},
-		{"EnsureStgclass", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureStgclass(ctx, name, params) }},
-		{"EnsureComminfo", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureComminfo(ctx, name, params) }},
-		{"EnsureCfstruct", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) { return s.EnsureCfstruct(ctx, name, params) }},
+		{"EnsureQremote", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureQremote(ctx, name, params)
+		}},
+		{"EnsureQalias", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureQalias(ctx, name, params)
+		}},
+		{"EnsureQmodel", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureQmodel(ctx, name, params)
+		}},
+		{"EnsureChannel", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureChannel(ctx, name, params)
+		}},
+		{"EnsureAuthinfo", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureAuthinfo(ctx, name, params)
+		}},
+		{"EnsureListener", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureListener(ctx, name, params)
+		}},
+		{"EnsureNamelist", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureNamelist(ctx, name, params)
+		}},
+		{"EnsureProcess", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureProcess(ctx, name, params)
+		}},
+		{"EnsureService", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureService(ctx, name, params)
+		}},
+		{"EnsureTopic", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureTopic(ctx, name, params)
+		}},
+		{"EnsureSub", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureSub(ctx, name, params)
+		}},
+		{"EnsureStgclass", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureStgclass(ctx, name, params)
+		}},
+		{"EnsureComminfo", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureComminfo(ctx, name, params)
+		}},
+		{"EnsureCfstruct", func(s *Session, ctx context.Context, name string, params map[string]any) (EnsureResult, error) {
+			return s.EnsureCfstruct(ctx, name, params)
+		}},
 	}
 
 	for _, entry := range entries {

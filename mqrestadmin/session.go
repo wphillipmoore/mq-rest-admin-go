@@ -15,10 +15,10 @@ const (
 	ltpaCookieName = "LtpaToken2"
 	mqscEndpoint   = "/admin/action/qmgr/%s/mqsc"
 
-	defaultTimeout       = 30 * time.Second
-	defaultCSRFToken     = "local"
-	defaultSyncTimeout   = 30 * time.Second
-	defaultPollInterval  = 1 * time.Second
+	defaultTimeout      = 30 * time.Second
+	defaultCSRFToken    = "local"
+	defaultSyncTimeout  = 30 * time.Second
+	defaultPollInterval = 1 * time.Second
 )
 
 // Session manages communication with the IBM MQ administrative REST API.
@@ -55,7 +55,7 @@ type clock interface {
 
 type systemClock struct{}
 
-func (systemClock) now() time.Time              { return time.Now() }
+func (systemClock) now() time.Time               { return time.Now() }
 func (systemClock) sleep(duration time.Duration) { time.Sleep(duration) }
 
 // Option configures a Session during construction.
