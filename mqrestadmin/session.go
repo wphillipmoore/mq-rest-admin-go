@@ -279,12 +279,12 @@ func (session *Session) mqscCommand(ctx context.Context, command, mqscQualifier 
 // attribute names and response parameter names from snake_case to MQSC names.
 func (session *Session) applyRequestMapping(command, qualifier string,
 	params map[string]any, responseParameters []string,
-) (string, map[string]any, []string, error) {
+) (mappingQualifier string, mappedParams map[string]any, mappedResponseParams []string, err error) {
 	if !session.mapAttributes || session.mapper == nil {
 		return "", params, responseParameters, nil
 	}
 
-	mappingQualifier := session.mapper.resolveMappingQualifier(command, qualifier)
+	mappingQualifier = session.mapper.resolveMappingQualifier(command, qualifier)
 
 	// Map request attributes
 	if len(params) > 0 && mappingQualifier != "" {
