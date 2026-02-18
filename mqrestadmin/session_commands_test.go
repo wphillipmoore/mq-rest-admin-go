@@ -14,45 +14,123 @@ type displayListEntry struct {
 
 func TestDisplayListCommands(t *testing.T) {
 	entries := []displayListEntry{
-		{"DisplayApstatus", "APSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayApstatus(ctx, name) }},
-		{"DisplayArchive", "ARCHIVE", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayArchive(ctx, name) }},
-		{"DisplayAuthinfo", "AUTHINFO", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayAuthinfo(ctx, name) }},
-		{"DisplayAuthrec", "AUTHREC", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayAuthrec(ctx, name) }},
-		{"DisplayAuthserv", "AUTHSERV", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayAuthserv(ctx, name) }},
-		{"DisplayCfstatus", "CFSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayCfstatus(ctx, name) }},
-		{"DisplayCfstruct", "CFSTRUCT", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayCfstruct(ctx, name) }},
-		{"DisplayChinit", "CHINIT", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayChinit(ctx, name) }},
-		{"DisplayChlauth", "CHLAUTH", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayChlauth(ctx, name) }},
-		{"DisplayChstatus", "CHSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayChstatus(ctx, name) }},
-		{"DisplayClusqmgr", "CLUSQMGR", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayClusqmgr(ctx, name) }},
-		{"DisplayComminfo", "COMMINFO", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayComminfo(ctx, name) }},
-		{"DisplayConn", "CONN", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayConn(ctx, name) }},
-		{"DisplayEntauth", "ENTAUTH", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayEntauth(ctx, name) }},
-		{"DisplayGroup", "GROUP", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayGroup(ctx, name) }},
-		{"DisplayListener", "LISTENER", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayListener(ctx, name) }},
-		{"DisplayLog", "LOG", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayLog(ctx, name) }},
-		{"DisplayLsstatus", "LSSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayLsstatus(ctx, name) }},
-		{"DisplayMaxsmsgs", "MAXSMSGS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayMaxsmsgs(ctx, name) }},
-		{"DisplayNamelist", "NAMELIST", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayNamelist(ctx, name) }},
-		{"DisplayPolicy", "POLICY", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayPolicy(ctx, name) }},
-		{"DisplayProcess", "PROCESS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayProcess(ctx, name) }},
-		{"DisplayPubsub", "PUBSUB", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayPubsub(ctx, name) }},
-		{"DisplayQstatus", "QSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayQstatus(ctx, name) }},
-		{"DisplaySbstatus", "SBSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplaySbstatus(ctx, name) }},
-		{"DisplaySecurity", "SECURITY", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplaySecurity(ctx, name) }},
-		{"DisplayService", "SERVICE", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayService(ctx, name) }},
-		{"DisplaySmds", "SMDS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplaySmds(ctx, name) }},
-		{"DisplaySmdsconn", "SMDSCONN", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplaySmdsconn(ctx, name) }},
-		{"DisplayStgclass", "STGCLASS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayStgclass(ctx, name) }},
-		{"DisplaySub", "SUB", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplaySub(ctx, name) }},
-		{"DisplaySvstatus", "SVSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplaySvstatus(ctx, name) }},
-		{"DisplaySystem", "SYSTEM", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplaySystem(ctx, name) }},
-		{"DisplayTcluster", "TCLUSTER", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayTcluster(ctx, name) }},
-		{"DisplayThread", "THREAD", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayThread(ctx, name) }},
-		{"DisplayTopic", "TOPIC", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayTopic(ctx, name) }},
-		{"DisplayTpstatus", "TPSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayTpstatus(ctx, name) }},
-		{"DisplayTrace", "TRACE", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayTrace(ctx, name) }},
-		{"DisplayUsage", "USAGE", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) { return s.DisplayUsage(ctx, name) }},
+		{"DisplayApstatus", "APSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayApstatus(ctx, name)
+		}},
+		{"DisplayArchive", "ARCHIVE", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayArchive(ctx, name)
+		}},
+		{"DisplayAuthinfo", "AUTHINFO", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayAuthinfo(ctx, name)
+		}},
+		{"DisplayAuthrec", "AUTHREC", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayAuthrec(ctx, name)
+		}},
+		{"DisplayAuthserv", "AUTHSERV", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayAuthserv(ctx, name)
+		}},
+		{"DisplayCfstatus", "CFSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayCfstatus(ctx, name)
+		}},
+		{"DisplayCfstruct", "CFSTRUCT", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayCfstruct(ctx, name)
+		}},
+		{"DisplayChinit", "CHINIT", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayChinit(ctx, name)
+		}},
+		{"DisplayChlauth", "CHLAUTH", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayChlauth(ctx, name)
+		}},
+		{"DisplayChstatus", "CHSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayChstatus(ctx, name)
+		}},
+		{"DisplayClusqmgr", "CLUSQMGR", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayClusqmgr(ctx, name)
+		}},
+		{"DisplayComminfo", "COMMINFO", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayComminfo(ctx, name)
+		}},
+		{"DisplayConn", "CONN", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayConn(ctx, name)
+		}},
+		{"DisplayEntauth", "ENTAUTH", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayEntauth(ctx, name)
+		}},
+		{"DisplayGroup", "GROUP", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayGroup(ctx, name)
+		}},
+		{"DisplayListener", "LISTENER", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayListener(ctx, name)
+		}},
+		{"DisplayLog", "LOG", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayLog(ctx, name)
+		}},
+		{"DisplayLsstatus", "LSSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayLsstatus(ctx, name)
+		}},
+		{"DisplayMaxsmsgs", "MAXSMSGS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayMaxsmsgs(ctx, name)
+		}},
+		{"DisplayNamelist", "NAMELIST", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayNamelist(ctx, name)
+		}},
+		{"DisplayPolicy", "POLICY", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayPolicy(ctx, name)
+		}},
+		{"DisplayProcess", "PROCESS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayProcess(ctx, name)
+		}},
+		{"DisplayPubsub", "PUBSUB", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayPubsub(ctx, name)
+		}},
+		{"DisplayQstatus", "QSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayQstatus(ctx, name)
+		}},
+		{"DisplaySbstatus", "SBSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplaySbstatus(ctx, name)
+		}},
+		{"DisplaySecurity", "SECURITY", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplaySecurity(ctx, name)
+		}},
+		{"DisplayService", "SERVICE", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayService(ctx, name)
+		}},
+		{"DisplaySmds", "SMDS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplaySmds(ctx, name)
+		}},
+		{"DisplaySmdsconn", "SMDSCONN", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplaySmdsconn(ctx, name)
+		}},
+		{"DisplayStgclass", "STGCLASS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayStgclass(ctx, name)
+		}},
+		{"DisplaySub", "SUB", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplaySub(ctx, name)
+		}},
+		{"DisplaySvstatus", "SVSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplaySvstatus(ctx, name)
+		}},
+		{"DisplaySystem", "SYSTEM", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplaySystem(ctx, name)
+		}},
+		{"DisplayTcluster", "TCLUSTER", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayTcluster(ctx, name)
+		}},
+		{"DisplayThread", "THREAD", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayThread(ctx, name)
+		}},
+		{"DisplayTopic", "TOPIC", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayTopic(ctx, name)
+		}},
+		{"DisplayTpstatus", "TPSTATUS", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayTpstatus(ctx, name)
+		}},
+		{"DisplayTrace", "TRACE", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayTrace(ctx, name)
+		}},
+		{"DisplayUsage", "USAGE", func(s *Session, ctx context.Context, name string) ([]map[string]any, error) {
+			return s.DisplayUsage(ctx, name)
+		}},
 	}
 
 	for _, entry := range entries {

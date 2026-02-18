@@ -325,7 +325,7 @@ func TestMqscCommand_ExtractsParameters(t *testing.T) {
 func TestMqscCommand_FlattensNestedObjects(t *testing.T) {
 	transport := newMockTransport()
 	transport.addSuccessResponse(map[string]any{
-		"CONN":   "CONN1",
+		"CONN": "CONN1",
 		"objects": []any{
 			map[string]any{"OBJNAME": "Q1", "OBJTYPE": "QUEUE"},
 			map[string]any{"OBJNAME": "Q2", "OBJTYPE": "QUEUE"},
@@ -672,7 +672,7 @@ func TestWithResponseParameters(t *testing.T) {
 func TestMqscCommand_MappingStrictResponseError(t *testing.T) {
 	transport := newMockTransport()
 	transport.addSuccessResponse(map[string]any{
-		"QUEUE":      "TEST.Q",
+		"QUEUE":       "TEST.Q",
 		"UNKNOWNATTR": "value",
 	})
 	session := newTestSessionWithMapping(transport)
@@ -735,7 +735,7 @@ func TestMqscCommand_PerItemCommandError(t *testing.T) {
 	// Overall codes OK, but per-item has error
 	body := map[string]any{
 		"overallCompletionCode": float64(0),
-		"overallReasonCode":    float64(0),
+		"overallReasonCode":     float64(0),
 		"commandResponse": []any{
 			map[string]any{
 				"completionCode": float64(2),
