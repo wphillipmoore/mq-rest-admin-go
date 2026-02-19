@@ -30,6 +30,9 @@ go.work.sum
 # MkDocs build output
 docs/site/site/
 
+# Python
+__pycache__/
+
 # Editor/IDE
 # .idea/
 # .vscode/
