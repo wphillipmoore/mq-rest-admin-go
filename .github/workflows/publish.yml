@@ -52,134 +52,39 @@ jobs:
           go vet ./...
           go test -race -count=1 ./...
 
-      - name: Configure git identity
+      - name: Tag and release
         if: steps.tag_check.outputs.exists == 'false'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create git tag
-        if: steps.tag_check.outputs.exists == 'false'
-        run: |
-          git tag -a "${{ steps.version.outputs.tag }}" \
-            -m "Release ${{ steps.version.outputs.version }}"
-          git push origin "${{ steps.version.outputs.tag }}"
-
-      - name: Tag develop for changelog boundaries
-        if: steps.tag_check.outputs.exists == 'false'
-        run: |
-          git fetch origin develop
-          git tag "develop-${{ steps.version.outputs.tag }}" origin/develop
-          git push origin "develop-${{ steps.version.outputs.tag }}"
-
-      - name: Create GitHub Release
-        if: steps.tag_check.outputs.exists == 'false'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "${{ steps.version.outputs.tag }}" \
-            --title "mqrestadmin ${{ steps.version.outputs.version }}" \
-            --notes "$(cat <<'EOF'
-          ## Installation
-
-          ```bash
-          go get github.com/wphillipmoore/mq-rest-admin-go@${{ steps.version.outputs.tag }}
-          ```
-
-          ## Links
-
-          - [Go Package](https://pkg.go.dev/github.com/wphillipmoore/mq-rest-admin-go@${{ steps.version.outputs.tag }})
-          - [Documentation](https://wphillipmoore.github.io/mq-rest-admin-go/)
-          EOF
-          )"
-
-      - name: Set up Python 3
-        if: steps.tag_check.outputs.exists == 'false'
-        uses: actions/setup-python@v6
+        uses: wphillipmoore/standard-actions/actions/publish/tag-and-release@develop
         with:
-          python-version: "3.x"
+          version: ${{ steps.version.outputs.version }}
+          release-title: mqrestadmin
+          release-notes: |
+            ## Installation
 
-      - name: Compute next patch version
-        id: next_version
-        if: steps.tag_check.outputs.exists == 'false'
-        run: |
-          next=$(python3 -c "
-          v = '${{ steps.version.outputs.version }}'.split('.')
-          v[2] = str(int(v[2]) + 1)
-          print('.'.join(v))
-          ")
-          echo "version=$next" >> "$GITHUB_OUTPUT"
-          echo "branch=chore/bump-version-$next" >> "$GITHUB_OUTPUT"
+            ```bash
+            go get github.com/wphillipmoore/mq-rest-admin-go@v${{ steps.version.outputs.version }}
+            ```
 
-      - name: Check if develop already has next version
-        id: bump_check
-        if: steps.tag_check.outputs.exists == 'false'
-        run: |
-          git fetch origin develop
-          current=$(git show origin/develop:mqrestadmin/version.go \
-            | grep -oP 'Version\s*=\s*"\K[^"]+')
-          if [ "$current" = "${{ steps.next_version.outputs.version }}" ]; then
-            echo "needed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "needed=true" >> "$GITHUB_OUTPUT"
-          fi
+            ## Links
+
+            - [Go Package](https://pkg.go.dev/github.com/wphillipmoore/mq-rest-admin-go@v${{ steps.version.outputs.version }})
+            - [Documentation](https://wphillipmoore.github.io/mq-rest-admin-go/)
 
       - name: Generate app token for bump PR
-        if: steps.tag_check.outputs.exists == 'false' && steps.bump_check.outputs.needed == 'true'
+        if: steps.tag_check.outputs.exists == 'false'
         id: app-token
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - name: Create version bump PR
-        if: steps.tag_check.outputs.exists == 'false' && steps.bump_check.outputs.needed == 'true'
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          git checkout -b "${{ steps.next_version.outputs.branch }}" origin/develop
-          git merge origin/main --no-edit
-
-          python3 -c "
-          from pathlib import Path
-          import re
-          p = Path('mqrestadmin/version.go')
-          content = p.read_text()
-          content = re.sub(
-              r'(Version\s*=\s*\").*(\"\s*)',
-              r'\g<1>${{ steps.next_version.outputs.version }}\2',
-              content,
-              count=1,
-          )
-          p.write_text(content)
-          "
-
-          git add mqrestadmin/version.go
-          git commit -m "chore: bump version to ${{ steps.next_version.outputs.version }}"
-          git push origin "${{ steps.next_version.outputs.branch }}"
-
-          pr_url=$(gh pr create \
-            --base develop \
-            --head "${{ steps.next_version.outputs.branch }}" \
-            --title "chore: bump version to ${{ steps.next_version.outputs.version }}" \
-            --body "Automated patch version bump after publishing ${{ steps.version.outputs.version }}.")
-
-          pr_number="${pr_url##*/}"
-          gh pr edit "$pr_url" --body "$(cat <<EOF
-          Automated patch version bump after publishing ${{ steps.version.outputs.version }}.
-
-          Ref #${pr_number}
-
-          This merges main back into develop to pick up the release tag and any
-          other release-branch artifacts, then sets the working version to the next
-          expected patch release. Change this to a minor or major bump if the next
-          release warrants it.
-          EOF
-          )"
-
-          gh pr close "$pr_url"
-          gh pr reopen "$pr_url"
-
-          gh pr merge \
-            --auto --merge --delete-branch \
-            "${{ steps.next_version.outputs.branch }}"
+      - name: Version bump PR
+        if: steps.tag_check.outputs.exists == 'false'
+        uses: wphillipmoore/standard-actions/actions/publish/version-bump-pr@develop
+        with:
+          current-version: ${{ steps.version.outputs.version }}
+          version-file: mqrestadmin/version.go
+          version-regex: '(Version\s*=\s*\").*(\"\s*)'
+          version-replacement: '\g<1>{version}\2'
+          develop-version-command: grep -oP 'Version\s*=\s*"\K[^"]+'
+          app-token: ${{ steps.app-token.outputs.token }}
