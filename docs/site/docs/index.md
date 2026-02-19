@@ -1,5 +1,7 @@
 # mqrestadmin
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/wphillipmoore/mq-rest-admin-go)](https://goreportcard.com/report/github.com/wphillipmoore/mq-rest-admin-go)
+
 ## Overview
 
 **mqrestadmin** provides a Go-friendly interface to IBM MQ queue manager

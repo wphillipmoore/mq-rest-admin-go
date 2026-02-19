@@ -1,5 +1,12 @@
 # Quality gates
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/wphillipmoore/mq-rest-admin-go)](https://goreportcard.com/report/github.com/wphillipmoore/mq-rest-admin-go)
+
+[Go Report Card](https://goreportcard.com/report/github.com/wphillipmoore/mq-rest-admin-go)
+runs six automated checks against the codebase: go vet, gofmt, gocyclo,
+ineffassign, license, and misspell. All of these overlap with checks
+already enforced by the local validation pipeline and CI.
+
 --8<-- "development/quality-gates.md"
 
 ## Go-specific validation
