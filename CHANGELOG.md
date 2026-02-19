@@ -5,7 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [1.1.6] - 2026-02-19
+## [1.1.8] - 2026-02-19
+
+### Documentation
+
+- add Go Report Card badge to docs landing page and quality gates (#139)
+- move Go Report Card section to top of quality gates page (#140)
+
+## [1.1.7] - 2026-02-19
+
+### Bug fixes
+
+- sync commit message validation to accept ci and build types (#122)
+
+### Refactoring
+
+- use shared docs-deploy composite action (#126)
+- use shared composite actions for publish and release gates (#132)
+
+## [1.1.6] - 2026-02-18
 
 ### Bug fixes
 
