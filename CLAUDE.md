@@ -48,6 +48,7 @@ go vet ./...            # Static analysis
 scripts/dev/validate_local.sh   # Canonical validation (runs all checks below)
 go vet ./...                    # Static analysis
 golangci-lint run ./...         # Lint checks
+gocyclo -over 15 ./mqrestadmin/ # Cyclomatic complexity gate
 go test -race -count=1 ./...   # Unit tests with race detection
 govulncheck ./...               # Vulnerability scanning
 ```

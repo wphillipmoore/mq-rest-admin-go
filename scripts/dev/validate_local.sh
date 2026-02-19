@@ -7,7 +7,7 @@ set -euo pipefail
 # --- Prerequisite checks ---
 
 missing=()
-for tool in go golangci-lint govulncheck; do
+for tool in go golangci-lint gocyclo govulncheck; do
     if ! command -v "$tool" &>/dev/null; then
         missing+=("$tool")
     fi
@@ -20,6 +20,7 @@ if [[ ${#missing[@]} -gt 0 ]]; then
         case "$tool" in
             go)              echo "  brew install go" >&2 ;;
             golangci-lint)   echo "  brew install golangci-lint" >&2 ;;
+            gocyclo)         echo "  go install github.com/fzipp/gocyclo/cmd/gocyclo@latest" >&2 ;;
             govulncheck)     echo "  go install golang.org/x/vuln/cmd/govulncheck@latest" >&2 ;;
         esac
     done
@@ -35,5 +36,6 @@ run() {
 
 run go vet ./...
 run golangci-lint run ./...
+run gocyclo -over 15 ./mqrestadmin/
 run go test -race -count=1 ./...
 run govulncheck ./...

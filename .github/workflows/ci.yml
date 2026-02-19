@@ -115,6 +115,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Install gocyclo
+        if: needs.docs-only.outputs.docs-only != 'true'
+        run: go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
+
+      - name: Run gocyclo (max complexity 15)
+        if: needs.docs-only.outputs.docs-only != 'true'
+        run: gocyclo -over 15 ./mqrestadmin/
+
       - name: Run go vet
         if: needs.docs-only.outputs.docs-only != 'true'
         run: go vet ./...
