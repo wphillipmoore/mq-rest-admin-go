@@ -152,6 +152,41 @@ pre-configured responses. Helper constructors:
 - **Pre-flight**: Always check branch with `git status -sb` before modifying files. If on `develop`, create a `feature/*` branch first.
 - **Go version gate**: PRs to `develop` must have a `go.mod` version different from `main`
 
+## Commit and PR Scripts
+
+**NEVER use raw `git commit`** — always use `scripts/dev/commit.sh`.
+**NEVER use raw `gh pr create`** — always use `scripts/dev/submit-pr.sh`.
+
+### Committing
+
+```bash
+scripts/dev/commit.sh --type feat --scope mapping --message "add reverse lookup" --agent claude
+scripts/dev/commit.sh --type fix --message "correct off-by-one in polling" --agent claude
+scripts/dev/commit.sh --type docs --message "update README examples" --body "Expanded usage section" --agent claude
+```
+
+- `--type` (required): `feat|fix|docs|style|refactor|test|chore|ci|build`
+- `--message` (required): commit description
+- `--agent` (required): `claude` or `codex` — resolves the correct `Co-Authored-By` identity
+- `--scope` (optional): conventional commit scope
+- `--body` (optional): detailed commit body
+
+### Submitting PRs
+
+```bash
+scripts/dev/submit-pr.sh --issue 42 --summary "Add reverse lookup for attribute mapping"
+scripts/dev/submit-pr.sh --issue 42 --linkage Ref --summary "Update docs" --docs-only
+scripts/dev/submit-pr.sh --issue 42 --summary "Fix polling bug" --notes "Tested with MQ 9.4"
+```
+
+- `--issue` (required): GitHub issue number (just the number)
+- `--summary` (required): one-line PR summary
+- `--linkage` (optional, default: `Fixes`): `Fixes|Closes|Resolves|Ref`
+- `--title` (optional): PR title (default: most recent commit subject)
+- `--notes` (optional): additional notes
+- `--docs-only` (optional): applies docs-only testing exception
+- `--dry-run` (optional): print generated PR without executing
+
 ## Key References
 
 **Canonical Standards**: <https://github.com/wphillipmoore/standards-and-conventions>
