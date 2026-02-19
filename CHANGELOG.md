@@ -5,7 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.6] - 2026-02-19
+
+### Bug fixes
+
+- sync prepare_release.py ruff lint fixes from canonical (#98)
+- sync prepare_release.py empty changelog abort from canonical (#100)
+- sync shared tooling to v1.0.2
+- sync hook and lint scripts from standards-and-conventions (#113)
+
+### CI
+
+- auto-add issues to GitHub Project (#109)
+
+### Documentation
+
+- rename mq-dev-environment references to mq-rest-admin-dev-environment (#114)
+
+### Features
+
+- add canonical local validation script (#104)
+- add shared tooling sync from standard-tooling v1.0.0
+- apply gofmt -s simplifications for goreportcard.com compliance (#115)
+- reduce mqscCommand cyclomatic complexity for goreportcard.com (#116)
+- add tools.go for development tool dependency management (#118)
+
 ## [1.1.5] - 2026-02-17
+
+### Bug fixes
+
+- truncate docs version to major.minor (#89)
+
+### Features
+
+- use GitHub App token for bump PR to trigger CI (#91)
+
+## [1.1.4] - 2026-02-16
 
 ### Bug fixes
 
@@ -13,11 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - sync prepare_release.py merge message fix from canonical (#74)
 - add cliff.toml for markdownlint-compliant changelog generation (#78)
 - sync prepare_release.py changelog conflict fix from canonical (#81)
-- truncate docs version to major.minor (#89)
-
-### Features
-
-- use GitHub App token for bump PR to trigger CI (#91)
 
 ## [1.1.3] - 2026-02-16
 
