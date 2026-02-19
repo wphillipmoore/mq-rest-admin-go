@@ -1,5 +1,12 @@
 # Quality gates
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/wphillipmoore/mq-rest-admin-go)](https://goreportcard.com/report/github.com/wphillipmoore/mq-rest-admin-go)
+
+[Go Report Card](https://goreportcard.com/report/github.com/wphillipmoore/mq-rest-admin-go)
+runs six automated checks against the codebase: go vet, gofmt, gocyclo,
+ineffassign, license, and misspell. All of these overlap with checks
+already enforced by the local validation pipeline and CI.
+
 --8<-- "development/quality-gates.md"
 
 ## Go-specific validation
@@ -23,12 +30,3 @@ This covers:
 
 The CI matrix tests against Go 1.25 and 1.26. The package uses only the
 Go standard library, so the dependency audit is minimal.
-
-## External quality report
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/wphillipmoore/mq-rest-admin-go)](https://goreportcard.com/report/github.com/wphillipmoore/mq-rest-admin-go)
-
-[Go Report Card](https://goreportcard.com/report/github.com/wphillipmoore/mq-rest-admin-go)
-runs six automated checks against the codebase: go vet, gofmt, gocyclo,
-ineffassign, license, and misspell. All of these overlap with checks
-already enforced by the local validation pipeline and CI.
