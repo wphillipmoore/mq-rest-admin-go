@@ -1,4 +1,4 @@
 package mqrestadmin
 
 // Version is the semantic version of this library.
-const Version = "1.1.7"
+const Version = "1.1.8"
