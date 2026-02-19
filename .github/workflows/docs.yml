@@ -24,43 +24,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout mq-rest-admin-common
-        uses: actions/checkout@v6
-        with:
-          repository: wphillipmoore/mq-rest-admin-common
-          ref: develop
-          path: .mq-rest-admin-common
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-
-      - name: Install MkDocs and mike
-        run: pip install mkdocs-material mike
-
-      - name: Configure git identity
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Determine version
-        id: version
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            version=$(grep -oP 'Version\s*=\s*"\K[^"]+' mqrestadmin/version.go | cut -d. -f1,2)
-            echo "version=$version" >> "$GITHUB_OUTPUT"
-            echo "alias=latest" >> "$GITHUB_OUTPUT"
-          else
-            echo "version=dev" >> "$GITHUB_OUTPUT"
-            echo "alias=" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Deploy docs
-        run: |
-          if [ -n "${{ steps.version.outputs.alias }}" ]; then
-            mike deploy -F docs/site/mkdocs.yml --push --update-aliases ${{ steps.version.outputs.version }} ${{ steps.version.outputs.alias }}
-            mike set-default -F docs/site/mkdocs.yml --push latest
-          else
-            mike deploy -F docs/site/mkdocs.yml --push ${{ steps.version.outputs.version }}
-          fi
+        uses: wphillipmoore/standard-actions/actions/docs-deploy@develop
+        with:
+          version-command: grep -oP 'Version\s*=\s*"\K[^"]+' mqrestadmin/version.go | cut -d. -f1,2
+          checkout-common: "true"

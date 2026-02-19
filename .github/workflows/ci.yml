@@ -81,28 +81,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Go
-        if: github.event_name == 'pull_request'
-        uses: actions/setup-go@v6
-        with:
-          go-version: "1.26"
-
       - name: Version divergence gate (PRs targeting develop)
         if: github.event_name == 'pull_request' && github.base_ref == 'develop'
-        run: |
-          git fetch origin main --depth=1
-          version_file=$(find . -name version.go -path '*/version.go' | head -1)
-          if [ -z "$version_file" ]; then
-            echo "FAIL: no version.go found."
-            exit 1
-          fi
-          main_version=$(git show "origin/main:${version_file#./}" | grep -oP 'Version\s*=\s*"\K[^"]+')
-          head_version=$(grep -oP 'Version\s*=\s*"\K[^"]+' "$version_file")
-          if [ "$main_version" = "$head_version" ]; then
-            echo "FAIL: module version ($head_version) must differ from main ($main_version)."
-            exit 1
-          fi
-          echo "OK: module version ($head_version) differs from main ($main_version)."
+        uses: wphillipmoore/standard-actions/actions/release-gates/version-divergence@develop
+        with:
+          head-version-command: grep -oP 'Version\s*=\s*"\K[^"]+' mqrestadmin/version.go
+          main-version-command: git show origin/main:mqrestadmin/version.go | grep -oP 'Version\s*=\s*"\K[^"]+'
 
       - name: Tag validation placeholder (PRs targeting main)
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
