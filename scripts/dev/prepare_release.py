@@ -22,7 +22,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 # -- helpers -----------------------------------------------------------------
 
 
@@ -78,7 +77,7 @@ def detect_go() -> str | None:
     """Return the version from **/version.go."""
     if not Path("go.mod").is_file():
         return None
-    for path in Path(".").rglob("version.go"):
+    for path in Path().rglob("version.go"):
         text = path.read_text(encoding="utf-8")
         match = re.search(r'(?:const\s+)?Version\s*=\s*"([^"]+)"', text)
         if match:
@@ -127,6 +126,20 @@ def ensure_clean_tree() -> None:
         raise SystemExit(message)
 
 
+def ensure_develop_up_to_date() -> None:
+    """Fail if local develop is behind origin/develop."""
+    run_command(("git", "fetch", "origin", "develop"))
+    local_sha = read_command_output(("git", "rev-parse", "HEAD"))
+    remote_sha = read_command_output(("git", "rev-parse", "origin/develop"))
+    if local_sha != remote_sha:
+        message = (
+            f"Local develop ({local_sha[:8]}) does not match "
+            f"origin/develop ({remote_sha[:8]}). "
+            f"Pull latest changes before preparing a release."
+        )
+        raise SystemExit(message)
+
+
 def branch_exists(name: str) -> bool:
     """Return True if a branch exists locally or on origin."""
     for ref in (name, f"origin/{name}"):
@@ -162,11 +175,17 @@ def merge_main(version: str) -> None:
     """
     print("Merging main into release branch...")
     run_command(("git", "fetch", "origin", "main"))
-    run_command((
-        "git", "merge", "origin/main",
-        "-X", "ours",
-        "-m", f"chore: merge main into release/{version}",
-    ))
+    run_command(
+        (
+            "git",
+            "merge",
+            "origin/main",
+            "-X",
+            "ours",
+            "-m",
+            f"chore: merge main into release/{version}",
+        )
+    )
 
 
 def generate_changelog(version: str) -> bool:
@@ -183,6 +202,14 @@ def generate_changelog(version: str) -> bool:
         encoding="utf-8",
     )
     run_command(("git", "add", "CHANGELOG.md"))
+    status = read_command_output(("git", "status", "--porcelain"))
+    if not status:
+        message = (
+            f"No publishable changes since the last release.\n"
+            f"All commits after develop-v{version} are filtered by git-cliff.\n"
+            f"Aborting release preparation."
+        )
+        raise SystemExit(message)
     run_command(("git", "commit", "-m", f"chore: prepare release {version}"))
     return True
 
@@ -197,18 +224,18 @@ def create_pr(version: str, issue: int) -> str:
     """Create a PR to main and return the PR URL."""
     print("Creating pull request to main...")
     title = f"release: {version}"
-    body = (
-        f"## Summary\n\n"
-        f"Release {version}\n\n"
-        f"Ref #{issue}\n\n"
-        f"Generated with `prepare_release.py`\n"
-    )
+    body = f"## Summary\n\nRelease {version}\n\nRef #{issue}\n\nGenerated with `prepare_release.py`\n"
     result = subprocess.run(  # noqa: S603
         (
-            "gh", "pr", "create",
-            "--base", "main",
-            "--title", title,
-            "--body", body,
+            "gh",
+            "pr",
+            "create",
+            "--base",
+            "main",
+            "--title",
+            title,
+            "--body",
+            body,
         ),
         check=True,
         text=True,
@@ -245,6 +272,7 @@ def main() -> int:
 
     ensure_on_develop()
     ensure_clean_tree()
+    ensure_develop_up_to_date()
     ensure_tool_available("gh")
 
     ecosystem, version = detect_ecosystem()

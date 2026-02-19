@@ -15,10 +15,10 @@ const (
 	ltpaCookieName = "LtpaToken2"
 	mqscEndpoint   = "/admin/action/qmgr/%s/mqsc"
 
-	defaultTimeout       = 30 * time.Second
-	defaultCSRFToken     = "local"
-	defaultSyncTimeout   = 30 * time.Second
-	defaultPollInterval  = 1 * time.Second
+	defaultTimeout      = 30 * time.Second
+	defaultCSRFToken    = "local"
+	defaultSyncTimeout  = 30 * time.Second
+	defaultPollInterval = 1 * time.Second
 )
 
 // Session manages communication with the IBM MQ administrative REST API.
@@ -55,7 +55,7 @@ type clock interface {
 
 type systemClock struct{}
 
-func (systemClock) now() time.Time              { return time.Now() }
+func (systemClock) now() time.Time               { return time.Now() }
 func (systemClock) sleep(duration time.Duration) { time.Sleep(duration) }
 
 // Option configures a Session during construction.
@@ -254,41 +254,67 @@ func (session *Session) mqscCommand(ctx context.Context, command, mqscQualifier 
 		responseParameters = []string{"all"}
 	}
 
-	// Resolve mapping qualifier
-	var mappingQualifier string
-	if session.mapAttributes && session.mapper != nil {
-		mappingQualifier = session.mapper.resolveMappingQualifier(upperCommand, upperQualifier)
-
-		// Map request attributes
-		if len(params) > 0 && mappingQualifier != "" {
-			mapped, issues := session.mapper.mapRequestAttributes(mappingQualifier, params, session.mappingStrict)
-			if session.mappingStrict && len(issues) > 0 {
-				return nil, &MappingError{Issues: issues}
-			}
-			params = mapped
-		}
-
-		// Map response parameter names
-		if len(responseParameters) > 0 && mappingQualifier != "" {
-			responseParameters = session.mapResponseParameterNames(mappingQualifier, responseParameters)
-		}
-
-		// Expand response parameter macros
-		if len(responseParameters) > 0 {
-			responseParameters = session.mapper.resolveResponseParameterMacros(
-				upperCommand, upperQualifier, responseParameters)
-		}
+	// Apply request-side mapping
+	mappingQualifier, params, responseParameters, err := session.applyRequestMapping(
+		upperCommand, upperQualifier, params, responseParameters)
+	if err != nil {
+		return nil, err
 	}
 
 	// Build payload
 	payload := session.buildCommandPayload(upperCommand, upperQualifier, name, params, responseParameters)
 	session.LastCommandPayload = payload
 
-	// Build URL and headers
+	// Execute request and parse response
+	objects, err := session.executeAndParseResponse(ctx, payload)
+	if err != nil {
+		return nil, err
+	}
+
+	// Apply response-side mapping
+	return session.applyResponseMapping(mappingQualifier, objects)
+}
+
+// applyRequestMapping resolves the mapping qualifier and translates request
+// attribute names and response parameter names from snake_case to MQSC names.
+func (session *Session) applyRequestMapping(command, qualifier string,
+	params map[string]any, responseParameters []string,
+) (mappingQualifier string, mappedParams map[string]any, mappedResponseParams []string, err error) {
+	if !session.mapAttributes || session.mapper == nil {
+		return "", params, responseParameters, nil
+	}
+
+	mappingQualifier = session.mapper.resolveMappingQualifier(command, qualifier)
+
+	// Map request attributes
+	if len(params) > 0 && mappingQualifier != "" {
+		mapped, issues := session.mapper.mapRequestAttributes(mappingQualifier, params, session.mappingStrict)
+		if session.mappingStrict && len(issues) > 0 {
+			return "", nil, nil, &MappingError{Issues: issues}
+		}
+		params = mapped
+	}
+
+	// Map response parameter names
+	if len(responseParameters) > 0 && mappingQualifier != "" {
+		responseParameters = session.mapResponseParameterNames(mappingQualifier, responseParameters)
+	}
+
+	// Expand response parameter macros
+	if len(responseParameters) > 0 {
+		responseParameters = session.mapper.resolveResponseParameterMacros(
+			command, qualifier, responseParameters)
+	}
+
+	return mappingQualifier, params, responseParameters, nil
+}
+
+// executeAndParseResponse sends the command payload to the REST API, validates
+// the HTTP response, parses JSON, and extracts command response objects.
+func (session *Session) executeAndParseResponse(ctx context.Context, payload map[string]any) ([]map[string]any, error) {
 	url := session.buildMQSCURL()
 	headers := session.buildHeaders()
 
-	// Send request
 	response, err := session.transport.PostJSON(ctx, url, payload, headers, session.timeout, session.verifyTLS)
 	if err != nil {
 		return nil, err
@@ -297,36 +323,35 @@ func (session *Session) mqscCommand(ctx context.Context, command, mqscQualifier 
 	session.LastHTTPStatus = response.StatusCode
 	session.LastResponseText = response.Body
 
-	// Check for auth errors
 	if response.StatusCode == http.StatusUnauthorized || response.StatusCode == http.StatusForbidden {
 		return nil, &AuthError{URL: url, StatusCode: response.StatusCode}
 	}
 
-	// Parse response JSON
 	responsePayload, err := parseResponsePayload(response.Body)
 	if err != nil {
 		return nil, &ResponseError{ResponseText: response.Body, StatusCode: response.StatusCode}
 	}
 	session.LastResponsePayload = responsePayload
 
-	// Check for command errors
 	if err := checkCommandErrors(responsePayload, response.StatusCode); err != nil {
 		return nil, err
 	}
 
-	// Extract command response objects
-	objects := extractCommandResponseObjects(responsePayload)
+	return extractCommandResponseObjects(responsePayload), nil
+}
 
-	// Map response attributes
-	if session.mapAttributes && session.mapper != nil && mappingQualifier != "" && len(objects) > 0 {
-		mapped, issues := session.mapper.mapResponseList(mappingQualifier, objects, session.mappingStrict)
-		if session.mappingStrict && len(issues) > 0 {
-			return nil, &MappingError{Issues: issues}
-		}
-		objects = mapped
+// applyResponseMapping translates response attribute names from MQSC names
+// back to snake_case using the mapping qualifier.
+func (session *Session) applyResponseMapping(mappingQualifier string, objects []map[string]any) ([]map[string]any, error) {
+	if !session.mapAttributes || session.mapper == nil || mappingQualifier == "" || len(objects) == 0 {
+		return objects, nil
 	}
 
-	return objects, nil
+	mapped, issues := session.mapper.mapResponseList(mappingQualifier, objects, session.mappingStrict)
+	if session.mappingStrict && len(issues) > 0 {
+		return nil, &MappingError{Issues: issues}
+	}
+	return mapped, nil
 }
 
 func (session *Session) buildMQSCURL() string {

@@ -56,7 +56,7 @@ func (transport *mockTransport) addErrorResponse(err error) {
 func (transport *mockTransport) addSuccessResponse(commandResponses ...map[string]any) {
 	body := map[string]any{
 		"overallCompletionCode": float64(0),
-		"overallReasonCode":    float64(0),
+		"overallReasonCode":     float64(0),
 	}
 	if len(commandResponses) > 0 {
 		items := make([]any, len(commandResponses))
@@ -76,7 +76,7 @@ func (transport *mockTransport) addSuccessResponse(commandResponses ...map[strin
 func (transport *mockTransport) addCommandErrorResponse(completionCode, reasonCode int) {
 	body := map[string]any{
 		"overallCompletionCode": float64(completionCode),
-		"overallReasonCode":    float64(reasonCode),
+		"overallReasonCode":     float64(reasonCode),
 	}
 	transport.addResponse(200, body, nil)
 }

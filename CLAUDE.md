@@ -31,8 +31,8 @@ This is a Go port of `pymqrest`, providing a Go wrapper for the IBM MQ administr
 ### Environment Setup
 
 - **Go**: 1.25+ (CI tests 1.25 and 1.26; go.mod declares 1.26)
-- **golangci-lint**: `brew install golangci-lint`
-- **govulncheck**: `go install golang.org/x/vuln/cmd/govulncheck@latest`
+- **golangci-lint**: `brew install golangci-lint` (not in `tools.go` per project recommendation)
+- **Dev tools** (pinned in `tools.go`): `go install golang.org/x/vuln/cmd/govulncheck && go install github.com/vladopajic/go-test-coverage/v2 && go install github.com/fzipp/gocyclo/cmd/gocyclo`
 - **Git hooks**: `git config core.hooksPath scripts/git-hooks` (required before committing)
 
 ### Build
@@ -45,6 +45,7 @@ go vet ./...            # Static analysis
 ### Validation
 
 ```bash
+scripts/dev/validate_local.sh   # Canonical validation (runs all checks below)
 go vet ./...                    # Static analysis
 golangci-lint run ./...         # Lint checks
 go test -race -count=1 ./...   # Unit tests with race detection
@@ -69,7 +70,7 @@ go tool cover -html=coverage.out                # View coverage in browser
   annotated with `// coverage-ignore -- <reason>` on the **preceding line** (the
   `{` line) and excluded from measurement.
 - **Integration tests**: Require `MQ_REST_ADMIN_GO_RUN_INTEGRATION=1` and a running
-  MQ container. CI uses the `wphillipmoore/mq-dev-environment` action.
+  MQ container. CI uses the `wphillipmoore/mq-rest-admin-dev-environment` action.
 
 ## Architecture
 
