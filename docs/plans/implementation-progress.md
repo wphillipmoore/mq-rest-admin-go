@@ -92,12 +92,12 @@ in CI — new untested code fails the gate.
 ### Phase 6: CI/CD (GitHub Actions)
 
 - `.github/workflows/ci.yml` — multi-job pipeline with docs-only detection
-- `test-and-validate` — Go 1.25 + 1.26 matrix: `go vet`, `golangci-lint`,
+- `test: unit` — Go 1.25 + 1.26 matrix: `go vet`, `golangci-lint`,
   `go test -race -count=1`
-- `dependency-audit` — `govulncheck`
-- `standards-compliance` — commit message and co-author validation
-- `integration-test` — gated by environment variables, skipped for docs-only
-- `release-gates` — merge-blocking gate aggregating all required checks
+- `ci: dependency-audit` — `govulncheck`
+- `ci: standards-compliance` — commit message and co-author validation
+- `test: integration` — gated by environment variables, skipped for docs-only
+- `release: gates` — merge-blocking gate aggregating all required checks
 - Git hooks (`scripts/git-hooks/`) — commit-msg and pre-commit validation
 - Linter configuration (`.golangci.yml`, `.markdownlint.json`)
 
