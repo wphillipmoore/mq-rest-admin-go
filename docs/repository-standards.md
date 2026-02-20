@@ -30,6 +30,7 @@
 - branching_model: library-release
 - release_model: artifact-publishing
 - supported_release_lines: current and previous
+- primary_language: go
 - canonical_local_validation_command: scripts/dev/validate_local.sh
 
 ## Local validation
