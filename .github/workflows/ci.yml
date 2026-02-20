@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   docs-only:
-    name: docs-only
+    name: "ci: docs-only"
     runs-on: ubuntu-latest
     outputs:
       docs-only: ${{ steps.detect.outputs.docs-only }}
@@ -28,7 +28,7 @@ jobs:
         uses: wphillipmoore/standard-actions/actions/docs-only-detect@develop
 
   standards-compliance:
-    name: standards-compliance
+    name: "ci: standards-compliance"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -42,7 +42,7 @@ jobs:
           commit-cutoff-sha: "11d94c9"
 
   dependency-audit:
-    name: dependency-audit
+    name: "ci: dependency-audit"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -68,7 +68,7 @@ jobs:
           --allowed_licenses=Apache-2.0,BSD-2-Clause,BSD-3-Clause,MIT,ISC,MPL-2.0,GPL-3.0
 
   release-gates:
-    name: release-gates
+    name: "release: gates"
     runs-on: ubuntu-latest
     steps:
       - name: Skip on non-PR events
@@ -93,7 +93,7 @@ jobs:
         run: echo "Tag-based release validation not yet implemented for Go modules."
 
   test-and-validate:
-    name: test-and-validate
+    name: "test: unit"
     runs-on: ubuntu-latest
     needs: docs-only
     strategy:
@@ -144,7 +144,7 @@ jobs:
         run: go-test-coverage --config .testcoverage.yml
 
   codeql:
-    name: codeql
+    name: "security: codeql"
     runs-on: ubuntu-latest
     needs: docs-only
     if: needs.docs-only.outputs.docs-only != 'true'
@@ -160,7 +160,7 @@ jobs:
           language: go
 
   trivy:
-    name: trivy
+    name: "security: trivy"
     runs-on: ubuntu-latest
     needs: docs-only
     if: needs.docs-only.outputs.docs-only != 'true'
@@ -176,7 +176,7 @@ jobs:
           scan-type: fs
 
   semgrep:
-    name: semgrep
+    name: "security: semgrep"
     runs-on: ubuntu-latest
     needs: docs-only
     if: needs.docs-only.outputs.docs-only != 'true'
@@ -192,7 +192,7 @@ jobs:
           language: golang
 
   integration-tests:
-    name: integration-tests
+    name: "test: integration"
     runs-on: ubuntu-latest
     needs: docs-only
     if: needs.docs-only.outputs.docs-only != 'true'
