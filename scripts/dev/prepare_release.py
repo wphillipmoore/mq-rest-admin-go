@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Managed by standard-tooling — DO NOT EDIT in downstream repos.
+# Canonical source: https://github.com/wphillipmoore/standard-tooling
 """Automate release preparation: branch, changelog, PR, auto-merge.
 
 Shared script for library repositories using the library-release branching
@@ -8,6 +10,7 @@ Supported ecosystems:
   - Python: reads version from pyproject.toml
   - Maven:  reads version from pom.xml
   - Go:     reads version from **/version.go
+  - VERSION file: reads version from VERSION (fallback)
 
 Usage:
   scripts/dev/prepare_release.py --issue 42
@@ -85,10 +88,26 @@ def detect_go() -> str | None:
     return None
 
 
+def detect_version_file() -> str | None:
+    """Return the version from a VERSION file at the repo root (fallback)."""
+    path = Path("VERSION")
+    if not path.is_file():
+        return None
+    version = path.read_text(encoding="utf-8").strip()
+    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+        message = (
+            f"VERSION file contains '{version}' which is not valid semver.\n"
+            f"Expected format: MAJOR.MINOR.PATCH (e.g. 1.2.3)"
+        )
+        raise SystemExit(message)
+    return version
+
+
 DETECTORS = [
     ("python", detect_python),
     ("maven", detect_maven),
     ("go", detect_go),
+    ("version-file", detect_version_file),
 ]
 
 
@@ -102,7 +121,8 @@ def detect_ecosystem() -> tuple[str, str]:
         "Could not detect ecosystem. Expected one of:\n"
         "  - pyproject.toml with version (Python)\n"
         "  - pom.xml with version (Maven)\n"
-        "  - go.mod + **/version.go (Go)"
+        "  - go.mod + **/version.go (Go)\n"
+        "  - VERSION file with MAJOR.MINOR.PATCH"
     )
     raise SystemExit(message)
 
@@ -189,10 +209,10 @@ def merge_main(version: str) -> None:
 
 
 def generate_changelog(version: str) -> bool:
-    """Generate changelog via git-cliff if available. Return True if generated."""
-    if not shutil.which("git-cliff"):
-        print("git-cliff not found, skipping changelog generation.")
-        return False
+    """Generate changelog via git-cliff. Return True if generated."""
+    for tool in ("git-cliff", "markdownlint"):
+        if not shutil.which(tool):
+            raise SystemExit(f"Required tool '{tool}' not found. Install it before releasing.")
     tag = f"develop-v{version}"
     print(f"Generating changelog with boundary tag: {tag}")
     run_command(("git-cliff", "--tag", tag, "-o", "CHANGELOG.md"))
@@ -201,6 +221,18 @@ def generate_changelog(version: str) -> bool:
         changelog.read_text(encoding="utf-8").rstrip() + "\n",
         encoding="utf-8",
     )
+    result = subprocess.run(
+        ("markdownlint", "CHANGELOG.md"),
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print(result.stdout)
+        print(result.stderr)
+        raise SystemExit(
+            "CHANGELOG.md failed markdownlint validation. "
+            "Fix cliff.toml template or CHANGELOG content before releasing."
+        )
     run_command(("git", "add", "CHANGELOG.md"))
     status = read_command_output(("git", "status", "--porcelain"))
     if not status:

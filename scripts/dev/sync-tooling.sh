@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Managed by standard-tooling — DO NOT EDIT in downstream repos.
+# Canonical source: https://github.com/wphillipmoore/standard-tooling
 set -euo pipefail
 
 # sync-tooling.sh — keep local copies of shared scripts in sync with
@@ -29,6 +31,11 @@ MANAGED_FILES=(
   scripts/dev/prepare_release.py
   scripts/dev/finalize_repo.sh
   scripts/dev/sync-tooling.sh
+  scripts/dev/validate_local.sh
+  scripts/dev/validate_local_common.sh
+  scripts/dev/validate_local_python.sh
+  scripts/dev/validate_local_go.sh
+  scripts/dev/validate_local_java.sh
 )
 
 # Lint scripts that also get copied to the actions path.
@@ -105,7 +112,7 @@ if [[ -n "$ref" ]]; then
 else
   # Discover the latest tag without a full clone.
   clone_ref="$(git ls-remote --tags --sort=-v:refname "$TOOLING_REPO" 'v*' \
-    | head -n 1 | sed 's|.*refs/tags/||')"
+    | head -n 1 | sed 's|.*refs/tags/||; s|\^{}$||')"
   if [[ -z "$clone_ref" ]]; then
     echo "ERROR: no tags found in $TOOLING_REPO" >&2
     exit 1
