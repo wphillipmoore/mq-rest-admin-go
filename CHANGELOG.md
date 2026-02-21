@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.9] - 2026-02-21
+
+### CI
+
+- add gocyclo complexity gate to CI and local validation (#146)
+
+### Documentation
+
+- ban MEMORY.md usage in CLAUDE.md (#148)
+- ban heredocs in shell commands (#149)
+
+### Features
+
+- add category prefixes to job names (#147)
+- adopt validate_local.sh dispatch architecture (#150)
+
 ## [1.1.8] - 2026-02-19
 
 ### Documentation
