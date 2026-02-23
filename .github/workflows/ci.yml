@@ -231,9 +231,12 @@ jobs:
           sonar-token: ${{ secrets.SONAR_TOKEN }}
           organization: wphillipmoore
           project-key: wphillipmoore_mq-rest-admin-go
-          sources: "."
-          tests: "."
-          extra-args: "-Dsonar.go.coverage.reportPaths=coverage.out"
+          sources: "mqrestadmin"
+          tests: "mqrestadmin"
+          extra-args: >-
+            -Dsonar.go.coverage.reportPaths=coverage.out
+            -Dsonar.test.inclusions=**/*_test.go
+            -Dsonar.exclusions=**/*_test.go
 
   integration-tests:
     name: "test: integration"
