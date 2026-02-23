@@ -1,0 +1,44 @@
+name: SonarCloud
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sonarcloud
+  cancel-in-progress: false
+
+jobs:
+  sonarcloud:
+    name: "quality: sonarcloud"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.26"
+
+      - name: Run tests with coverage
+        run: go test -race -count=1 -coverprofile=coverage.out ./...
+
+      - name: Run SonarCloud scan
+        uses: wphillipmoore/standard-actions/actions/quality/sonarcloud@develop
+        with:
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          organization: wphillipmoore
+          project-key: wphillipmoore_mq-rest-admin-go
+          sources: "mqrestadmin"
+          tests: "mqrestadmin"
+          extra-args: >-
+            -Dsonar.go.coverage.reportPaths=coverage.out
+            -Dsonar.test.inclusions=**/*_test.go
+            -Dsonar.exclusions=**/*_test.go
