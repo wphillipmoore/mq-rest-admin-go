@@ -61,7 +61,8 @@ This is a Go port of `pymqrest`, providing a Go wrapper for the IBM MQ administr
 - **Go**: 1.25+ (CI tests 1.25 and 1.26; go.mod declares 1.26)
 - **golangci-lint**: `brew install golangci-lint` (not in `tools.go` per project recommendation)
 - **Dev tools** (pinned in `tools.go`): `go install golang.org/x/vuln/cmd/govulncheck && go install github.com/vladopajic/go-test-coverage/v2 && go install github.com/fzipp/gocyclo/cmd/gocyclo`
-- **Git hooks**: `git config core.hooksPath scripts/git-hooks` (required before committing)
+- **Standard tooling**: `cd ../standard-tooling && uv sync && export PATH="../standard-tooling/.venv/bin:../standard-tooling/scripts/bin:$PATH"`
+- **Git hooks**: `git config core.hooksPath ../standard-tooling/scripts/lib/git-hooks` (required before committing)
 
 ### Build
 
@@ -73,7 +74,7 @@ go vet ./...            # Static analysis
 ### Validation
 
 ```bash
-scripts/dev/validate_local.sh   # Canonical validation (runs all checks below)
+st-validate-local   # Canonical validation (runs all checks below)
 go vet ./...                    # Static analysis
 golangci-lint run ./...         # Lint checks
 gocyclo -over 15 ./mqrestadmin/ # Cyclomatic complexity gate
@@ -183,15 +184,15 @@ pre-configured responses. Helper constructors:
 
 ## Commit and PR Scripts
 
-**NEVER use raw `git commit`** — always use `scripts/dev/commit.sh`.
-**NEVER use raw `gh pr create`** — always use `scripts/dev/submit-pr.sh`.
+**NEVER use raw `git commit`** — always use `st-commit`.
+**NEVER use raw `gh pr create`** — always use `st-submit-pr`.
 
 ### Committing
 
 ```bash
-scripts/dev/commit.sh --type feat --scope mapping --message "add reverse lookup" --agent claude
-scripts/dev/commit.sh --type fix --message "correct off-by-one in polling" --agent claude
-scripts/dev/commit.sh --type docs --message "update README examples" --body "Expanded usage section" --agent claude
+st-commit --type feat --scope mapping --message "add reverse lookup" --agent claude
+st-commit --type fix --message "correct off-by-one in polling" --agent claude
+st-commit --type docs --message "update README examples" --body "Expanded usage section" --agent claude
 ```
 
 - `--type` (required): `feat|fix|docs|style|refactor|test|chore|ci|build`
@@ -203,9 +204,9 @@ scripts/dev/commit.sh --type docs --message "update README examples" --body "Exp
 ### Submitting PRs
 
 ```bash
-scripts/dev/submit-pr.sh --issue 42 --summary "Add reverse lookup for attribute mapping"
-scripts/dev/submit-pr.sh --issue 42 --linkage Ref --summary "Update docs" --docs-only
-scripts/dev/submit-pr.sh --issue 42 --summary "Fix polling bug" --notes "Tested with MQ 9.4"
+st-submit-pr --issue 42 --summary "Add reverse lookup for attribute mapping"
+st-submit-pr --issue 42 --linkage Ref --summary "Update docs" --docs-only
+st-submit-pr --issue 42 --summary "Fix polling bug" --notes "Tested with MQ 9.4"
 ```
 
 - `--issue` (required): GitHub issue number (just the number)

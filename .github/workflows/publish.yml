@@ -52,6 +52,13 @@ jobs:
           go vet ./...
           go test -race -count=1 ./...
 
+      - name: Generate SBOM
+        if: steps.tag_check.outputs.exists == 'false'
+        uses: wphillipmoore/standard-actions/actions/security/trivy@develop
+        with:
+          scan-type: sbom
+          output-file: mqrestadmin-${{ steps.version.outputs.version }}.cdx.json
+
       - name: Tag and release
         if: steps.tag_check.outputs.exists == 'false'
         uses: wphillipmoore/standard-actions/actions/publish/tag-and-release@develop
@@ -69,6 +76,7 @@ jobs:
 
             - [Go Package](https://pkg.go.dev/github.com/wphillipmoore/mq-rest-admin-go@v${{ steps.version.outputs.version }})
             - [Documentation](https://wphillipmoore.github.io/mq-rest-admin-go/)
+          release-artifacts: mqrestadmin-${{ steps.version.outputs.version }}.cdx.json
 
       - name: Generate app token for bump PR
         if: steps.tag_check.outputs.exists == 'false'
