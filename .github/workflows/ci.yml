@@ -238,6 +238,39 @@ jobs:
             -Dsonar.test.inclusions=**/*_test.go
             -Dsonar.exclusions=**/*_test.go
 
+  codeclimate:
+    name: "quality: codeclimate"
+    runs-on: ubuntu-latest
+    needs: docs-only
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Docs-only short-circuit
+        if: needs.docs-only.outputs.docs-only == 'true'
+        run: echo "Docs-only changes detected; skipping Code Climate."
+
+      - name: Checkout code
+        if: needs.docs-only.outputs.docs-only != 'true'
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        if: needs.docs-only.outputs.docs-only != 'true'
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.26"
+
+      - name: Run tests with coverage
+        if: needs.docs-only.outputs.docs-only != 'true'
+        run: go test -race -count=1 -coverprofile=coverage.out ./...
+
+      - name: Upload coverage to Qlty Cloud
+        if: needs.docs-only.outputs.docs-only != 'true'
+        uses: wphillipmoore/standard-actions/actions/quality/codeclimate@develop
+        with:
+          files: "coverage.out"
+          format: "coverprofile"
+
   integration-tests:
     name: "test: integration"
     runs-on: ubuntu-latest
