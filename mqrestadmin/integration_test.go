@@ -174,12 +174,29 @@ func silentDelete(fn func() error) {
 	_ = fn()
 }
 
-// skipIfLifecycleDisabled skips tests that create/modify MQ objects when the
-// MQ_SKIP_LIFECYCLE env var is set.
-func skipIfLifecycleDisabled(t *testing.T) {
+// dumpEnsureDiagnostics logs diagnostic details when an ensure comparison
+// reports unexpected changes. It shows whether each changed key exists in
+// the DISPLAY result and what its value is.
+func dumpEnsureDiagnostics(t *testing.T, label string, desired map[string]any, current map[string]any, changed []string) {
 	t.Helper()
-	if os.Getenv("MQ_SKIP_LIFECYCLE") == "1" {
-		t.Skip("lifecycle tests disabled (MQ_SKIP_LIFECYCLE=1)")
+	// Dump all keys in the DISPLAY result (first 20).
+	var allKeys []string
+	for k := range current {
+		allKeys = append(allKeys, k)
+	}
+	if len(allKeys) > 20 {
+		allKeys = allKeys[:20]
+	}
+	t.Logf("%s: DISPLAY result keys (first 20 of %d): %v", label, len(current), allKeys)
+
+	for _, key := range changed {
+		desiredVal := desired[key]
+		currentVal, exists := current[key]
+		if !exists {
+			t.Logf("%s: key %q NOT in DISPLAY result; desired=%v", label, key, desiredVal)
+		} else {
+			t.Logf("%s: key %q exists; desired=%q (%T), current=%q (%T)", label, key, desiredVal, desiredVal, currentVal, currentVal)
+		}
 	}
 }
 
@@ -394,7 +411,6 @@ type lifecycleCase struct {
 }
 
 func TestMutatingObjectLifecycle(t *testing.T) {
-	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -405,7 +421,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			objectName: testQlocal,
 			define:     session.DefineQlocal,
 			display:    session.DisplayQueue,
-			delete:     session.DeleteQueue,
+			delete:     session.DeleteQlocal,
 			defineParams: map[string]any{
 				"replace":             "yes",
 				"default_persistence": "yes",
@@ -417,7 +433,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			objectName: testQremote,
 			define:     session.DefineQremote,
 			display:    session.DisplayQueue,
-			delete:     session.DeleteQueue,
+			delete:     session.DeleteQremote,
 			defineParams: map[string]any{
 				"replace":                    "yes",
 				"remote_queue_name":          "DEV.TARGET",
@@ -431,7 +447,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			objectName: testQalias,
 			define:     session.DefineQalias,
 			display:    session.DisplayQueue,
-			delete:     session.DeleteQueue,
+			delete:     session.DeleteQalias,
 			defineParams: map[string]any{
 				"replace":           "yes",
 				"target_queue_name": "DEV.QLOCAL",
@@ -443,7 +459,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			objectName: testQmodel,
 			define:     session.DefineQmodel,
 			display:    session.DisplayQueue,
-			delete:     session.DeleteQueue,
+			delete:     session.DeleteQmodel,
 			defineParams: map[string]any{
 				"replace":                    "yes",
 				"definition_type":            "TEMPDYN",
@@ -634,7 +650,6 @@ func verifyAlter(t *testing.T, ctx context.Context, tc lifecycleCase) {
 // ---------------------------------------------------------------------------
 
 func TestEnsureQmgrLifecycle(t *testing.T) {
-	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -658,12 +673,16 @@ func TestEnsureQmgrLifecycle(t *testing.T) {
 	}
 
 	// Idempotent — same attributes should be unchanged.
-	result, err = session.EnsureQmgr(ctx, map[string]any{"description": testDescr})
+	desiredQmgr := map[string]any{"description": testDescr}
+	result, err = session.EnsureQmgr(ctx, desiredQmgr)
 	if err != nil {
 		t.Fatalf("EnsureQmgr (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
-		t.Errorf("EnsureQmgr (unchanged): got %v, want Unchanged", result.Action)
+		t.Errorf("EnsureQmgr (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
+		// Diagnostic: show what DISPLAY returned for the changed keys.
+		diag, _ := session.DisplayQmgr(ctx, mqrestadmin.WithResponseParameters([]string{"all"}))
+		dumpEnsureDiagnostics(t, "EnsureQmgr", desiredQmgr, diag, result.Changed)
 	}
 
 	// Restore original description.
@@ -674,13 +693,12 @@ func TestEnsureQmgrLifecycle(t *testing.T) {
 }
 
 func TestEnsureQlocalLifecycle(t *testing.T) {
-	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
 
 	// Clean up from any prior failed run.
-	silentDelete(func() error { return session.DeleteQueue(ctx, testEnsureQlocal) })
+	silentDelete(func() error { return session.DeleteQlocal(ctx, testEnsureQlocal) })
 
 	// Create.
 	result, err := session.EnsureQlocal(ctx, testEnsureQlocal, map[string]any{"description": "ensure test"})
@@ -692,12 +710,17 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 	}
 
 	// Unchanged (same attributes).
-	result, err = session.EnsureQlocal(ctx, testEnsureQlocal, map[string]any{"description": "ensure test"})
+	desiredQlocal := map[string]any{"description": "ensure test"}
+	result, err = session.EnsureQlocal(ctx, testEnsureQlocal, desiredQlocal)
 	if err != nil {
 		t.Fatalf("EnsureQlocal (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
-		t.Errorf("EnsureQlocal (unchanged): got %v, want Unchanged", result.Action)
+		t.Errorf("EnsureQlocal (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
+		diag, _ := session.DisplayQueue(ctx, testEnsureQlocal)
+		if len(diag) > 0 {
+			dumpEnsureDiagnostics(t, "EnsureQlocal", desiredQlocal, diag[0], result.Changed)
+		}
 	}
 
 	// Updated (different attribute).
@@ -710,13 +733,12 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 	}
 
 	// Cleanup.
-	if err := session.DeleteQueue(ctx, testEnsureQlocal); err != nil {
+	if err := session.DeleteQlocal(ctx, testEnsureQlocal); err != nil {
 		t.Fatalf("cleanup delete %s: %v", testEnsureQlocal, err)
 	}
 }
 
 func TestEnsureChannelLifecycle(t *testing.T) {
-	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -737,15 +759,20 @@ func TestEnsureChannelLifecycle(t *testing.T) {
 	}
 
 	// Unchanged.
-	result, err = session.EnsureChannel(ctx, testEnsureChannel, map[string]any{
+	desiredChannel := map[string]any{
 		"channel_type": "SVRCONN",
 		"description":  "ensure test",
-	})
+	}
+	result, err = session.EnsureChannel(ctx, testEnsureChannel, desiredChannel)
 	if err != nil {
 		t.Fatalf("EnsureChannel (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
-		t.Errorf("EnsureChannel (unchanged): got %v, want Unchanged", result.Action)
+		t.Errorf("EnsureChannel (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
+		diag, _ := session.DisplayChannel(ctx, testEnsureChannel)
+		if len(diag) > 0 {
+			dumpEnsureDiagnostics(t, "EnsureChannel", desiredChannel, diag[0], result.Changed)
+		}
 	}
 
 	// Updated.

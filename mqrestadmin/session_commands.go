@@ -514,6 +514,26 @@ func (session *Session) DeleteQueue(ctx context.Context, name string, opts ...Co
 	return session.voidCommand(ctx, "DELETE", "QUEUE", &name, opts)
 }
 
+// DeleteQlocal deletes a local queue. Name is required.
+func (session *Session) DeleteQlocal(ctx context.Context, name string, opts ...CommandOption) error {
+	return session.voidCommand(ctx, "DELETE", "QLOCAL", &name, opts)
+}
+
+// DeleteQremote deletes a remote queue. Name is required.
+func (session *Session) DeleteQremote(ctx context.Context, name string, opts ...CommandOption) error {
+	return session.voidCommand(ctx, "DELETE", "QREMOTE", &name, opts)
+}
+
+// DeleteQalias deletes an alias queue. Name is required.
+func (session *Session) DeleteQalias(ctx context.Context, name string, opts ...CommandOption) error {
+	return session.voidCommand(ctx, "DELETE", "QALIAS", &name, opts)
+}
+
+// DeleteQmodel deletes a model queue. Name is required.
+func (session *Session) DeleteQmodel(ctx context.Context, name string, opts ...CommandOption) error {
+	return session.voidCommand(ctx, "DELETE", "QMODEL", &name, opts)
+}
+
 // DeleteChannel deletes a channel. Name is required.
 func (session *Session) DeleteChannel(ctx context.Context, name string, opts ...CommandOption) error {
 	return session.voidCommand(ctx, "DELETE", "CHANNEL", &name, opts)

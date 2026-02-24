@@ -29,12 +29,20 @@ func TestResolveMappingQualifier(t *testing.T) {
 		qualifier string
 		expected  string
 	}{
+		// Exact command map hits
 		{"DISPLAY", "QUEUE", "queue"},
 		{"DISPLAY", "CHANNEL", "channel"},
 		{"ALTER", "QMGR", "qmgr"},
 		{"DEFINE", "CHANNEL", "channel"},
 		{"CLEAR", "QLOCAL", "queue"},
-		{"NONEXISTENT", "THING", ""},
+		// Default qualifier fallback (DEFINE QLOCAL not in commands map)
+		{"DEFINE", "QLOCAL", "queue"},
+		{"DEFINE", "QREMOTE", "queue"},
+		{"DEFINE", "QALIAS", "queue"},
+		{"DEFINE", "QMODEL", "queue"},
+		{"ALTER", "QLOCAL", "queue"},
+		// Lowercase fallback for unknown MQSC qualifier
+		{"NONEXISTENT", "THING", "thing"},
 	}
 
 	for _, test := range tests {
@@ -43,6 +51,44 @@ func TestResolveMappingQualifier(t *testing.T) {
 			t.Errorf("resolveMappingQualifier(%q, %q) = %q, want %q",
 				test.command, test.qualifier, result, test.expected)
 		}
+	}
+}
+
+func TestResolveMappingQualifier_FallbackEnablesMapping(t *testing.T) {
+	// Verify that DEFINE QLOCAL (not in commands map) resolves to "queue"
+	// and the queue mapping data is applied to request attributes.
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	qualifier := mapper.resolveMappingQualifier("DEFINE", "QLOCAL")
+	if qualifier != "queue" {
+		t.Fatalf("DEFINE QLOCAL qualifier = %q, want %q", qualifier, "queue")
+	}
+
+	// Map request attributes using the resolved qualifier
+	input := map[string]any{
+		"replace":             "yes",
+		"default_persistence": "yes",
+		"description":         "test queue",
+	}
+	result, _ := mapper.mapRequestAttributes(qualifier, input, false)
+
+	// Layer 1: replace:yes → REPLACE:YES
+	if result["REPLACE"] != "YES" {
+		t.Errorf("expected REPLACE=YES, got %v", result)
+	}
+	// Layer 2: default_persistence → DEFPSIST
+	if _, hasOriginal := result["default_persistence"]; hasOriginal {
+		t.Error("default_persistence should be mapped to DEFPSIST")
+	}
+	if result["DEFPSIST"] == nil {
+		t.Error("expected DEFPSIST key in mapped result")
+	}
+	// Layer 2+3: description → DESCR with value
+	if result["DESCR"] != "test queue" {
+		t.Errorf("expected DESCR='test queue', got %v", result["DESCR"])
 	}
 }
 
@@ -91,6 +137,57 @@ func TestMapResponseAttributes_KeyMap(t *testing.T) {
 	}
 	if result["queue_name"] == nil {
 		t.Error("expected queue_name key in mapped result")
+	}
+}
+
+func TestMapResponseAttributes_LowercaseKeys(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// The MQ REST API returns MQSC parameter names in lowercase. Verify
+	// that response mapping normalizes them to uppercase for lookup.
+	input := map[string]any{
+		"maxdepth": "5000",
+		"queue":    "TEST.Q",
+		"descr":    "a test queue",
+	}
+
+	result, issues := mapper.mapResponseAttributes("queue", input, false)
+	if len(issues) > 0 {
+		t.Logf("mapping issues (permissive): %v", issues)
+	}
+
+	if result["max_queue_depth"] == nil {
+		t.Errorf("expected max_queue_depth, got keys: %v", keys(result))
+	}
+	if result["queue_name"] == nil {
+		t.Errorf("expected queue_name, got keys: %v", keys(result))
+	}
+	if result["description"] == nil {
+		t.Errorf("expected description, got keys: %v", keys(result))
+	}
+	if result["description"] != "a test queue" {
+		t.Errorf("description: got %q, want %q", result["description"], "a test queue")
+	}
+}
+
+func TestMapResponseAttributes_LowercaseValueMap(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Verify that response value mapping also works with lowercase keys.
+	// The queue qualifier has response_value_map entries for DEFPSIST.
+	input := map[string]any{
+		"defpsist": "NO",
+	}
+
+	result, _ := mapper.mapResponseAttributes("queue", input, false)
+	if result["default_persistence"] != "no" {
+		t.Errorf("default_persistence: got %q, want %q", result["default_persistence"], "no")
 	}
 }
 
@@ -813,4 +910,12 @@ func TestMapValue_ListMapping(t *testing.T) {
 		}
 		break
 	}
+}
+
+func keys(m map[string]any) []string {
+	result := make([]string, 0, len(m))
+	for k := range m {
+		result = append(result, k)
+	}
+	return result
 }
