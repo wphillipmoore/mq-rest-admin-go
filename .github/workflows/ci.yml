@@ -275,6 +275,10 @@ jobs:
     name: "test: integration"
     runs-on: ubuntu-latest
     needs: docs-only
+    strategy:
+      matrix:
+        go-version: ["1.25", "1.26"]
+
     steps:
       - name: Docs-only short-circuit
         if: needs.docs-only.outputs.docs-only == 'true'
@@ -288,7 +292,7 @@ jobs:
         if: needs.docs-only.outputs.docs-only != 'true'
         uses: actions/setup-go@v6
         with:
-          go-version: "1.26"
+          go-version: ${{ matrix.go-version }}
 
       - name: Setup MQ environment
         if: needs.docs-only.outputs.docs-only != 'true'
