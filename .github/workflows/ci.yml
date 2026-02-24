@@ -272,12 +272,20 @@ jobs:
           format: "coverprofile"
 
   integration-tests:
-    name: "test: integration"
+    name: "test: integration (${{ matrix.go-version }})"
     runs-on: ubuntu-latest
     needs: docs-only
     strategy:
       matrix:
-        go-version: ["1.25", "1.26"]
+        include:
+          - go-version: "1.25"
+            project-suffix: "1-25"
+            qm1-rest-port: "9443"
+            qm2-rest-port: "9444"
+          - go-version: "1.26"
+            project-suffix: "1-26"
+            qm1-rest-port: "9445"
+            qm2-rest-port: "9446"
 
     steps:
       - name: Docs-only short-circuit
@@ -298,10 +306,15 @@ jobs:
         if: needs.docs-only.outputs.docs-only != 'true'
         uses: wphillipmoore/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
         with:
-          project-name: mq-rest-admin-go
+          project-name: mq-rest-admin-go-${{ matrix.project-suffix }}
+          qm1-rest-port: ${{ matrix.qm1-rest-port }}
+          qm2-rest-port: ${{ matrix.qm2-rest-port }}
 
       - name: Run integration tests
         if: needs.docs-only.outputs.docs-only != 'true'
+        env:
+          MQ_REST_BASE_URL: https://localhost:${{ matrix.qm1-rest-port }}/ibmmq/rest/v2
+          MQ_REST_BASE_URL_QM2: https://localhost:${{ matrix.qm2-rest-port }}/ibmmq/rest/v2
         run: |
           MQ_SKIP_LIFECYCLE=1 \
           MQ_REST_ADMIN_GO_RUN_INTEGRATION=1 \

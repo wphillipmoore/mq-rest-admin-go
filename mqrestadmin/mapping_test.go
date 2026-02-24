@@ -10,9 +10,6 @@ func TestNewAttributeMapper_LoadsSuccessfully(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if mapper == nil {
-		t.Fatal("expected non-nil mapper")
-	}
 	if len(mapper.data.Commands) == 0 {
 		t.Error("expected commands to be loaded")
 	}
