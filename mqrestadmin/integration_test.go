@@ -103,20 +103,6 @@ func buildSession(t *testing.T, cfg integrationConfig) *mqrestadmin.Session {
 		cfg.qmgrName,
 		mqrestadmin.BasicAuth{Username: cfg.adminUser, Password: cfg.adminPassword},
 		mqrestadmin.WithVerifyTLS(cfg.verifyTLS),
-	)
-	if err != nil {
-		t.Fatalf("NewSession: %v", err)
-	}
-	return session
-}
-
-func buildNonStrictSession(t *testing.T, cfg integrationConfig) *mqrestadmin.Session {
-	t.Helper()
-	session, err := mqrestadmin.NewSession(
-		cfg.restBaseURL,
-		cfg.qmgrName,
-		mqrestadmin.BasicAuth{Username: cfg.adminUser, Password: cfg.adminPassword},
-		mqrestadmin.WithVerifyTLS(cfg.verifyTLS),
 		mqrestadmin.WithMappingStrict(false),
 	)
 	if err != nil {
@@ -133,6 +119,7 @@ func buildGatewaySession(t *testing.T, cfg integrationConfig, targetQmgr, gatewa
 		mqrestadmin.BasicAuth{Username: cfg.adminUser, Password: cfg.adminPassword},
 		mqrestadmin.WithGatewayQmgr(gatewayQmgr),
 		mqrestadmin.WithVerifyTLS(cfg.verifyTLS),
+		mqrestadmin.WithMappingStrict(false),
 	)
 	if err != nil {
 		t.Fatalf("NewSession (gateway): %v", err)
@@ -662,7 +649,7 @@ func TestEnsureQmgrLifecycle(t *testing.T) {
 
 func TestEnsureQlocalLifecycle(t *testing.T) {
 	cfg := loadIntegrationConfig()
-	session := buildNonStrictSession(t, cfg)
+	session := buildSession(t, cfg)
 	ctx := context.Background()
 
 	// Clean up from any prior failed run.
@@ -703,7 +690,7 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 
 func TestEnsureChannelLifecycle(t *testing.T) {
 	cfg := loadIntegrationConfig()
-	session := buildNonStrictSession(t, cfg)
+	session := buildSession(t, cfg)
 	ctx := context.Background()
 
 	// Clean up from any prior failed run.
