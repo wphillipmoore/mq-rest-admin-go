@@ -508,8 +508,10 @@ func TestNewAttributeMapperWithOverrides_RequestKeyValueMap(t *testing.T) {
 			"queue": map[string]any{
 				"request_key_value_map": map[string]any{
 					"custom_flag": map[string]any{
-						"key":   "FLAGATTR",
-						"value": "YES",
+						"on": map[string]any{
+							"key":   "FLAGATTR",
+							"value": "YES",
+						},
 					},
 				},
 			},
@@ -521,10 +523,103 @@ func TestNewAttributeMapperWithOverrides_RequestKeyValueMap(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	input := map[string]any{"custom_flag": "ignored"}
+	input := map[string]any{"custom_flag": "on"}
 	result, _ := mapper.mapRequestAttributes("queue", input, false)
 	if result["FLAGATTR"] != "YES" {
 		t.Errorf("expected FLAGATTR=YES from key-value map, got %v", result)
+	}
+}
+
+func TestNewAttributeMapperWithOverrides_MergeExistingKeyValueMap(t *testing.T) {
+	// Merge a new value into an existing request_key_value_map key ("replace"
+	// already exists in the built-in queue mapping data).
+	overrides := map[string]any{
+		"qualifiers": map[string]any{
+			"queue": map[string]any{
+				"request_key_value_map": map[string]any{
+					"replace": map[string]any{
+						"maybe": map[string]any{
+							"key":   "REPLACE",
+							"value": "MAYBE",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	mapper, err := newAttributeMapperWithOverrides(overrides, MappingOverrideMerge)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// New value should work.
+	input := map[string]any{"replace": "maybe"}
+	result, _ := mapper.mapRequestAttributes("queue", input, false)
+	if result["REPLACE"] != "MAYBE" {
+		t.Errorf("expected REPLACE=MAYBE from merged override, got %v", result)
+	}
+
+	// Original value should still work.
+	input2 := map[string]any{"replace": "yes"}
+	result2, _ := mapper.mapRequestAttributes("queue", input2, false)
+	if result2["REPLACE"] != "YES" {
+		t.Errorf("expected REPLACE=YES from original mapping, got %v", result2)
+	}
+}
+
+func TestMapRequestAttributes_KeyValueMap(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	tests := []struct {
+		name      string
+		input     map[string]any
+		expectKey string
+		expectVal any
+		fallThru  bool
+	}{
+		{
+			name:      "replace yes maps to REPLACE YES",
+			input:     map[string]any{"replace": "yes"},
+			expectKey: "REPLACE",
+			expectVal: "YES",
+		},
+		{
+			name:      "noreplace yes maps to REPLACE NO",
+			input:     map[string]any{"noreplace": "yes"},
+			expectKey: "REPLACE",
+			expectVal: "NO",
+		},
+		{
+			name:      "replace no maps to REPLACE NO",
+			input:     map[string]any{"replace": "no"},
+			expectKey: "REPLACE",
+			expectVal: "NO",
+		},
+		{
+			name:     "replace bogus falls through to layer 2/3",
+			input:    map[string]any{"replace": "bogus"},
+			fallThru: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			result, _ := mapper.mapRequestAttributes("queue", tc.input, false)
+			if tc.fallThru {
+				// Should NOT produce REPLACE key via Layer 1
+				if _, hasReplace := result["REPLACE"]; hasReplace {
+					t.Errorf("expected fallthrough, but got REPLACE key in result: %v", result)
+				}
+				return
+			}
+			if result[tc.expectKey] != tc.expectVal {
+				t.Errorf("expected %s=%v, got result: %v", tc.expectKey, tc.expectVal, result)
+			}
+		})
 	}
 }
 

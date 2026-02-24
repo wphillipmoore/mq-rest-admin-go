@@ -34,7 +34,7 @@ type commandMapping struct {
 type qualifierMapping struct {
 	RequestKeyMap      map[string]string            `json:"request_key_map"`
 	RequestValueMap    map[string]map[string]string `json:"request_value_map"`
-	RequestKeyValueMap map[string]keyValueEntry     `json:"request_key_value_map"`
+	RequestKeyValueMap map[string]map[string]keyValueEntry `json:"request_key_value_map"`
 	ResponseKeyMap     map[string]string            `json:"response_key_map"`
 	ResponseValueMap   map[string]map[string]string `json:"response_value_map"`
 }
@@ -91,8 +91,14 @@ func newAttributeMapperWithOverrides(overrides map[string]any, mode MappingOverr
 			}
 			mergeStringMap(existing.RequestKeyMap, override.RequestKeyMap)
 			mergeNestedStringMap(existing.RequestValueMap, override.RequestValueMap)
-			for key, value := range override.RequestKeyValueMap {
-				existing.RequestKeyValueMap[key] = value
+			for key, valueEntries := range override.RequestKeyValueMap {
+				if existingEntries, exists := existing.RequestKeyValueMap[key]; exists {
+					for val, entry := range valueEntries {
+						existingEntries[val] = entry
+					}
+				} else {
+					existing.RequestKeyValueMap[key] = valueEntries
+				}
 			}
 			mergeStringMap(existing.ResponseKeyMap, override.ResponseKeyMap)
 			mergeNestedStringMap(existing.ResponseValueMap, override.ResponseValueMap)
@@ -173,7 +179,7 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 
 	var keyMap map[string]string
 	var valueMap map[string]map[string]string
-	var keyValueMap map[string]keyValueEntry
+	var keyValueMap map[string]map[string]keyValueEntry
 
 	if direction == MappingRequest {
 		keyMap = qualifierData.RequestKeyMap
@@ -191,9 +197,13 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 	for key, value := range attributes {
 		// Layer 1: Key-value map (request only)
 		if keyValueMap != nil {
-			if entry, found := keyValueMap[key]; found {
-				result[entry.Key] = entry.Value
-				continue
+			if valueEntries, found := keyValueMap[key]; found {
+				if strValue, ok := value.(string); ok {
+					if entry, found := valueEntries[strValue]; found {
+						result[entry.Key] = entry.Value
+						continue
+					}
+				}
 			}
 		}
 
