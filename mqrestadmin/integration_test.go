@@ -180,18 +180,21 @@ func silentDelete(fn func() error) {
 // the DISPLAY result and what its value is.
 func dumpEnsureDiagnostics(t *testing.T, label string, desired map[string]any, current map[string]any, changed []string) {
 	t.Helper()
+	// Dump all keys in the DISPLAY result (first 20).
+	var allKeys []string
+	for k := range current {
+		allKeys = append(allKeys, k)
+	}
+	if len(allKeys) > 20 {
+		allKeys = allKeys[:20]
+	}
+	t.Logf("%s: DISPLAY result keys (first 20 of %d): %v", label, len(current), allKeys)
+
 	for _, key := range changed {
 		desiredVal := desired[key]
 		currentVal, exists := current[key]
 		if !exists {
-			// Key not found — show all keys that contain a substring match
-			var candidates []string
-			for k := range current {
-				if strings.Contains(strings.ToLower(k), strings.ToLower(key)) {
-					candidates = append(candidates, fmt.Sprintf("%s=%v", k, current[k]))
-				}
-			}
-			t.Logf("%s: key %q NOT in DISPLAY result; desired=%v; candidates=%v", label, key, desiredVal, candidates)
+			t.Logf("%s: key %q NOT in DISPLAY result; desired=%v", label, key, desiredVal)
 		} else {
 			t.Logf("%s: key %q exists; desired=%q (%T), current=%q (%T)", label, key, desiredVal, desiredVal, currentVal, currentVal)
 		}
