@@ -216,9 +216,17 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 	var issues []MappingIssue
 
 	for key, value := range attributes {
+		// The MQ REST API returns MQSC parameter names in lowercase, but the
+		// mapping data uses uppercase. Normalize response keys to uppercase
+		// for all lookups.
+		lookupKey := key
+		if direction == MappingResponse {
+			lookupKey = strings.ToUpper(key)
+		}
+
 		// Layer 1: Key-value map (request only)
 		if keyValueMap != nil {
-			if valueEntries, found := keyValueMap[key]; found {
+			if valueEntries, found := keyValueMap[lookupKey]; found {
 				if strValue, ok := value.(string); ok {
 					if entry, found := valueEntries[strValue]; found {
 						result[entry.Key] = entry.Value
@@ -231,7 +239,7 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 		// Layer 2: Key map
 		mappedKey := key
 		if keyMap != nil {
-			if mapped, found := keyMap[key]; found {
+			if mapped, found := keyMap[lookupKey]; found {
 				mappedKey = mapped
 			} else {
 				issue := MappingIssue{
@@ -247,9 +255,9 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 			}
 		}
 
-		// Layer 3: Value map (lookup uses original key, since value map keys
-		// are in the same namespace as the input attributes)
-		mappedValue := mapper.mapValue(key, value, valueMap, direction, qualifier, objectIndex, &issues)
+		// Layer 3: Value map (lookup uses the normalized key, matching the
+		// namespace of the mapping data)
+		mappedValue := mapper.mapValue(lookupKey, value, valueMap, direction, qualifier, objectIndex, &issues)
 
 		result[mappedKey] = mappedValue
 	}

@@ -140,6 +140,57 @@ func TestMapResponseAttributes_KeyMap(t *testing.T) {
 	}
 }
 
+func TestMapResponseAttributes_LowercaseKeys(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// The MQ REST API returns MQSC parameter names in lowercase. Verify
+	// that response mapping normalizes them to uppercase for lookup.
+	input := map[string]any{
+		"maxdepth": "5000",
+		"queue":    "TEST.Q",
+		"descr":    "a test queue",
+	}
+
+	result, issues := mapper.mapResponseAttributes("queue", input, false)
+	if len(issues) > 0 {
+		t.Logf("mapping issues (permissive): %v", issues)
+	}
+
+	if result["max_queue_depth"] == nil {
+		t.Errorf("expected max_queue_depth, got keys: %v", keys(result))
+	}
+	if result["queue_name"] == nil {
+		t.Errorf("expected queue_name, got keys: %v", keys(result))
+	}
+	if result["description"] == nil {
+		t.Errorf("expected description, got keys: %v", keys(result))
+	}
+	if result["description"] != "a test queue" {
+		t.Errorf("description: got %q, want %q", result["description"], "a test queue")
+	}
+}
+
+func TestMapResponseAttributes_LowercaseValueMap(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Verify that response value mapping also works with lowercase keys.
+	// The queue qualifier has response_value_map entries for DEFPSIST.
+	input := map[string]any{
+		"defpsist": "NO",
+	}
+
+	result, _ := mapper.mapResponseAttributes("queue", input, false)
+	if result["default_persistence"] != "no" {
+		t.Errorf("default_persistence: got %q, want %q", result["default_persistence"], "no")
+	}
+}
+
 func TestMapRequestAttributes_StrictMode_UnknownKey(t *testing.T) {
 	mapper, err := newAttributeMapper()
 	if err != nil {
@@ -859,4 +910,12 @@ func TestMapValue_ListMapping(t *testing.T) {
 		}
 		break
 	}
+}
+
+func keys(m map[string]any) []string {
+	result := make([]string, 0, len(m))
+	for k := range m {
+		result = append(result, k)
+	}
+	return result
 }
