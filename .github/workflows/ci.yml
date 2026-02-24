@@ -272,7 +272,7 @@ jobs:
           format: "coverprofile"
 
   integration-tests:
-    name: "test: integration"
+    name: "test: integration (${{ matrix.go-version }})"
     runs-on: ubuntu-latest
     needs: docs-only
     strategy:
