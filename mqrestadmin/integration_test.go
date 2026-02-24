@@ -174,6 +174,15 @@ func silentDelete(fn func() error) {
 	_ = fn()
 }
 
+// skipIfLifecycleDisabled skips tests that create/modify MQ objects when the
+// MQ_SKIP_LIFECYCLE env var is set.
+func skipIfLifecycleDisabled(t *testing.T) {
+	t.Helper()
+	if os.Getenv("MQ_SKIP_LIFECYCLE") == "1" {
+		t.Skip("lifecycle tests disabled (MQ_SKIP_LIFECYCLE=1)")
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Display tests — singletons
 // ---------------------------------------------------------------------------
@@ -385,6 +394,7 @@ type lifecycleCase struct {
 }
 
 func TestMutatingObjectLifecycle(t *testing.T) {
+	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -397,7 +407,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayQueue,
 			delete:     session.DeleteQueue,
 			defineParams: map[string]any{
-				"replace":             "yes",
 				"default_persistence": "yes",
 				"description":         "dev test qlocal",
 			},
@@ -409,7 +418,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayQueue,
 			delete:     session.DeleteQueue,
 			defineParams: map[string]any{
-				"replace":                    "yes",
 				"remote_queue_name":          "DEV.TARGET",
 				"remote_queue_manager_name":  cfg.qmgrName,
 				"transmission_queue_name":    "DEV.XMITQ",
@@ -423,7 +431,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayQueue,
 			delete:     session.DeleteQueue,
 			defineParams: map[string]any{
-				"replace":           "yes",
 				"target_queue_name": "DEV.QLOCAL",
 				"description":       "dev test qalias",
 			},
@@ -435,7 +442,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayQueue,
 			delete:     session.DeleteQueue,
 			defineParams: map[string]any{
-				"replace":                    "yes",
 				"definition_type":            "TEMPDYN",
 				"default_input_open_option":  "SHARED",
 				"description":               "dev test qmodel",
@@ -448,7 +454,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayChannel,
 			delete:     session.DeleteChannel,
 			defineParams: map[string]any{
-				"replace":        "yes",
 				"channel_type":   "SVRCONN",
 				"transport_type": "TCP",
 				"description":    "dev test channel",
@@ -467,7 +472,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayListener,
 			delete:     session.DeleteListener,
 			defineParams: map[string]any{
-				"replace":        "yes",
 				"transport_type": "TCP",
 				"port":           1416,
 				"start_mode":     "QMGR",
@@ -487,7 +491,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayProcess,
 			delete:     session.DeleteProcess,
 			defineParams: map[string]any{
-				"replace":        "yes",
 				"application_id": "/bin/true",
 				"description":    "dev test process",
 			},
@@ -504,7 +507,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayTopic,
 			delete:     session.DeleteTopic,
 			defineParams: map[string]any{
-				"replace":      "yes",
 				"topic_string": "dev/test",
 				"description":  "dev test topic",
 			},
@@ -521,7 +523,6 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayNamelist,
 			delete:     session.DeleteNamelist,
 			defineParams: map[string]any{
-				"replace":     "yes",
 				"names":       []string{"DEV.QLOCAL"},
 				"description": "dev test namelist",
 			},
@@ -543,6 +544,9 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 func runLifecycleCase(t *testing.T, ctx context.Context, tc lifecycleCase) {
 	t.Helper()
 
+	// Clean up from any prior failed run.
+	silentDelete(func() error { return tc.delete(ctx, tc.objectName) })
+
 	// Define.
 	err := tc.define(ctx, tc.objectName, mqrestadmin.WithRequestParameters(tc.defineParams))
 	if err != nil {
@@ -560,31 +564,7 @@ func runLifecycleCase(t *testing.T, ctx context.Context, tc lifecycleCase) {
 
 	// Alter (if applicable).
 	if tc.alter != nil {
-		err = tc.alter(ctx, tc.objectName, mqrestadmin.WithRequestParameters(tc.alterParams))
-		if err != nil {
-			t.Fatalf("alter %s: %v", tc.objectName, err)
-		}
-		updated, err := tc.display(ctx, tc.objectName)
-		if err != nil {
-			t.Fatalf("display after alter %s: %v", tc.objectName, err)
-		}
-		if tc.alterDescription != "" {
-			matched := findMatchingObject(updated, tc.objectName)
-			if matched == nil {
-				t.Fatalf("display after alter: could not find %q", tc.objectName)
-			}
-			desc, found := getAttributeCaseInsensitive(matched, "description")
-			if !found {
-				desc, found = getAttributeCaseInsensitive(matched, "DESCR")
-			}
-			if descStr, ok := desc.(string); ok {
-				if descStr != tc.alterDescription {
-					t.Errorf("alter description: got %q, want %q", descStr, tc.alterDescription)
-				}
-			} else if found {
-				t.Errorf("alter description: unexpected type %T", desc)
-			}
-		}
+		verifyAlter(t, ctx, tc)
 	}
 
 	// Delete.
@@ -604,11 +584,48 @@ func runLifecycleCase(t *testing.T, ctx context.Context, tc lifecycleCase) {
 	}
 }
 
+func verifyAlter(t *testing.T, ctx context.Context, tc lifecycleCase) {
+	t.Helper()
+
+	err := tc.alter(ctx, tc.objectName, mqrestadmin.WithRequestParameters(tc.alterParams))
+	if err != nil {
+		t.Fatalf("alter %s: %v", tc.objectName, err)
+	}
+
+	updated, err := tc.display(ctx, tc.objectName)
+	if err != nil {
+		t.Fatalf("display after alter %s: %v", tc.objectName, err)
+	}
+
+	if tc.alterDescription == "" {
+		return
+	}
+
+	matched := findMatchingObject(updated, tc.objectName)
+	if matched == nil {
+		t.Fatalf("display after alter: could not find %q", tc.objectName)
+	}
+
+	desc, found := getAttributeCaseInsensitive(matched, "description")
+	if !found {
+		desc, found = getAttributeCaseInsensitive(matched, "DESCR")
+	}
+
+	if descStr, ok := desc.(string); ok {
+		if descStr != tc.alterDescription {
+			t.Errorf("alter description: got %q, want %q", descStr, tc.alterDescription)
+		}
+	} else if found {
+		t.Errorf("alter description: unexpected type %T", desc)
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Ensure idempotent tests
 // ---------------------------------------------------------------------------
 
 func TestEnsureQmgrLifecycle(t *testing.T) {
+	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -648,6 +665,7 @@ func TestEnsureQmgrLifecycle(t *testing.T) {
 }
 
 func TestEnsureQlocalLifecycle(t *testing.T) {
+	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -689,6 +707,7 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 }
 
 func TestEnsureChannelLifecycle(t *testing.T) {
+	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
