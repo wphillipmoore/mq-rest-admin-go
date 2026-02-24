@@ -29,12 +29,20 @@ func TestResolveMappingQualifier(t *testing.T) {
 		qualifier string
 		expected  string
 	}{
+		// Exact command map hits
 		{"DISPLAY", "QUEUE", "queue"},
 		{"DISPLAY", "CHANNEL", "channel"},
 		{"ALTER", "QMGR", "qmgr"},
 		{"DEFINE", "CHANNEL", "channel"},
 		{"CLEAR", "QLOCAL", "queue"},
-		{"NONEXISTENT", "THING", ""},
+		// Default qualifier fallback (DEFINE QLOCAL not in commands map)
+		{"DEFINE", "QLOCAL", "queue"},
+		{"DEFINE", "QREMOTE", "queue"},
+		{"DEFINE", "QALIAS", "queue"},
+		{"DEFINE", "QMODEL", "queue"},
+		{"ALTER", "QLOCAL", "queue"},
+		// Lowercase fallback for unknown MQSC qualifier
+		{"NONEXISTENT", "THING", "thing"},
 	}
 
 	for _, test := range tests {
@@ -43,6 +51,44 @@ func TestResolveMappingQualifier(t *testing.T) {
 			t.Errorf("resolveMappingQualifier(%q, %q) = %q, want %q",
 				test.command, test.qualifier, result, test.expected)
 		}
+	}
+}
+
+func TestResolveMappingQualifier_FallbackEnablesMapping(t *testing.T) {
+	// Verify that DEFINE QLOCAL (not in commands map) resolves to "queue"
+	// and the queue mapping data is applied to request attributes.
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	qualifier := mapper.resolveMappingQualifier("DEFINE", "QLOCAL")
+	if qualifier != "queue" {
+		t.Fatalf("DEFINE QLOCAL qualifier = %q, want %q", qualifier, "queue")
+	}
+
+	// Map request attributes using the resolved qualifier
+	input := map[string]any{
+		"replace":             "yes",
+		"default_persistence": "yes",
+		"description":         "test queue",
+	}
+	result, _ := mapper.mapRequestAttributes(qualifier, input, false)
+
+	// Layer 1: replace:yes → REPLACE:YES
+	if result["REPLACE"] != "YES" {
+		t.Errorf("expected REPLACE=YES, got %v", result)
+	}
+	// Layer 2: default_persistence → DEFPSIST
+	if _, hasOriginal := result["default_persistence"]; hasOriginal {
+		t.Error("default_persistence should be mapped to DEFPSIST")
+	}
+	if result["DEFPSIST"] == nil {
+		t.Error("expected DEFPSIST key in mapped result")
+	}
+	// Layer 2+3: description → DESCR with value
+	if result["DESCR"] != "test queue" {
+		t.Errorf("expected DESCR='test queue', got %v", result["DESCR"])
 	}
 }
 

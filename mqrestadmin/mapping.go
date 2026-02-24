@@ -109,15 +109,36 @@ func newAttributeMapperWithOverrides(overrides map[string]any, mode MappingOverr
 	return mapper, nil
 }
 
+// defaultMappingQualifiers maps MQSC qualifier names to their mapping
+// qualifier when the exact command+qualifier combination is not in the
+// commands map.  This allows commands like DEFINE QLOCAL (not explicitly
+// listed) to resolve to the "queue" mapping qualifier, matching the
+// Python and Ruby SDKs.
+var defaultMappingQualifiers = map[string]string{
+	"QUEUE":    "queue",
+	"QLOCAL":  "queue",
+	"QREMOTE": "queue",
+	"QALIAS":  "queue",
+	"QMODEL":  "queue",
+	"QMSTATUS": "qmstatus",
+	"QSTATUS": "qstatus",
+	"CHANNEL": "channel",
+	"QMGR":   "qmgr",
+}
+
 // resolveMappingQualifier looks up the mapping qualifier for a given MQSC
 // command and qualifier combination. For example, "DISPLAY" + "QLOCAL"
-// resolves to "queue".
+// resolves to "queue". If the exact command is not in the commands map,
+// falls back to the default qualifier for the MQSC qualifier name.
 func (mapper *attributeMapper) resolveMappingQualifier(command, mqscQualifier string) string {
 	key := command + " " + mqscQualifier
 	if cmdMapping, exists := mapper.data.Commands[key]; exists {
 		return cmdMapping.Qualifier
 	}
-	return ""
+	if fallback, exists := defaultMappingQualifiers[mqscQualifier]; exists {
+		return fallback
+	}
+	return strings.ToLower(mqscQualifier)
 }
 
 // mapRequestAttributes translates request attributes from snake_case to MQSC
