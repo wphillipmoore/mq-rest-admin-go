@@ -174,15 +174,6 @@ func silentDelete(fn func() error) {
 	_ = fn()
 }
 
-// skipIfLifecycleDisabled skips tests that create/modify MQ objects when the
-// MQ_SKIP_LIFECYCLE env var is set.
-func skipIfLifecycleDisabled(t *testing.T) {
-	t.Helper()
-	if os.Getenv("MQ_SKIP_LIFECYCLE") == "1" {
-		t.Skip("lifecycle tests disabled (MQ_SKIP_LIFECYCLE=1)")
-	}
-}
-
 // ---------------------------------------------------------------------------
 // Display tests — singletons
 // ---------------------------------------------------------------------------
@@ -394,7 +385,6 @@ type lifecycleCase struct {
 }
 
 func TestMutatingObjectLifecycle(t *testing.T) {
-	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -407,6 +397,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayQueue,
 			delete:     session.DeleteQueue,
 			defineParams: map[string]any{
+				"replace":             "yes",
 				"default_persistence": "yes",
 				"description":         "dev test qlocal",
 			},
@@ -418,6 +409,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayQueue,
 			delete:     session.DeleteQueue,
 			defineParams: map[string]any{
+				"replace":                    "yes",
 				"remote_queue_name":          "DEV.TARGET",
 				"remote_queue_manager_name":  cfg.qmgrName,
 				"transmission_queue_name":    "DEV.XMITQ",
@@ -431,6 +423,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayQueue,
 			delete:     session.DeleteQueue,
 			defineParams: map[string]any{
+				"replace":           "yes",
 				"target_queue_name": "DEV.QLOCAL",
 				"description":       "dev test qalias",
 			},
@@ -442,6 +435,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayQueue,
 			delete:     session.DeleteQueue,
 			defineParams: map[string]any{
+				"replace":                    "yes",
 				"definition_type":            "TEMPDYN",
 				"default_input_open_option":  "SHARED",
 				"description":               "dev test qmodel",
@@ -454,9 +448,10 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayChannel,
 			delete:     session.DeleteChannel,
 			defineParams: map[string]any{
-				"channel_type":   "SVRCONN",
-				"transport_type": "TCP",
-				"description":    "dev test channel",
+				"replace":         "yes",
+				"channel_type":    "SVRCONN",
+				"transport_type":  "TCP",
+				"description":     "dev test channel",
 			},
 			alter: session.AlterChannel,
 			alterParams: map[string]any{
@@ -472,10 +467,11 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayListener,
 			delete:     session.DeleteListener,
 			defineParams: map[string]any{
-				"transport_type": "TCP",
-				"port":           1416,
-				"start_mode":     "QMGR",
-				"description":    "dev test listener",
+				"replace":         "yes",
+				"transport_type":  "TCP",
+				"port":            1416,
+				"start_mode":      "QMGR",
+				"description":     "dev test listener",
 			},
 			alter: session.AlterListener,
 			alterParams: map[string]any{
@@ -491,8 +487,9 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayProcess,
 			delete:     session.DeleteProcess,
 			defineParams: map[string]any{
-				"application_id": "/bin/true",
-				"description":    "dev test process",
+				"replace":         "yes",
+				"application_id":  "/bin/true",
+				"description":     "dev test process",
 			},
 			alter: session.AlterProcess,
 			alterParams: map[string]any{
@@ -507,8 +504,9 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayTopic,
 			delete:     session.DeleteTopic,
 			defineParams: map[string]any{
-				"topic_string": "dev/test",
-				"description":  "dev test topic",
+				"replace":       "yes",
+				"topic_string":  "dev/test",
+				"description":   "dev test topic",
 			},
 			alter: session.AlterTopic,
 			alterParams: map[string]any{
@@ -523,8 +521,9 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			display:    session.DisplayNamelist,
 			delete:     session.DeleteNamelist,
 			defineParams: map[string]any{
-				"names":       []string{"DEV.QLOCAL"},
-				"description": "dev test namelist",
+				"replace":      "yes",
+				"names":        []string{"DEV.QLOCAL"},
+				"description":  "dev test namelist",
 			},
 			alter: session.AlterNamelist,
 			alterParams: map[string]any{
@@ -625,7 +624,6 @@ func verifyAlter(t *testing.T, ctx context.Context, tc lifecycleCase) {
 // ---------------------------------------------------------------------------
 
 func TestEnsureQmgrLifecycle(t *testing.T) {
-	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -665,7 +663,6 @@ func TestEnsureQmgrLifecycle(t *testing.T) {
 }
 
 func TestEnsureQlocalLifecycle(t *testing.T) {
-	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -707,7 +704,6 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 }
 
 func TestEnsureChannelLifecycle(t *testing.T) {
-	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
