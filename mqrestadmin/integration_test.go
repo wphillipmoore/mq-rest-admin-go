@@ -395,7 +395,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			objectName: testQlocal,
 			define:     session.DefineQlocal,
 			display:    session.DisplayQueue,
-			delete:     session.DeleteQueue,
+			delete:     session.DeleteQlocal,
 			defineParams: map[string]any{
 				"replace":             "yes",
 				"default_persistence": "yes",
@@ -407,7 +407,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			objectName: testQremote,
 			define:     session.DefineQremote,
 			display:    session.DisplayQueue,
-			delete:     session.DeleteQueue,
+			delete:     session.DeleteQremote,
 			defineParams: map[string]any{
 				"replace":                    "yes",
 				"remote_queue_name":          "DEV.TARGET",
@@ -421,7 +421,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			objectName: testQalias,
 			define:     session.DefineQalias,
 			display:    session.DisplayQueue,
-			delete:     session.DeleteQueue,
+			delete:     session.DeleteQalias,
 			defineParams: map[string]any{
 				"replace":           "yes",
 				"target_queue_name": "DEV.QLOCAL",
@@ -433,7 +433,7 @@ func TestMutatingObjectLifecycle(t *testing.T) {
 			objectName: testQmodel,
 			define:     session.DefineQmodel,
 			display:    session.DisplayQueue,
-			delete:     session.DeleteQueue,
+			delete:     session.DeleteQmodel,
 			defineParams: map[string]any{
 				"replace":                    "yes",
 				"definition_type":            "TEMPDYN",
@@ -652,7 +652,7 @@ func TestEnsureQmgrLifecycle(t *testing.T) {
 		t.Fatalf("EnsureQmgr (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
-		t.Errorf("EnsureQmgr (unchanged): got %v, want Unchanged", result.Action)
+		t.Errorf("EnsureQmgr (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
 	}
 
 	// Restore original description.
@@ -668,7 +668,7 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 	ctx := context.Background()
 
 	// Clean up from any prior failed run.
-	silentDelete(func() error { return session.DeleteQueue(ctx, testEnsureQlocal) })
+	silentDelete(func() error { return session.DeleteQlocal(ctx, testEnsureQlocal) })
 
 	// Create.
 	result, err := session.EnsureQlocal(ctx, testEnsureQlocal, map[string]any{"description": "ensure test"})
@@ -685,7 +685,7 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 		t.Fatalf("EnsureQlocal (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
-		t.Errorf("EnsureQlocal (unchanged): got %v, want Unchanged", result.Action)
+		t.Errorf("EnsureQlocal (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
 	}
 
 	// Updated (different attribute).
@@ -698,7 +698,7 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 	}
 
 	// Cleanup.
-	if err := session.DeleteQueue(ctx, testEnsureQlocal); err != nil {
+	if err := session.DeleteQlocal(ctx, testEnsureQlocal); err != nil {
 		t.Fatalf("cleanup delete %s: %v", testEnsureQlocal, err)
 	}
 }
@@ -732,7 +732,7 @@ func TestEnsureChannelLifecycle(t *testing.T) {
 		t.Fatalf("EnsureChannel (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
-		t.Errorf("EnsureChannel (unchanged): got %v, want Unchanged", result.Action)
+		t.Errorf("EnsureChannel (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
 	}
 
 	// Updated.
