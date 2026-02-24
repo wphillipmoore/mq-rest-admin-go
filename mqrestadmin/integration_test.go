@@ -174,6 +174,15 @@ func silentDelete(fn func() error) {
 	_ = fn()
 }
 
+// skipIfLifecycleDisabled skips tests that create/modify MQ objects when the
+// MQ_SKIP_LIFECYCLE env var is set.
+func skipIfLifecycleDisabled(t *testing.T) {
+	t.Helper()
+	if os.Getenv("MQ_SKIP_LIFECYCLE") == "1" {
+		t.Skip("lifecycle tests disabled (MQ_SKIP_LIFECYCLE=1)")
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Display tests — singletons
 // ---------------------------------------------------------------------------
@@ -385,6 +394,7 @@ type lifecycleCase struct {
 }
 
 func TestMutatingObjectLifecycle(t *testing.T) {
+	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -624,6 +634,7 @@ func verifyAlter(t *testing.T, ctx context.Context, tc lifecycleCase) {
 // ---------------------------------------------------------------------------
 
 func TestEnsureQmgrLifecycle(t *testing.T) {
+	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -663,6 +674,7 @@ func TestEnsureQmgrLifecycle(t *testing.T) {
 }
 
 func TestEnsureQlocalLifecycle(t *testing.T) {
+	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()
@@ -704,6 +716,7 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 }
 
 func TestEnsureChannelLifecycle(t *testing.T) {
+	skipIfLifecycleDisabled(t)
 	cfg := loadIntegrationConfig()
 	session := buildSession(t, cfg)
 	ctx := context.Background()

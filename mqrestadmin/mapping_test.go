@@ -530,6 +530,44 @@ func TestNewAttributeMapperWithOverrides_RequestKeyValueMap(t *testing.T) {
 	}
 }
 
+func TestNewAttributeMapperWithOverrides_MergeExistingKeyValueMap(t *testing.T) {
+	// Merge a new value into an existing request_key_value_map key ("replace"
+	// already exists in the built-in queue mapping data).
+	overrides := map[string]any{
+		"qualifiers": map[string]any{
+			"queue": map[string]any{
+				"request_key_value_map": map[string]any{
+					"replace": map[string]any{
+						"maybe": map[string]any{
+							"key":   "REPLACE",
+							"value": "MAYBE",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	mapper, err := newAttributeMapperWithOverrides(overrides, MappingOverrideMerge)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// New value should work.
+	input := map[string]any{"replace": "maybe"}
+	result, _ := mapper.mapRequestAttributes("queue", input, false)
+	if result["REPLACE"] != "MAYBE" {
+		t.Errorf("expected REPLACE=MAYBE from merged override, got %v", result)
+	}
+
+	// Original value should still work.
+	input2 := map[string]any{"replace": "yes"}
+	result2, _ := mapper.mapRequestAttributes("queue", input2, false)
+	if result2["REPLACE"] != "YES" {
+		t.Errorf("expected REPLACE=YES from original mapping, got %v", result2)
+	}
+}
+
 func TestMapRequestAttributes_KeyValueMap(t *testing.T) {
 	mapper, err := newAttributeMapper()
 	if err != nil {
