@@ -4,6 +4,7 @@ package mqrestadmin_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -172,6 +173,29 @@ func getAttributeCaseInsensitive(obj map[string]any, name string) (any, bool) {
 // silentDelete suppresses errors from delete operations used for cleanup.
 func silentDelete(fn func() error) {
 	_ = fn()
+}
+
+// dumpEnsureDiagnostics logs diagnostic details when an ensure comparison
+// reports unexpected changes. It shows whether each changed key exists in
+// the DISPLAY result and what its value is.
+func dumpEnsureDiagnostics(t *testing.T, label string, desired map[string]any, current map[string]any, changed []string) {
+	t.Helper()
+	for _, key := range changed {
+		desiredVal := desired[key]
+		currentVal, exists := current[key]
+		if !exists {
+			// Key not found — show all keys that contain a substring match
+			var candidates []string
+			for k := range current {
+				if strings.Contains(strings.ToLower(k), strings.ToLower(key)) {
+					candidates = append(candidates, fmt.Sprintf("%s=%v", k, current[k]))
+				}
+			}
+			t.Logf("%s: key %q NOT in DISPLAY result; desired=%v; candidates=%v", label, key, desiredVal, candidates)
+		} else {
+			t.Logf("%s: key %q exists; desired=%q (%T), current=%q (%T)", label, key, desiredVal, desiredVal, currentVal, currentVal)
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -647,12 +671,16 @@ func TestEnsureQmgrLifecycle(t *testing.T) {
 	}
 
 	// Idempotent — same attributes should be unchanged.
-	result, err = session.EnsureQmgr(ctx, map[string]any{"description": testDescr})
+	desiredQmgr := map[string]any{"description": testDescr}
+	result, err = session.EnsureQmgr(ctx, desiredQmgr)
 	if err != nil {
 		t.Fatalf("EnsureQmgr (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
 		t.Errorf("EnsureQmgr (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
+		// Diagnostic: show what DISPLAY returned for the changed keys.
+		diag, _ := session.DisplayQmgr(ctx, mqrestadmin.WithResponseParameters([]string{"all"}))
+		dumpEnsureDiagnostics(t, "EnsureQmgr", desiredQmgr, diag, result.Changed)
 	}
 
 	// Restore original description.
@@ -680,12 +708,17 @@ func TestEnsureQlocalLifecycle(t *testing.T) {
 	}
 
 	// Unchanged (same attributes).
-	result, err = session.EnsureQlocal(ctx, testEnsureQlocal, map[string]any{"description": "ensure test"})
+	desiredQlocal := map[string]any{"description": "ensure test"}
+	result, err = session.EnsureQlocal(ctx, testEnsureQlocal, desiredQlocal)
 	if err != nil {
 		t.Fatalf("EnsureQlocal (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
 		t.Errorf("EnsureQlocal (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
+		diag, _ := session.DisplayQueue(ctx, testEnsureQlocal)
+		if len(diag) > 0 {
+			dumpEnsureDiagnostics(t, "EnsureQlocal", desiredQlocal, diag[0], result.Changed)
+		}
 	}
 
 	// Updated (different attribute).
@@ -724,15 +757,20 @@ func TestEnsureChannelLifecycle(t *testing.T) {
 	}
 
 	// Unchanged.
-	result, err = session.EnsureChannel(ctx, testEnsureChannel, map[string]any{
+	desiredChannel := map[string]any{
 		"channel_type": "SVRCONN",
 		"description":  "ensure test",
-	})
+	}
+	result, err = session.EnsureChannel(ctx, testEnsureChannel, desiredChannel)
 	if err != nil {
 		t.Fatalf("EnsureChannel (unchanged): %v", err)
 	}
 	if result.Action != mqrestadmin.EnsureUnchanged {
 		t.Errorf("EnsureChannel (unchanged): got %v, want Unchanged (changed=%v)", result.Action, result.Changed)
+		diag, _ := session.DisplayChannel(ctx, testEnsureChannel)
+		if len(diag) > 0 {
+			dumpEnsureDiagnostics(t, "EnsureChannel", desiredChannel, diag[0], result.Changed)
+		}
 	}
 
 	// Updated.
