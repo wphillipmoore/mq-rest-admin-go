@@ -490,6 +490,82 @@ func TestDeleteQueue_SendsCorrectCommand(t *testing.T) {
 	}
 }
 
+func TestDeleteQlocal_SendsCorrectCommand(t *testing.T) {
+	transport := newMockTransport()
+	transport.addSuccessResponse()
+	session := newTestSession(transport)
+
+	err := session.DeleteQlocal(context.Background(), "MY.QUEUE")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	payload := transport.lastCall().Payload
+	if payload["command"] != "DELETE" {
+		t.Errorf("command = %v, want DELETE", payload["command"])
+	}
+	if payload["qualifier"] != "QLOCAL" {
+		t.Errorf("qualifier = %v, want QLOCAL", payload["qualifier"])
+	}
+}
+
+func TestDeleteQremote_SendsCorrectCommand(t *testing.T) {
+	transport := newMockTransport()
+	transport.addSuccessResponse()
+	session := newTestSession(transport)
+
+	err := session.DeleteQremote(context.Background(), "MY.QUEUE")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	payload := transport.lastCall().Payload
+	if payload["command"] != "DELETE" {
+		t.Errorf("command = %v, want DELETE", payload["command"])
+	}
+	if payload["qualifier"] != "QREMOTE" {
+		t.Errorf("qualifier = %v, want QREMOTE", payload["qualifier"])
+	}
+}
+
+func TestDeleteQalias_SendsCorrectCommand(t *testing.T) {
+	transport := newMockTransport()
+	transport.addSuccessResponse()
+	session := newTestSession(transport)
+
+	err := session.DeleteQalias(context.Background(), "MY.QUEUE")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	payload := transport.lastCall().Payload
+	if payload["command"] != "DELETE" {
+		t.Errorf("command = %v, want DELETE", payload["command"])
+	}
+	if payload["qualifier"] != "QALIAS" {
+		t.Errorf("qualifier = %v, want QALIAS", payload["qualifier"])
+	}
+}
+
+func TestDeleteQmodel_SendsCorrectCommand(t *testing.T) {
+	transport := newMockTransport()
+	transport.addSuccessResponse()
+	session := newTestSession(transport)
+
+	err := session.DeleteQmodel(context.Background(), "MY.QUEUE")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	payload := transport.lastCall().Payload
+	if payload["command"] != "DELETE" {
+		t.Errorf("command = %v, want DELETE", payload["command"])
+	}
+	if payload["qualifier"] != "QMODEL" {
+		t.Errorf("qualifier = %v, want QMODEL", payload["qualifier"])
+	}
+}
+
 func TestStartChannel_SendsCorrectCommand(t *testing.T) {
 	transport := newMockTransport()
 	transport.addSuccessResponse()

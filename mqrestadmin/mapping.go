@@ -34,7 +34,7 @@ type commandMapping struct {
 type qualifierMapping struct {
 	RequestKeyMap      map[string]string            `json:"request_key_map"`
 	RequestValueMap    map[string]map[string]string `json:"request_value_map"`
-	RequestKeyValueMap map[string]keyValueEntry     `json:"request_key_value_map"`
+	RequestKeyValueMap map[string]map[string]keyValueEntry `json:"request_key_value_map"`
 	ResponseKeyMap     map[string]string            `json:"response_key_map"`
 	ResponseValueMap   map[string]map[string]string `json:"response_value_map"`
 }
@@ -91,8 +91,14 @@ func newAttributeMapperWithOverrides(overrides map[string]any, mode MappingOverr
 			}
 			mergeStringMap(existing.RequestKeyMap, override.RequestKeyMap)
 			mergeNestedStringMap(existing.RequestValueMap, override.RequestValueMap)
-			for key, value := range override.RequestKeyValueMap {
-				existing.RequestKeyValueMap[key] = value
+			for key, valueEntries := range override.RequestKeyValueMap {
+				if existingEntries, exists := existing.RequestKeyValueMap[key]; exists {
+					for val, entry := range valueEntries {
+						existingEntries[val] = entry
+					}
+				} else {
+					existing.RequestKeyValueMap[key] = valueEntries
+				}
 			}
 			mergeStringMap(existing.ResponseKeyMap, override.ResponseKeyMap)
 			mergeNestedStringMap(existing.ResponseValueMap, override.ResponseValueMap)
@@ -103,15 +109,36 @@ func newAttributeMapperWithOverrides(overrides map[string]any, mode MappingOverr
 	return mapper, nil
 }
 
+// defaultMappingQualifiers maps MQSC qualifier names to their mapping
+// qualifier when the exact command+qualifier combination is not in the
+// commands map.  This allows commands like DEFINE QLOCAL (not explicitly
+// listed) to resolve to the "queue" mapping qualifier, matching the
+// Python and Ruby SDKs.
+var defaultMappingQualifiers = map[string]string{
+	"QUEUE":    "queue",
+	"QLOCAL":  "queue",
+	"QREMOTE": "queue",
+	"QALIAS":  "queue",
+	"QMODEL":  "queue",
+	"QMSTATUS": "qmstatus",
+	"QSTATUS": "qstatus",
+	"CHANNEL": "channel",
+	"QMGR":   "qmgr",
+}
+
 // resolveMappingQualifier looks up the mapping qualifier for a given MQSC
 // command and qualifier combination. For example, "DISPLAY" + "QLOCAL"
-// resolves to "queue".
+// resolves to "queue". If the exact command is not in the commands map,
+// falls back to the default qualifier for the MQSC qualifier name.
 func (mapper *attributeMapper) resolveMappingQualifier(command, mqscQualifier string) string {
 	key := command + " " + mqscQualifier
 	if cmdMapping, exists := mapper.data.Commands[key]; exists {
 		return cmdMapping.Qualifier
 	}
-	return ""
+	if fallback, exists := defaultMappingQualifiers[mqscQualifier]; exists {
+		return fallback
+	}
+	return strings.ToLower(mqscQualifier)
 }
 
 // mapRequestAttributes translates request attributes from snake_case to MQSC
@@ -173,7 +200,7 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 
 	var keyMap map[string]string
 	var valueMap map[string]map[string]string
-	var keyValueMap map[string]keyValueEntry
+	var keyValueMap map[string]map[string]keyValueEntry
 
 	if direction == MappingRequest {
 		keyMap = qualifierData.RequestKeyMap
@@ -189,18 +216,30 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 	var issues []MappingIssue
 
 	for key, value := range attributes {
+		// The MQ REST API returns MQSC parameter names in lowercase, but the
+		// mapping data uses uppercase. Normalize response keys to uppercase
+		// for all lookups.
+		lookupKey := key
+		if direction == MappingResponse {
+			lookupKey = strings.ToUpper(key)
+		}
+
 		// Layer 1: Key-value map (request only)
 		if keyValueMap != nil {
-			if entry, found := keyValueMap[key]; found {
-				result[entry.Key] = entry.Value
-				continue
+			if valueEntries, found := keyValueMap[lookupKey]; found {
+				if strValue, ok := value.(string); ok {
+					if entry, found := valueEntries[strValue]; found {
+						result[entry.Key] = entry.Value
+						continue
+					}
+				}
 			}
 		}
 
 		// Layer 2: Key map
 		mappedKey := key
 		if keyMap != nil {
-			if mapped, found := keyMap[key]; found {
+			if mapped, found := keyMap[lookupKey]; found {
 				mappedKey = mapped
 			} else {
 				issue := MappingIssue{
@@ -216,9 +255,9 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 			}
 		}
 
-		// Layer 3: Value map (lookup uses original key, since value map keys
-		// are in the same namespace as the input attributes)
-		mappedValue := mapper.mapValue(key, value, valueMap, direction, qualifier, objectIndex, &issues)
+		// Layer 3: Value map (lookup uses the normalized key, matching the
+		// namespace of the mapping data)
+		mappedValue := mapper.mapValue(lookupKey, value, valueMap, direction, qualifier, objectIndex, &issues)
 
 		result[mappedKey] = mappedValue
 	}

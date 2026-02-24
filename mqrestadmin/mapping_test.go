@@ -10,9 +10,6 @@ func TestNewAttributeMapper_LoadsSuccessfully(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if mapper == nil {
-		t.Fatal("expected non-nil mapper")
-	}
 	if len(mapper.data.Commands) == 0 {
 		t.Error("expected commands to be loaded")
 	}
@@ -32,12 +29,20 @@ func TestResolveMappingQualifier(t *testing.T) {
 		qualifier string
 		expected  string
 	}{
+		// Exact command map hits
 		{"DISPLAY", "QUEUE", "queue"},
 		{"DISPLAY", "CHANNEL", "channel"},
 		{"ALTER", "QMGR", "qmgr"},
 		{"DEFINE", "CHANNEL", "channel"},
 		{"CLEAR", "QLOCAL", "queue"},
-		{"NONEXISTENT", "THING", ""},
+		// Default qualifier fallback (DEFINE QLOCAL not in commands map)
+		{"DEFINE", "QLOCAL", "queue"},
+		{"DEFINE", "QREMOTE", "queue"},
+		{"DEFINE", "QALIAS", "queue"},
+		{"DEFINE", "QMODEL", "queue"},
+		{"ALTER", "QLOCAL", "queue"},
+		// Lowercase fallback for unknown MQSC qualifier
+		{"NONEXISTENT", "THING", "thing"},
 	}
 
 	for _, test := range tests {
@@ -46,6 +51,44 @@ func TestResolveMappingQualifier(t *testing.T) {
 			t.Errorf("resolveMappingQualifier(%q, %q) = %q, want %q",
 				test.command, test.qualifier, result, test.expected)
 		}
+	}
+}
+
+func TestResolveMappingQualifier_FallbackEnablesMapping(t *testing.T) {
+	// Verify that DEFINE QLOCAL (not in commands map) resolves to "queue"
+	// and the queue mapping data is applied to request attributes.
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	qualifier := mapper.resolveMappingQualifier("DEFINE", "QLOCAL")
+	if qualifier != "queue" {
+		t.Fatalf("DEFINE QLOCAL qualifier = %q, want %q", qualifier, "queue")
+	}
+
+	// Map request attributes using the resolved qualifier
+	input := map[string]any{
+		"replace":             "yes",
+		"default_persistence": "yes",
+		"description":         "test queue",
+	}
+	result, _ := mapper.mapRequestAttributes(qualifier, input, false)
+
+	// Layer 1: replace:yes → REPLACE:YES
+	if result["REPLACE"] != "YES" {
+		t.Errorf("expected REPLACE=YES, got %v", result)
+	}
+	// Layer 2: default_persistence → DEFPSIST
+	if _, hasOriginal := result["default_persistence"]; hasOriginal {
+		t.Error("default_persistence should be mapped to DEFPSIST")
+	}
+	if result["DEFPSIST"] == nil {
+		t.Error("expected DEFPSIST key in mapped result")
+	}
+	// Layer 2+3: description → DESCR with value
+	if result["DESCR"] != "test queue" {
+		t.Errorf("expected DESCR='test queue', got %v", result["DESCR"])
 	}
 }
 
@@ -94,6 +137,57 @@ func TestMapResponseAttributes_KeyMap(t *testing.T) {
 	}
 	if result["queue_name"] == nil {
 		t.Error("expected queue_name key in mapped result")
+	}
+}
+
+func TestMapResponseAttributes_LowercaseKeys(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// The MQ REST API returns MQSC parameter names in lowercase. Verify
+	// that response mapping normalizes them to uppercase for lookup.
+	input := map[string]any{
+		"maxdepth": "5000",
+		"queue":    "TEST.Q",
+		"descr":    "a test queue",
+	}
+
+	result, issues := mapper.mapResponseAttributes("queue", input, false)
+	if len(issues) > 0 {
+		t.Logf("mapping issues (permissive): %v", issues)
+	}
+
+	if result["max_queue_depth"] == nil {
+		t.Errorf("expected max_queue_depth, got keys: %v", keys(result))
+	}
+	if result["queue_name"] == nil {
+		t.Errorf("expected queue_name, got keys: %v", keys(result))
+	}
+	if result["description"] == nil {
+		t.Errorf("expected description, got keys: %v", keys(result))
+	}
+	if result["description"] != "a test queue" {
+		t.Errorf("description: got %q, want %q", result["description"], "a test queue")
+	}
+}
+
+func TestMapResponseAttributes_LowercaseValueMap(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Verify that response value mapping also works with lowercase keys.
+	// The queue qualifier has response_value_map entries for DEFPSIST.
+	input := map[string]any{
+		"defpsist": "NO",
+	}
+
+	result, _ := mapper.mapResponseAttributes("queue", input, false)
+	if result["default_persistence"] != "no" {
+		t.Errorf("default_persistence: got %q, want %q", result["default_persistence"], "no")
 	}
 }
 
@@ -511,8 +605,10 @@ func TestNewAttributeMapperWithOverrides_RequestKeyValueMap(t *testing.T) {
 			"queue": map[string]any{
 				"request_key_value_map": map[string]any{
 					"custom_flag": map[string]any{
-						"key":   "FLAGATTR",
-						"value": "YES",
+						"on": map[string]any{
+							"key":   "FLAGATTR",
+							"value": "YES",
+						},
 					},
 				},
 			},
@@ -524,10 +620,103 @@ func TestNewAttributeMapperWithOverrides_RequestKeyValueMap(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	input := map[string]any{"custom_flag": "ignored"}
+	input := map[string]any{"custom_flag": "on"}
 	result, _ := mapper.mapRequestAttributes("queue", input, false)
 	if result["FLAGATTR"] != "YES" {
 		t.Errorf("expected FLAGATTR=YES from key-value map, got %v", result)
+	}
+}
+
+func TestNewAttributeMapperWithOverrides_MergeExistingKeyValueMap(t *testing.T) {
+	// Merge a new value into an existing request_key_value_map key ("replace"
+	// already exists in the built-in queue mapping data).
+	overrides := map[string]any{
+		"qualifiers": map[string]any{
+			"queue": map[string]any{
+				"request_key_value_map": map[string]any{
+					"replace": map[string]any{
+						"maybe": map[string]any{
+							"key":   "REPLACE",
+							"value": "MAYBE",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	mapper, err := newAttributeMapperWithOverrides(overrides, MappingOverrideMerge)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// New value should work.
+	input := map[string]any{"replace": "maybe"}
+	result, _ := mapper.mapRequestAttributes("queue", input, false)
+	if result["REPLACE"] != "MAYBE" {
+		t.Errorf("expected REPLACE=MAYBE from merged override, got %v", result)
+	}
+
+	// Original value should still work.
+	input2 := map[string]any{"replace": "yes"}
+	result2, _ := mapper.mapRequestAttributes("queue", input2, false)
+	if result2["REPLACE"] != "YES" {
+		t.Errorf("expected REPLACE=YES from original mapping, got %v", result2)
+	}
+}
+
+func TestMapRequestAttributes_KeyValueMap(t *testing.T) {
+	mapper, err := newAttributeMapper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	tests := []struct {
+		name      string
+		input     map[string]any
+		expectKey string
+		expectVal any
+		fallThru  bool
+	}{
+		{
+			name:      "replace yes maps to REPLACE YES",
+			input:     map[string]any{"replace": "yes"},
+			expectKey: "REPLACE",
+			expectVal: "YES",
+		},
+		{
+			name:      "noreplace yes maps to REPLACE NO",
+			input:     map[string]any{"noreplace": "yes"},
+			expectKey: "REPLACE",
+			expectVal: "NO",
+		},
+		{
+			name:      "replace no maps to REPLACE NO",
+			input:     map[string]any{"replace": "no"},
+			expectKey: "REPLACE",
+			expectVal: "NO",
+		},
+		{
+			name:     "replace bogus falls through to layer 2/3",
+			input:    map[string]any{"replace": "bogus"},
+			fallThru: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			result, _ := mapper.mapRequestAttributes("queue", tc.input, false)
+			if tc.fallThru {
+				// Should NOT produce REPLACE key via Layer 1
+				if _, hasReplace := result["REPLACE"]; hasReplace {
+					t.Errorf("expected fallthrough, but got REPLACE key in result: %v", result)
+				}
+				return
+			}
+			if result[tc.expectKey] != tc.expectVal {
+				t.Errorf("expected %s=%v, got result: %v", tc.expectKey, tc.expectVal, result)
+			}
+		})
 	}
 }
 
@@ -721,4 +910,12 @@ func TestMapValue_ListMapping(t *testing.T) {
 		}
 		break
 	}
+}
+
+func keys(m map[string]any) []string {
+	result := make([]string, 0, len(m))
+	for k := range m {
+		result = append(result, k)
+	}
+	return result
 }

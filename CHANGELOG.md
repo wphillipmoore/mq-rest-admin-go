@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-02-24
+
+### Bug fixes
+
+- separate source and test paths for SonarCloud (#171)
+- correct request_key_value_map 2-level nested parsing (#181)
+- add default qualifier fallback and remove MQ_SKIP_LIFECYCLE guard (#183)
+
+### CI
+
+- add SonarCloud quality analysis to CI (#170)
+- add SonarCloud post-merge workflow (#172)
+- add Code Climate (Qlty) coverage upload (#174)
+- assign unique REST API ports per integration test matrix entry (#177)
+
+### Features
+
+- run integration tests with same Go version matrix as unit tests (#175)
+
+### Testing
+
+- add integration test suite porting Python reference coverage (#179)
+
 ## [1.1.10] - 2026-02-23
 
 ### Bug fixes
