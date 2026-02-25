@@ -45,6 +45,7 @@ jobs:
     uses: wphillipmoore/standard-actions/.github/workflows/ci-security.yml@develop
     with:
       language: go
+      semgrep-language: golang
     permissions:
       contents: read
       security-events: write
