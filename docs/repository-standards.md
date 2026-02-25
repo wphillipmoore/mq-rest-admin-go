@@ -84,7 +84,7 @@ submission. Do not construct commit messages or PR bodies manually.
 ### Committing
 
 ```bash
-scripts/dev/commit.sh \
+st-commit \
   --type TYPE --message MESSAGE --agent AGENT \
   [--scope SCOPE] [--body BODY]
 ```
@@ -103,7 +103,7 @@ the result.
 ### Submitting PRs
 
 ```bash
-scripts/dev/submit-pr.sh \
+st-submit-pr \
   --issue NUMBER --summary TEXT \
   [--linkage KEYWORD] [--title TEXT] \
   [--notes TEXT] [--docs-only] [--dry-run]
