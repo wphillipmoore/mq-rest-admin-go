@@ -1,0 +1,25 @@
+name: CI (push)
+
+on:
+  push:
+    branches:
+      - "feature/**"
+      - "bugfix/**"
+      - "hotfix/**"
+      - "chore/**"
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+      security-events: write
+    with:
+      go-versions: '["1.26"]'
+      integration-matrix: '[{"go-version":"1.26","project-suffix":"1-26","qm1-rest-port":"9445","qm2-rest-port":"9446"}]'
+      run-security: "false"
+      run-release-gates: "false"
