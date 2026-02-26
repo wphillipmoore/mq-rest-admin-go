@@ -4,11 +4,19 @@
 
 - [Session](session.md) -- `Session` struct and `NewSession()` constructor
 - [Commands](commands.md) -- MQSC command methods
-- [Transport](transport.md) -- `Transport` interface and `HTTPTransport`
+
+## Declarative Management
+
+- [Ensure](ensure.md) -- Idempotent create-or-update for MQ objects
+- [Sync](sync.md) -- Synchronous start/stop/restart with polling
 
 ## Authentication
 
 - [Auth](auth.md) -- `Credentials` sealed interface and implementations
+
+## Transport
+
+- [Transport](transport.md) -- `Transport` interface and `HTTPTransport`
 
 ## Mapping
 
@@ -17,10 +25,3 @@
 ## Errors
 
 - [Errors](errors.md) -- Error types for `errors.As()` matching
-
-## Patterns
-
-- [Ensure](ensure.md) -- `EnsureResult`, `EnsureAction`
-- [Ensure Methods](../ensure-methods.md) -- Per-object-type ensure convenience methods
-- [Sync](sync.md) -- `SyncConfig`, `SyncResult`, `SyncOperation`
-- [Sync Methods](../sync-methods.md) -- Per-object-type sync convenience methods
