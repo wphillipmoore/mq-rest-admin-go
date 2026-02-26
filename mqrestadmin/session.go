@@ -347,7 +347,7 @@ func (session *Session) applyResponseMapping(mappingQualifier string, objects []
 		return objects, nil
 	}
 
-	mapped, issues := session.mapper.mapResponseList(mappingQualifier, objects, session.mappingStrict)
+	mapped, issues := session.mapper.mapResponseList(mappingQualifier, objects)
 	if session.mappingStrict && len(issues) > 0 {
 		return nil, &MappingError{Issues: issues}
 	}

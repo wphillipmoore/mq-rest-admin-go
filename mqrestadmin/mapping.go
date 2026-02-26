@@ -160,7 +160,7 @@ func (mapper *attributeMapper) mapResponseAttributes(qualifier string,
 // mapResponseList translates a list of response attribute maps, tracking
 // object indices in any mapping issues.
 func (mapper *attributeMapper) mapResponseList(qualifier string,
-	objects []map[string]any, strict bool,
+	objects []map[string]any,
 ) ([]map[string]any, []MappingIssue) {
 	var allIssues []MappingIssue
 	result := make([]map[string]any, len(objects))
@@ -171,9 +171,6 @@ func (mapper *attributeMapper) mapResponseList(qualifier string,
 		allIssues = append(allIssues, issues...)
 	}
 
-	if strict && len(allIssues) > 0 {
-		return result, allIssues
-	}
 	return result, allIssues
 }
 

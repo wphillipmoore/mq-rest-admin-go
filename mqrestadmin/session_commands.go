@@ -49,19 +49,21 @@ func WithWhere(clause string) CommandOption {
 // DisplayQueue displays queue attributes. Name defaults to "*" if empty.
 func (session *Session) DisplayQueue(ctx context.Context, name string, opts ...CommandOption) ([]map[string]any, error) {
 	config := buildCommandConfig(opts)
-	if name == "" {
-		name = "*"
+	displayName := name
+	if displayName == "" {
+		displayName = "*"
 	}
-	return session.mqscCommand(ctx, "DISPLAY", "QUEUE", &name, config.requestParameters, config.responseParameters, config.where, true)
+	return session.mqscCommand(ctx, "DISPLAY", "QUEUE", &displayName, config.requestParameters, config.responseParameters, config.where, true)
 }
 
 // DisplayChannel displays channel attributes. Name defaults to "*" if empty.
 func (session *Session) DisplayChannel(ctx context.Context, name string, opts ...CommandOption) ([]map[string]any, error) {
 	config := buildCommandConfig(opts)
-	if name == "" {
-		name = "*"
+	displayName := name
+	if displayName == "" {
+		displayName = "*"
 	}
-	return session.mqscCommand(ctx, "DISPLAY", "CHANNEL", &name, config.requestParameters, config.responseParameters, config.where, true)
+	return session.mqscCommand(ctx, "DISPLAY", "CHANNEL", &displayName, config.requestParameters, config.responseParameters, config.where, true)
 }
 
 // ---------------------------------------------------------------------------
