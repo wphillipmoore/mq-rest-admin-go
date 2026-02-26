@@ -16,7 +16,7 @@
         <link rel="prev" href="../ensure/">
       
       
-        <link rel="next" href="../errors/">
+        <link rel="next" href="../auth/">
       
       
         
@@ -1095,10 +1095,6 @@
       
         
       
-        
-      
-        
-      
     
     
     
@@ -1191,34 +1187,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../auth/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Authentication
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../commands/" class="md-nav__link">
         
   
@@ -1227,118 +1195,6 @@
     
   
     Commands
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ensure-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Ensure Methods
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../sync-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Sync Methods
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../transport/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Transport
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../mapping/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Mapping
   
 
     
@@ -1447,10 +1303,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#the-problem-with-fire-and-forget" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        The problem with fire-and-forget
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-sync-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The sync pattern
       
     </span>
   </a>
@@ -1502,10 +1369,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-sync-methods" class="md-nav__link">
+  <a href="#basic-usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available sync methods
+        Basic usage
       
     </span>
   </a>
@@ -1513,10 +1380,104 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
+  <a href="#custom-timeout-and-poll-interval" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Usage
+        Custom timeout and poll interval
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restart-convenience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restart convenience
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timeout-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timeout handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#status-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status detection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Status detection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#channel-stop-edge-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel stop edge case
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attribute-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attribute mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provisioning-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provisioning example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rolling-restart-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rolling restart example
       
     </span>
   </a>
@@ -1527,6 +1488,90 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transport
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mapping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapping
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -3316,10 +3361,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#the-problem-with-fire-and-forget" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        The problem with fire-and-forget
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-sync-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The sync pattern
       
     </span>
   </a>
@@ -3371,10 +3427,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-sync-methods" class="md-nav__link">
+  <a href="#basic-usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available sync methods
+        Basic usage
       
     </span>
   </a>
@@ -3382,10 +3438,104 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
+  <a href="#custom-timeout-and-poll-interval" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Usage
+        Custom timeout and poll interval
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restart-convenience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restart convenience
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timeout-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timeout handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#status-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status detection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Status detection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#channel-stop-edge-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel stop edge case
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attribute-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attribute mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provisioning-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provisioning example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rolling-restart-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rolling restart example
       
     </span>
   </a>
@@ -3410,11 +3560,17 @@
 
 
 <h1 id="sync">Sync<a class="headerlink" href="#sync" title="Permanent link">&para;</a></h1>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>The sync methods provide 9 synchronous start/stop/restart operations on
-<code>Session</code>. These methods wrap fire-and-forget <code>START</code> and <code>STOP</code> commands with
-a polling loop that waits until the object reaches its target state or the
-timeout expires.</p>
+<h2 id="the-problem-with-fire-and-forget">The problem with fire-and-forget<a class="headerlink" href="#the-problem-with-fire-and-forget" title="Permanent link">&para;</a></h2>
+<p>All MQSC <code>START</code> and <code>STOP</code> commands are fire-and-forget -- they return
+immediately without waiting for the object to reach its target state.
+In practice, tooling that provisions infrastructure needs to wait until
+a channel is <code>RUNNING</code> or a listener is <code>STOPPED</code> before proceeding to
+the next step. Writing polling loops by hand is error-prone and
+clutters business logic with retry mechanics.</p>
+<h2 id="the-sync-pattern">The sync pattern<a class="headerlink" href="#the-sync-pattern" title="Permanent link">&para;</a></h2>
+<p>The <code>*Sync</code> and <code>Restart*</code> methods wrap the fire-and-forget commands
+with a polling loop that issues <code>DISPLAY *STATUS</code> until the object
+reaches a stable state or the timeout expires.</p>
 <h2 id="syncoperation">SyncOperation<a class="headerlink" href="#syncoperation" title="Permanent link">&para;</a></h2>
 <p>An integer enum indicating the operation that was performed:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="p">(</span>
@@ -3497,91 +3653,223 @@ or <code>"restarted"</code>.</p>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nx">config</span><span class="w"> </span><span class="nx">SyncConfig</span><span class="p">,</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">SyncResult</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="available-sync-methods">Available sync methods<a class="headerlink" href="#available-sync-methods" title="Permanent link">&para;</a></h2>
+<p>Every sync method takes <code>context.Context</code> as its first parameter,
+following standard Go conventions for I/O operations. The <code>config</code>
+parameter is always required; pass a zero-value <code>SyncConfig{}</code> for
+defaults.</p>
+<h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">// Start a channel and wait until it is RUNNING</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StartChannelSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;TO.PARTNER&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{})</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Channel running after %d poll(s), %.1fs\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Polls</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">ElapsedSeconds</span><span class="p">)</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1">// Stop a listener and wait until it is STOPPED</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StopListenerSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;TCP.LISTENER&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{})</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="p">}</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">Operation</span><span class="p">)</span><span class="w"> </span><span class="c1">// &quot;stopped&quot;</span>
+</code></pre></div>
+<p>Passing a zero-value <code>SyncConfig{}</code> uses the defaults (30-second timeout,
+1-second poll interval).</p>
+<h2 id="custom-timeout-and-poll-interval">Custom timeout and poll interval<a class="headerlink" href="#custom-timeout-and-poll-interval" title="Permanent link">&para;</a></h2>
+<p>Pass a <code>SyncConfig</code> with non-zero fields to override the defaults:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// Aggressive polling for fast local development</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nx">fast</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nx">Timeout</span><span class="p">:</span><span class="w">      </span><span class="mi">10</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nx">PollInterval</span><span class="p">:</span><span class="w"> </span><span class="mi">250</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">}</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StartServiceSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MY.SVC&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">fast</span><span class="p">)</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1">// Patient polling for remote queue managers</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="nx">patient</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="nx">Timeout</span><span class="p">:</span><span class="w">      </span><span class="mi">120</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="nx">PollInterval</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">}</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StartChannelSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;REMOTE.CHL&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">patient</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="restart-convenience">Restart convenience<a class="headerlink" href="#restart-convenience" title="Permanent link">&para;</a></h2>
+<p>The <code>Restart*</code> methods perform a synchronous stop followed by a
+synchronous start. Each phase gets the full timeout independently --
+worst case is 2x the configured timeout.</p>
+<p>The returned <code>SyncResult</code> reports <strong>total</strong> polls and <strong>total</strong> elapsed
+time across both phases:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">RestartChannel</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;TO.PARTNER&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{})</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">}</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Restarted in %.1fs (%d total polls)\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">ElapsedSeconds</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Polls</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="timeout-handling">Timeout handling<a class="headerlink" href="#timeout-handling" title="Permanent link">&para;</a></h2>
+<p>When the timeout expires, a <code>*TimeoutError</code> is returned with
+diagnostic fields:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StartChannelSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;BROKEN.CHL&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nx">Timeout</span><span class="p">:</span><span class="w">      </span><span class="mi">15</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nx">PollInterval</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">})</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">timeoutErr</span><span class="w"> </span><span class="o">*</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">TimeoutError</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">errors</span><span class="p">.</span><span class="nx">As</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">timeoutErr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Name: %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">timeoutErr</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span><span class="w">               </span><span class="c1">// &quot;BROKEN.CHL&quot;</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Operation: %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">timeoutErr</span><span class="p">.</span><span class="nx">Operation</span><span class="p">)</span><span class="w">      </span><span class="c1">// &quot;started&quot;</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Elapsed: %.1fs\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">timeoutErr</span><span class="p">.</span><span class="nx">ElapsedSeconds</span><span class="p">)</span><span class="w"> </span><span class="c1">// 15.0</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="p">}</span>
+</code></pre></div>
+<p><code>TimeoutError</code> can be matched with <code>errors.As</code>, following standard Go
+error-handling conventions.</p>
+<h2 id="available-methods">Available methods<a class="headerlink" href="#available-methods" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Method</th>
 <th>Operation</th>
-<th>Object type</th>
+<th>START/STOP qualifier</th>
+<th>Status qualifier</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>StartChannelSync()</code></td>
 <td>Start</td>
-<td>Channel</td>
+<td><code>CHANNEL</code></td>
+<td><code>CHSTATUS</code></td>
 </tr>
 <tr>
 <td><code>StopChannelSync()</code></td>
 <td>Stop</td>
-<td>Channel</td>
+<td><code>CHANNEL</code></td>
+<td><code>CHSTATUS</code></td>
 </tr>
 <tr>
 <td><code>RestartChannel()</code></td>
 <td>Restart</td>
-<td>Channel</td>
+<td><code>CHANNEL</code></td>
+<td><code>CHSTATUS</code></td>
 </tr>
 <tr>
 <td><code>StartListenerSync()</code></td>
 <td>Start</td>
-<td>Listener</td>
+<td><code>LISTENER</code></td>
+<td><code>LSSTATUS</code></td>
 </tr>
 <tr>
 <td><code>StopListenerSync()</code></td>
 <td>Stop</td>
-<td>Listener</td>
+<td><code>LISTENER</code></td>
+<td><code>LSSTATUS</code></td>
 </tr>
 <tr>
 <td><code>RestartListener()</code></td>
 <td>Restart</td>
-<td>Listener</td>
+<td><code>LISTENER</code></td>
+<td><code>LSSTATUS</code></td>
 </tr>
 <tr>
 <td><code>StartServiceSync()</code></td>
 <td>Start</td>
-<td>Service</td>
+<td><code>SERVICE</code></td>
+<td><code>SVSTATUS</code></td>
 </tr>
 <tr>
 <td><code>StopServiceSync()</code></td>
 <td>Stop</td>
-<td>Service</td>
+<td><code>SERVICE</code></td>
+<td><code>SVSTATUS</code></td>
 </tr>
 <tr>
 <td><code>RestartService()</code></td>
 <td>Restart</td>
-<td>Service</td>
+<td><code>SERVICE</code></td>
+<td><code>SVSTATUS</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">// Start a channel and wait for RUNNING status</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StartChannelSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;TO.PARTNER&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{})</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">timeoutErr</span><span class="w"> </span><span class="o">*</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">TimeoutError</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">errors</span><span class="p">.</span><span class="nx">As</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">timeoutErr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Timed out after %.1fs\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">timeoutErr</span><span class="p">.</span><span class="nx">ElapsedSeconds</span><span class="p">)</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="p">}</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Channel %s after %d polls (%.1fs)\n&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="nx">result</span><span class="p">.</span><span class="nx">Operation</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Polls</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">ElapsedSeconds</span><span class="p">)</span>
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="c1">// Custom polling configuration</span>
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StopChannelSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;TO.PARTNER&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{</span>
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">    </span><span class="nx">Timeout</span><span class="p">:</span><span class="w">      </span><span class="mi">10</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
-<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">    </span><span class="nx">PollInterval</span><span class="p">:</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">,</span>
-<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="p">})</span>
-<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>
-<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="c1">// Restart (stop then start, polling at each step)</span>
-<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">RestartChannel</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;TO.PARTNER&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{})</span>
-<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="c1">// result.Operation == SyncRestarted</span>
-<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="c1">// result.Polls includes polls from both stop and start phases</span>
+<h2 id="status-detection">Status detection<a class="headerlink" href="#status-detection" title="Permanent link">&para;</a></h2>
+<p>The polling loop checks the <code>STATUS</code> attribute in the <code>DISPLAY *STATUS</code>
+response. The target values are:</p>
+<ul>
+<li><strong>Start</strong>: <code>RUNNING</code></li>
+<li><strong>Stop</strong>: <code>STOPPED</code> or <code>INACTIVE</code></li>
+</ul>
+<h3 id="channel-stop-edge-case">Channel stop edge case<a class="headerlink" href="#channel-stop-edge-case" title="Permanent link">&para;</a></h3>
+<p>When a channel stops, its <code>CHSTATUS</code> record may disappear entirely
+(the <code>DISPLAY CHSTATUS</code> response returns no rows). The channel sync
+methods treat an empty status result as successfully stopped. Listener
+and service status records are always present, so empty results are not
+treated as stopped for those object types.</p>
+<h2 id="attribute-mapping">Attribute mapping<a class="headerlink" href="#attribute-mapping" title="Permanent link">&para;</a></h2>
+<p>The sync methods call the internal MQSC command layer, so they participate
+in the same <a href="../../mapping-pipeline/">mapping pipeline</a> as all other
+command methods. The status key is checked using both the mapped
+<code>snake_case</code> name and the raw MQSC name, so polling works correctly
+regardless of whether mapping is enabled or disabled.</p>
+<h2 id="provisioning-example">Provisioning example<a class="headerlink" href="#provisioning-example" title="Permanent link">&para;</a></h2>
+<p>The sync methods pair naturally with the
+<a href="../ensure/">ensure methods</a> for end-to-end provisioning:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nx">config</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{</span><span class="nx">Timeout</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">}</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1">// Ensure listeners exist for application and admin traffic</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">EnsureListener</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;APP.LISTENER&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="s">&quot;transport_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TCP&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="s">&quot;port&quot;</span><span class="p">:</span><span class="w">           </span><span class="mi">1415</span><span class="p">,</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="s">&quot;start_mode&quot;</span><span class="p">:</span><span class="w">     </span><span class="s">&quot;MQSVC_CONTROL_Q_MGR&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">})</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="p">}</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">EnsureListener</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ADMIN.LISTENER&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">    </span><span class="s">&quot;transport_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TCP&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">    </span><span class="s">&quot;port&quot;</span><span class="p">:</span><span class="w">           </span><span class="mi">1416</span><span class="p">,</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">    </span><span class="s">&quot;start_mode&quot;</span><span class="p">:</span><span class="w">     </span><span class="s">&quot;MQSVC_CONTROL_Q_MGR&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="p">})</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="p">}</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="c1">// Start them synchronously</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StartListenerSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;APP.LISTENER&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">config</span><span class="p">)</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="p">}</span>
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">StartListenerSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ADMIN.LISTENER&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">config</span><span class="p">)</span>
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a><span class="p">}</span>
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a>
+<a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Listeners ready&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>See <a href="../../sync-methods/">Sync Methods</a> for the full conceptual overview,
-polling behavior, and status detection logic.</p>
+<h2 id="rolling-restart-example">Rolling restart example<a class="headerlink" href="#rolling-restart-example" title="Permanent link">&para;</a></h2>
+<p>Restart all listeners with error handling -- useful when a queue
+manager serves multiple TCP ports for different client populations:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nx">listeners</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;APP.LISTENER&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ADMIN.LISTENER&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;PARTNER.LISTENER&quot;</span><span class="p">}</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nx">config</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">SyncConfig</span><span class="p">{</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nx">Timeout</span><span class="p">:</span><span class="w">      </span><span class="mi">30</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="nx">PollInterval</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="p">}</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">listeners</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">RestartListener</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">config</span><span class="p">)</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">timeoutErr</span><span class="w"> </span><span class="o">*</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">TimeoutError</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">errors</span><span class="p">.</span><span class="nx">As</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">timeoutErr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">            </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s: timed out after %.1fs\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">timeoutErr</span><span class="p">.</span><span class="nx">ElapsedSeconds</span><span class="p">)</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="w">            </span><span class="k">continue</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="w">        </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;%s: %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s: restarted in %.1fs\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">ElapsedSeconds</span><span class="p">)</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="p">}</span>
+</code></pre></div>
 
 
 

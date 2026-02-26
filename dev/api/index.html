@@ -1095,10 +1095,6 @@
       
         
       
-        
-      
-        
-      
     
     
     
@@ -1191,34 +1187,6 @@
   
   
     <li class="md-nav__item">
-      <a href="auth/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Authentication
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="commands/" class="md-nav__link">
         
   
@@ -1227,118 +1195,6 @@
     
   
     Commands
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ensure-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Ensure Methods
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sync-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Sync Methods
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="transport/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Transport
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="mapping/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Mapping
   
 
     
@@ -1395,6 +1251,90 @@
     
   
     Sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="transport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transport
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mapping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapping
   
 
     
@@ -3203,10 +3143,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#declarative-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarative Management
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
         Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transport
       
     </span>
   </a>
@@ -3235,17 +3197,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#patterns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Patterns
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3268,11 +3219,19 @@
 <ul>
 <li><a href="session/">Session</a> -- <code>Session</code> struct and <code>NewSession()</code> constructor</li>
 <li><a href="commands/">Commands</a> -- MQSC command methods</li>
-<li><a href="transport/">Transport</a> -- <code>Transport</code> interface and <code>HTTPTransport</code></li>
+</ul>
+<h2 id="declarative-management">Declarative Management<a class="headerlink" href="#declarative-management" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="ensure/">Ensure</a> -- Idempotent create-or-update for MQ objects</li>
+<li><a href="sync/">Sync</a> -- Synchronous start/stop/restart with polling</li>
 </ul>
 <h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="auth/">Auth</a> -- <code>Credentials</code> sealed interface and implementations</li>
+</ul>
+<h2 id="transport">Transport<a class="headerlink" href="#transport" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="transport/">Transport</a> -- <code>Transport</code> interface and <code>HTTPTransport</code></li>
 </ul>
 <h2 id="mapping">Mapping<a class="headerlink" href="#mapping" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3281,13 +3240,6 @@
 <h2 id="errors">Errors<a class="headerlink" href="#errors" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="errors/">Errors</a> -- Error types for <code>errors.As()</code> matching</li>
-</ul>
-<h2 id="patterns">Patterns<a class="headerlink" href="#patterns" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="ensure/">Ensure</a> -- <code>EnsureResult</code>, <code>EnsureAction</code></li>
-<li><a href="../ensure-methods/">Ensure Methods</a> -- Per-object-type ensure convenience methods</li>
-<li><a href="sync/">Sync</a> -- <code>SyncConfig</code>, <code>SyncResult</code>, <code>SyncOperation</code></li>
-<li><a href="../sync-methods/">Sync Methods</a> -- Per-object-type sync convenience methods</li>
 </ul>
 
 

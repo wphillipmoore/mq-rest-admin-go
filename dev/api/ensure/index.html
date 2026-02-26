@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://wphillipmoore.github.io/mq-rest-admin-go/dev/api/ensure/">
       
       
-        <link rel="prev" href="../mapping/">
+        <link rel="prev" href="../commands/">
       
       
         <link rel="next" href="../sync/">
@@ -1095,10 +1095,6 @@
       
         
       
-        
-      
-        
-      
     
     
     
@@ -1191,34 +1187,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../auth/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Authentication
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../commands/" class="md-nav__link">
         
   
@@ -1227,118 +1195,6 @@
     
   
     Commands
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ensure-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Ensure Methods
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../sync-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Sync Methods
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../transport/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Transport
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../mapping/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Mapping
   
 
     
@@ -1419,10 +1275,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#the-problem-with-alter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        The problem with ALTER
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-ensure-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ensure pattern
       
     </span>
   </a>
@@ -1463,10 +1330,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-ensure-methods" class="md-nav__link">
+  <a href="#basic-usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available ensure methods
+        Basic usage
       
     </span>
   </a>
@@ -1474,10 +1341,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
+  <a href="#comparison-logic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Usage
+        Comparison logic
       
     </span>
   </a>
@@ -1485,10 +1352,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-comparison-works" class="md-nav__link">
+  <a href="#selective-alter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How comparison works
+        Selective ALTER
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queue-manager-singleton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queue manager (singleton)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attribute-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attribute mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-management-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration management example
       
     </span>
   </a>
@@ -1519,6 +1436,90 @@
     
   
     Sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transport
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mapping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapping
   
 
     
@@ -3316,10 +3317,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#the-problem-with-alter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        The problem with ALTER
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-ensure-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ensure pattern
       
     </span>
   </a>
@@ -3360,10 +3372,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-ensure-methods" class="md-nav__link">
+  <a href="#basic-usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available ensure methods
+        Basic usage
       
     </span>
   </a>
@@ -3371,10 +3383,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
+  <a href="#comparison-logic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Usage
+        Comparison logic
       
     </span>
   </a>
@@ -3382,10 +3394,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-comparison-works" class="md-nav__link">
+  <a href="#selective-alter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How comparison works
+        Selective ALTER
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queue-manager-singleton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queue manager (singleton)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#attribute-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attribute mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-management-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration management example
       
     </span>
   </a>
@@ -3410,11 +3472,21 @@
 
 
 <h1 id="ensure">Ensure<a class="headerlink" href="#ensure" title="Permanent link">&para;</a></h1>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>The ensure methods provide 16 idempotent ensure operations on <code>Session</code>. These
-methods implement a declarative upsert pattern: DEFINE if the object does not
-exist, ALTER only attributes that differ, or no-op if the object already matches
-the desired state.</p>
+<h2 id="the-problem-with-alter">The problem with ALTER<a class="headerlink" href="#the-problem-with-alter" title="Permanent link">&para;</a></h2>
+<p>Every <code>Alter*()</code> call sends an <code>ALTER</code> command to the queue manager,
+even when every specified attribute already matches the current state.
+MQ updates <code>ALTDATE</code> and <code>ALTTIME</code> on every <code>ALTER</code>, regardless of
+whether any values actually changed. This makes <code>ALTER</code> unsuitable for
+declarative configuration management where idempotency matters -- running
+the same configuration twice should not corrupt audit timestamps.</p>
+<h2 id="the-ensure-pattern">The ensure pattern<a class="headerlink" href="#the-ensure-pattern" title="Permanent link">&para;</a></h2>
+<p>The <code>Ensure*()</code> methods implement a declarative upsert pattern:</p>
+<ol>
+<li><strong>DEFINE</strong> the object when it does not exist.</li>
+<li><strong>ALTER</strong> only the attributes that differ from the current state.</li>
+<li><strong>Do nothing</strong> when all specified attributes already match,
+   preserving <code>ALTDATE</code> and <code>ALTTIME</code>.</li>
+</ol>
 <h2 id="ensureaction">EnsureAction<a class="headerlink" href="#ensureaction" title="Permanent link">&para;</a></h2>
 <p>An integer enum indicating the action taken by an ensure method:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="p">(</span>
@@ -3468,109 +3540,239 @@ triggered the change (if any):</p>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nx">requestParameters</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">,</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">EnsureResult</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="available-ensure-methods">Available ensure methods<a class="headerlink" href="#available-ensure-methods" title="Permanent link">&para;</a></h2>
+<p>All ensure methods take <code>context.Context</code> as their first parameter,
+following standard Go conventions for I/O operations.</p>
+<p><code>responseParameters</code> is not exposed -- the ensure logic always requests
+<code>["all"]</code> internally so it can compare the full current state.</p>
+<h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">// First call -- queue does not exist yet</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">EnsureQlocal</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;APP.REQUEST.Q&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="s">&quot;max_queue_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="w">     </span><span class="s">&quot;Application request queue&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">})</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">Action</span><span class="p">)</span><span class="w"> </span><span class="c1">// &quot;created&quot;</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="c1">// Second call -- same attributes, nothing to change</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">EnsureQlocal</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;APP.REQUEST.Q&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="s">&quot;max_queue_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="p">,</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="w">     </span><span class="s">&quot;Application request queue&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="p">})</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="p">}</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">Action</span><span class="p">)</span><span class="w"> </span><span class="c1">// &quot;unchanged&quot;</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="c1">// Third call -- description changed, only that attribute is altered</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">EnsureQlocal</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;APP.REQUEST.Q&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">    </span><span class="s">&quot;max_queue_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="p">,</span>
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="w">    </span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="w">     </span><span class="s">&quot;Updated request queue&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="p">})</span>
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="p">}</span>
+<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">Action</span><span class="p">)</span><span class="w">  </span><span class="c1">// &quot;updated&quot;</span>
+<a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">Changed</span><span class="p">)</span><span class="w"> </span><span class="c1">// [&quot;description&quot;]</span>
+</code></pre></div>
+<h2 id="comparison-logic">Comparison logic<a class="headerlink" href="#comparison-logic" title="Permanent link">&para;</a></h2>
+<p>The ensure methods compare only the attributes the caller passes in
+<code>requestParameters</code> against the current state returned by <code>DISPLAY</code>.
+Attributes not specified by the caller are ignored.</p>
+<p>Comparison is:</p>
+<ul>
+<li><strong>Case-insensitive</strong> -- <code>"ENABLED"</code> matches <code>"enabled"</code>.</li>
+<li><strong>Type-normalizing</strong> -- integer <code>5000</code> matches string <code>"5000"</code>.</li>
+<li><strong>Whitespace-trimming</strong> -- <code>" YES "</code> matches <code>"YES"</code>.</li>
+</ul>
+<p>An attribute present in <code>requestParameters</code> but absent from the
+<code>DISPLAY</code> response is treated as changed and included in the <code>ALTER</code>.</p>
+<h2 id="selective-alter">Selective ALTER<a class="headerlink" href="#selective-alter" title="Permanent link">&para;</a></h2>
+<p>When an update is needed, only the changed attributes are sent in the
+<code>ALTER</code> command. Attributes that already match are excluded from the
+request. This minimizes the scope of each <code>ALTER</code> to the strict delta.</p>
+<h2 id="available-methods">Available methods<a class="headerlink" href="#available-methods" title="Permanent link">&para;</a></h2>
+<p>Each method targets a specific MQ object type with the correct
+MQSC qualifier triple (DISPLAY / DEFINE / ALTER):</p>
 <table>
 <thead>
 <tr>
 <th>Method</th>
 <th>Object type</th>
+<th>DISPLAY</th>
+<th>DEFINE</th>
+<th>ALTER</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>EnsureQmgr()</code></td>
-<td>Queue manager (always exists; never returns <code>EnsureCreated</code>)</td>
+<td>Queue manager</td>
+<td><code>QMGR</code></td>
+<td>--</td>
+<td><code>QMGR</code></td>
 </tr>
 <tr>
 <td><code>EnsureQlocal()</code></td>
 <td>Local queue</td>
+<td><code>QUEUE</code></td>
+<td><code>QLOCAL</code></td>
+<td><code>QLOCAL</code></td>
 </tr>
 <tr>
 <td><code>EnsureQremote()</code></td>
 <td>Remote queue</td>
+<td><code>QUEUE</code></td>
+<td><code>QREMOTE</code></td>
+<td><code>QREMOTE</code></td>
 </tr>
 <tr>
 <td><code>EnsureQalias()</code></td>
 <td>Alias queue</td>
+<td><code>QUEUE</code></td>
+<td><code>QALIAS</code></td>
+<td><code>QALIAS</code></td>
 </tr>
 <tr>
 <td><code>EnsureQmodel()</code></td>
 <td>Model queue</td>
+<td><code>QUEUE</code></td>
+<td><code>QMODEL</code></td>
+<td><code>QMODEL</code></td>
 </tr>
 <tr>
 <td><code>EnsureChannel()</code></td>
 <td>Channel</td>
+<td><code>CHANNEL</code></td>
+<td><code>CHANNEL</code></td>
+<td><code>CHANNEL</code></td>
 </tr>
 <tr>
 <td><code>EnsureAuthinfo()</code></td>
-<td>Authentication information object</td>
+<td>Auth info</td>
+<td><code>AUTHINFO</code></td>
+<td><code>AUTHINFO</code></td>
+<td><code>AUTHINFO</code></td>
 </tr>
 <tr>
 <td><code>EnsureListener()</code></td>
 <td>Listener</td>
+<td><code>LISTENER</code></td>
+<td><code>LISTENER</code></td>
+<td><code>LISTENER</code></td>
 </tr>
 <tr>
 <td><code>EnsureNamelist()</code></td>
 <td>Namelist</td>
+<td><code>NAMELIST</code></td>
+<td><code>NAMELIST</code></td>
+<td><code>NAMELIST</code></td>
 </tr>
 <tr>
 <td><code>EnsureProcess()</code></td>
 <td>Process</td>
+<td><code>PROCESS</code></td>
+<td><code>PROCESS</code></td>
+<td><code>PROCESS</code></td>
 </tr>
 <tr>
 <td><code>EnsureService()</code></td>
 <td>Service</td>
+<td><code>SERVICE</code></td>
+<td><code>SERVICE</code></td>
+<td><code>SERVICE</code></td>
 </tr>
 <tr>
 <td><code>EnsureTopic()</code></td>
 <td>Topic</td>
+<td><code>TOPIC</code></td>
+<td><code>TOPIC</code></td>
+<td><code>TOPIC</code></td>
 </tr>
 <tr>
 <td><code>EnsureSub()</code></td>
 <td>Subscription</td>
+<td><code>SUB</code></td>
+<td><code>SUB</code></td>
+<td><code>SUB</code></td>
 </tr>
 <tr>
 <td><code>EnsureStgclass()</code></td>
 <td>Storage class</td>
+<td><code>STGCLASS</code></td>
+<td><code>STGCLASS</code></td>
+<td><code>STGCLASS</code></td>
 </tr>
 <tr>
 <td><code>EnsureComminfo()</code></td>
-<td>Communication information object</td>
+<td>Comm info</td>
+<td><code>COMMINFO</code></td>
+<td><code>COMMINFO</code></td>
+<td><code>COMMINFO</code></td>
 </tr>
 <tr>
 <td><code>EnsureCfstruct()</code></td>
 <td>CF structure</td>
+<td><code>CFSTRUCT</code></td>
+<td><code>CFSTRUCT</code></td>
+<td><code>CFSTRUCT</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">ctx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">()</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">EnsureQlocal</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MY.QUEUE&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="s">&quot;max_queue_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="p">,</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="w">     </span><span class="s">&quot;App queue&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="p">})</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="k">switch</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Action</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="k">case</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">EnsureCreated</span><span class="p">:</span>
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Queue created&quot;</span><span class="p">)</span>
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="k">case</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">EnsureUpdated</span><span class="p">:</span>
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Changed:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Changed</span><span class="p">)</span>
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="k">case</span><span class="w"> </span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">EnsureUnchanged</span><span class="p">:</span>
-<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Already correct&quot;</span><span class="p">)</span>
-<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="p">}</span>
+<h3 id="queue-manager-singleton">Queue manager (singleton)<a class="headerlink" href="#queue-manager-singleton" title="Permanent link">&para;</a></h3>
+<p><code>EnsureQmgr()</code> has no <code>name</code> parameter because the queue manager is a
+singleton that always exists. It can only return <code>EnsureUpdated</code> or
+<code>EnsureUnchanged</code> (never <code>EnsureCreated</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">session</span><span class="w"> </span><span class="o">*</span><span class="nx">Session</span><span class="p">)</span><span class="w"> </span><span class="nx">EnsureQmgr</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">requestParameters</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">EnsureResult</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="how-comparison-works">How comparison works<a class="headerlink" href="#how-comparison-works" title="Permanent link">&para;</a></h2>
-<p>The ensure methods compare desired attributes against the current state using
-case-insensitive string comparison after trimming whitespace. Only attributes
-that differ are included in the ALTER command. Attributes not specified in the
-request are left unchanged.</p>
-<p>See <a href="../../ensure-methods/">Ensure Methods</a> for the full conceptual overview
-and comparison logic.</p>
+<p>This makes it ideal for asserting queue manager-level settings such as
+statistics, monitoring, events, and logging attributes without
+corrupting <code>ALTDATE</code>/<code>ALTTIME</code> on every run.</p>
+<h2 id="attribute-mapping">Attribute mapping<a class="headerlink" href="#attribute-mapping" title="Permanent link">&para;</a></h2>
+<p>The ensure methods participate in the same
+<a href="../../mapping-pipeline/">mapping pipeline</a> as all other command methods.
+Pass <code>snake_case</code> attribute names in <code>requestParameters</code> and the
+mapping layer translates them to MQSC names for the DISPLAY, DEFINE,
+and ALTER commands automatically.</p>
+<h2 id="configuration-management-example">Configuration management example<a class="headerlink" href="#configuration-management-example" title="Permanent link">&para;</a></h2>
+<p>The ensure pattern is designed for programs that declare desired state:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">func</span><span class="w"> </span><span class="nx">configureQueueManager</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">session</span><span class="w"> </span><span class="o">*</span><span class="nx">mqrestadmin</span><span class="p">.</span><span class="nx">Session</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="c1">// Ensure queue manager settings</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">EnsureQmgr</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">        </span><span class="s">&quot;queue_statistics&quot;</span><span class="p">:</span><span class="w">   </span><span class="s">&quot;on&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">        </span><span class="s">&quot;channel_statistics&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;on&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">        </span><span class="s">&quot;queue_monitoring&quot;</span><span class="p">:</span><span class="w">   </span><span class="s">&quot;medium&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">        </span><span class="s">&quot;channel_monitoring&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;medium&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="p">})</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;ensure qmgr: %w&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Queue manager: %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Action</span><span class="p">)</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="c1">// Ensure application queues</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">    </span><span class="nx">queues</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">        </span><span class="s">&quot;APP.REQUEST.Q&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;max_queue_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">50000</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;default_persistence&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p">},</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">        </span><span class="s">&quot;APP.REPLY.Q&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="s">&quot;max_queue_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;default_persistence&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;no&quot;</span><span class="p">},</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">        </span><span class="s">&quot;APP.DLQ&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="s">&quot;max_queue_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100000</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;default_persistence&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p">},</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">attrs</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">queues</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="w">        </span><span class="nx">result</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">session</span><span class="p">.</span><span class="nx">EnsureQlocal</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">attrs</span><span class="p">)</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;ensure %s: %w&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s: %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">Action</span><span class="p">)</span>
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span class="p">}</span>
+</code></pre></div>
+<p>Running this function repeatedly produces no side effects when the configuration
+is already correct. Only genuine changes trigger <code>ALTER</code> commands, keeping
+<code>ALTDATE</code>/<code>ALTTIME</code> accurate.</p>
 
 
 
