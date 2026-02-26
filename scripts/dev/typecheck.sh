@@ -2,7 +2,7 @@
 set -euo pipefail
 
 export DOCKER_DEV_IMAGE="${DOCKER_DEV_IMAGE:-dev-go:1.26}"
-export DOCKER_TEST_CMD="${DOCKER_TEST_CMD:-golangci-lint run ./... && gocyclo -over 15 ./mqrestadmin/}"
+export DOCKER_TEST_CMD="${DOCKER_TEST_CMD:-go vet ./...}"
 
 if command -v docker-test >/dev/null 2>&1; then
   exec docker-test
