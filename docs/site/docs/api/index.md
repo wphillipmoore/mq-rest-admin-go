@@ -21,4 +21,6 @@
 ## Patterns
 
 - [Ensure](ensure.md) -- `EnsureResult`, `EnsureAction`
+- [Ensure Methods](../ensure-methods.md) -- Per-object-type ensure convenience methods
 - [Sync](sync.md) -- `SyncConfig`, `SyncResult`, `SyncOperation`
+- [Sync Methods](../sync-methods.md) -- Per-object-type sync convenience methods
