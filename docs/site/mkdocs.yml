@@ -129,4 +129,7 @@ nav:
       - Contributing: development/contributing.md
       - Local MQ Container: development/local-mq-container.md
       - Quality Gates: development/quality-gates.md
+  - Releases:
+      - Release Notes: releases/index.md
+      - Changelog: changelog.md
   - AI Engineering: ai-engineering.md
