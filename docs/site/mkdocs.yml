@@ -59,23 +59,26 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Releases:
+      - Release Notes: releases/index.md
+      - Changelog: changelog.md
   - Getting Started: getting-started.md
   - Architecture: architecture.md
-  - Mapping Pipeline: mapping-pipeline.md
-  - Ensure Methods: ensure-methods.md
-  - Sync Methods: sync-methods.md
   - Examples: examples.md
   - API Reference:
       - api/index.md
       - Session: api/session.md
       - Authentication: api/auth.md
       - Commands: api/commands.md
+      - Ensure Methods: ensure-methods.md
+      - Sync Methods: sync-methods.md
       - Transport: api/transport.md
       - Mapping: api/mapping.md
       - Ensure: api/ensure.md
       - Sync: api/sync.md
       - Errors: api/errors.md
   - Mappings:
+      - Mapping Pipeline: mapping-pipeline.md
       - mappings/index.md
       - apstatus: mappings/apstatus.md
       - archive: mappings/archive.md
@@ -129,7 +132,4 @@ nav:
       - Contributing: development/contributing.md
       - Local MQ Container: development/local-mq-container.md
       - Quality Gates: development/quality-gates.md
-  - Releases:
-      - Release Notes: releases/index.md
-      - Changelog: changelog.md
-  - AI Engineering: ai-engineering.md
+      - AI Engineering: ai-engineering.md
