@@ -274,7 +274,7 @@ func TestMapResponseList(t *testing.T) {
 		{"QUEUE": "Q2", "MAXDEPTH": "10000"},
 	}
 
-	result, issues := mapper.mapResponseList("queue", objects, false)
+	result, issues := mapper.mapResponseList("queue", objects)
 	if len(issues) > 0 {
 		t.Logf("mapping issues: %v", issues)
 	}
@@ -515,7 +515,7 @@ func TestMapValue_ListWithNonStringItems(t *testing.T) {
 			mappedKey = snakeName
 		}
 		if resultList, isList := result[mappedKey].([]any); isList {
-			if resultList[0] != 42 || resultList[1] != true {
+			if resultList[0] != 42 || !resultList[1].(bool) {
 				t.Errorf("non-string items should pass through, got %v", resultList)
 			}
 		}
@@ -756,7 +756,7 @@ func TestMapResponseList_StrictWithIssues(t *testing.T) {
 		{"UNKNOWN_ATTR_XYZ": "val"},
 	}
 
-	_, issues := mapper.mapResponseList("queue", objects, true)
+	_, issues := mapper.mapResponseList("queue", objects)
 	if len(issues) == 0 {
 		t.Error("expected issues for unknown attribute in strict mode")
 	}
@@ -822,7 +822,7 @@ func TestMapResponseList_ObjectIndexInIssues(t *testing.T) {
 		{valueMapKey: "UNKNOWN_TEST_VALUE_XYZ"},
 	}
 
-	_, issues := mapper.mapResponseList("queue", objects, true)
+	_, issues := mapper.mapResponseList("queue", objects)
 	foundWithIndex := false
 	for _, issue := range issues {
 		if issue.ObjectIndex != nil && *issue.ObjectIndex == 0 {
@@ -854,7 +854,7 @@ func TestMapResponseList_ObjectIndexInListIssues(t *testing.T) {
 		{valueMapKey: []any{"UNKNOWN_LIST_VAL_XYZ"}},
 	}
 
-	_, issues := mapper.mapResponseList("queue", objects, true)
+	_, issues := mapper.mapResponseList("queue", objects)
 	foundWithIndex := false
 	for _, issue := range issues {
 		if issue.ObjectIndex != nil {

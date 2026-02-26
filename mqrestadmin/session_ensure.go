@@ -125,11 +125,10 @@ func (session *Session) ensureObject(ctx context.Context, name string,
 	if err != nil {
 		// Command errors mean the object doesn't exist
 		var cmdErr *CommandError
-		if errors.As(err, &cmdErr) {
-			currentObjects = nil
-		} else {
+		if !errors.As(err, &cmdErr) {
 			return EnsureResult{}, fmt.Errorf("ensure %s display: %w", strings.ToLower(defineQualifier), err)
 		}
+		currentObjects = nil
 	}
 
 	// Step 2: Not found -> DEFINE
