@@ -40,12 +40,12 @@ jobs:
   # Security and standards (shared reusable workflow)
   # ---------------------------------------------------------------------------
   security-and-standards:
-    name: "security-and-standards"
-    if: ${{ inputs.run-security != 'false' }}
     uses: wphillipmoore/standard-actions/.github/workflows/ci-security.yml@develop
     with:
       language: go
       semgrep-language: golang
+      run-standards: ${{ inputs.run-release-gates || 'true' }}
+      run-security: ${{ inputs.run-security || 'true' }}
     permissions:
       contents: read
       security-events: write
