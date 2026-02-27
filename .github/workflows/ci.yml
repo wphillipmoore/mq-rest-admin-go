@@ -184,4 +184,5 @@ jobs:
           MQ_REST_BASE_URL_QM2: https://localhost:${{ matrix.qm2-rest-port }}/ibmmq/rest/v2
         run: |
           MQ_REST_ADMIN_RUN_INTEGRATION=1 \
+          MQ_SKIP_LIFECYCLE=1 \
           go test -race -count=1 -tags=integration ./...
