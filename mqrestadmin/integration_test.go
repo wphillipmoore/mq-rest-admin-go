@@ -4,12 +4,106 @@ package mqrestadmin_test
 
 import (
 	"context"
+	"crypto/tls"
+	"fmt"
+	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/wphillipmoore/mq-rest-admin-go/mqrestadmin"
 )
+
+// ---------------------------------------------------------------------------
+// TestMain — lifecycle management and runtime gate
+// ---------------------------------------------------------------------------
+
+func TestMain(m *testing.M) {
+	if os.Getenv("MQ_REST_ADMIN_RUN_INTEGRATION") != "1" {
+		fmt.Println("Skipping integration tests (set MQ_REST_ADMIN_RUN_INTEGRATION=1)")
+		os.Exit(0)
+	}
+
+	skipLifecycle := parseBool(os.Getenv("MQ_SKIP_LIFECYCLE"))
+
+	if !skipLifecycle {
+		runScript("scripts/dev/mq_start.sh")
+	}
+	waitForRESTReady()
+	if !skipLifecycle {
+		runScript("scripts/dev/mq_seed.sh")
+	}
+
+	code := m.Run()
+
+	if !skipLifecycle {
+		runScript("scripts/dev/mq_stop.sh") // best-effort
+	}
+	os.Exit(code)
+}
+
+func runScript(relPath string) {
+	repoRoot := findRepoRoot()
+	scriptPath := filepath.Join(repoRoot, relPath)
+	cmd := exec.Command("bash", scriptPath)
+	cmd.Dir = repoRoot
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "%s failed: %v\n", relPath, err)
+		os.Exit(1)
+	}
+}
+
+func findRepoRoot() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "cannot get working directory: %v\n", err)
+		os.Exit(1)
+	}
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			fmt.Fprintln(os.Stderr, "cannot find repo root (no go.mod found)")
+			os.Exit(1)
+		}
+		dir = parent
+	}
+}
+
+func waitForRESTReady() {
+	cfg := loadIntegrationConfig()
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, //nolint:gosec // integration test
+		},
+	}
+	deadline := time.Now().Add(90 * time.Second)
+	url := cfg.restBaseURL + "/admin/qmgr"
+
+	for time.Now().Before(deadline) {
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+		req.SetBasicAuth(cfg.adminUser, cfg.adminPassword)
+		req.Header.Set("ibm-mq-rest-csrf-token", "blank")
+		resp, err := client.Do(req)
+		if err == nil {
+			resp.Body.Close()
+			if resp.StatusCode == http.StatusOK {
+				return
+			}
+		}
+		time.Sleep(2 * time.Second)
+	}
+	fmt.Fprintln(os.Stderr, "MQ REST endpoint not ready after 90s")
+	os.Exit(1)
+}
 
 // ---------------------------------------------------------------------------
 // Seeded object names (created by mq_seed.sh)
@@ -66,8 +160,8 @@ type integrationConfig struct {
 
 func loadIntegrationConfig() integrationConfig {
 	return integrationConfig{
-		restBaseURL:    envOrDefault("MQ_REST_BASE_URL", "https://localhost:9443/ibmmq/rest/v2"),
-		restBaseURLQM2: envOrDefault("MQ_REST_BASE_URL_QM2", "https://localhost:9444/ibmmq/rest/v2"),
+		restBaseURL:    envOrDefault("MQ_REST_BASE_URL", "https://localhost:9463/ibmmq/rest/v2"),
+		restBaseURLQM2: envOrDefault("MQ_REST_BASE_URL_QM2", "https://localhost:9464/ibmmq/rest/v2"),
 		adminUser:      envOrDefault("MQ_ADMIN_USER", "mqadmin"),
 		adminPassword:  envOrDefault("MQ_ADMIN_PASSWORD", "mqadmin"),
 		qmgrName:       envOrDefault("MQ_QMGR_NAME", "QM1"),

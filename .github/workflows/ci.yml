@@ -158,7 +158,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(inputs.integration-matrix || '[{"go-version":"1.25","project-suffix":"1-25","qm1-rest-port":"9443","qm2-rest-port":"9444"},{"go-version":"1.26","project-suffix":"1-26","qm1-rest-port":"9445","qm2-rest-port":"9446"}]') }}
+        include: ${{ fromJSON(inputs.integration-matrix || '[{"go-version":"1.25","project-suffix":"1-25","qm1-rest-port":"9465","qm2-rest-port":"9466","qm1-mq-port":"1436","qm2-mq-port":"1437"},{"go-version":"1.26","project-suffix":"1-26","qm1-rest-port":"9467","qm2-rest-port":"9468","qm1-mq-port":"1438","qm2-mq-port":"1439"}]') }}
 
     steps:
       - name: Checkout code
@@ -172,14 +172,17 @@ jobs:
       - name: Setup MQ environment
         uses: wphillipmoore/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
         with:
-          project-name: mq-rest-admin-go-${{ matrix.project-suffix }}
+          project-name: mqrest-go-${{ matrix.project-suffix }}
           qm1-rest-port: ${{ matrix.qm1-rest-port }}
           qm2-rest-port: ${{ matrix.qm2-rest-port }}
+          qm1-mq-port: ${{ matrix.qm1-mq-port }}
+          qm2-mq-port: ${{ matrix.qm2-mq-port }}
 
       - name: Run integration tests
         env:
           MQ_REST_BASE_URL: https://localhost:${{ matrix.qm1-rest-port }}/ibmmq/rest/v2
           MQ_REST_BASE_URL_QM2: https://localhost:${{ matrix.qm2-rest-port }}/ibmmq/rest/v2
         run: |
-          MQ_REST_ADMIN_GO_RUN_INTEGRATION=1 \
+          MQ_REST_ADMIN_RUN_INTEGRATION=1 \
+          MQ_SKIP_LIFECYCLE=1 \
           go test -race -count=1 -tags=integration ./...
