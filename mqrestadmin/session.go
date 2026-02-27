@@ -419,7 +419,7 @@ func (session *Session) mapResponseParameterNames(qualifier string, params []str
 
 	mapped := make([]string, len(params))
 	for idx, param := range params {
-		if mqscName, found := qualifierData.RequestKeyMap[param]; found {
+		if mqscName, exists := qualifierData.RequestKeyMap[param]; exists {
 			mapped[idx] = mqscName
 		} else {
 			mapped[idx] = param
