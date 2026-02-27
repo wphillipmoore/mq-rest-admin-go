@@ -146,8 +146,11 @@ go tool cover -html=coverage.out                # View coverage in browser
   lines (e.g., `json.Marshal` on `map[string]any`, embedded JSON parse errors) are
   annotated with `// coverage-ignore -- <reason>` on the **preceding line** (the
   `{` line) and excluded from measurement.
-- **Integration tests**: Require `MQ_REST_ADMIN_GO_RUN_INTEGRATION=1` and a running
+- **Integration tests**: Require `MQ_REST_ADMIN_RUN_INTEGRATION=1` and a running
   MQ container. CI uses the `wphillipmoore/mq-rest-admin-dev-environment` action.
+  Wrapper scripts in `scripts/dev/mq_*.sh` manage the MQ lifecycle with
+  `COMPOSE_PROJECT_NAME=mqrest-go` and Go-specific port allocation
+  (REST: 9463/9464, MQ: 1434/1435).
 
 ## Architecture
 

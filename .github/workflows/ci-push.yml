@@ -20,6 +20,6 @@ jobs:
       security-events: write
     with:
       go-versions: '["1.26"]'
-      integration-matrix: '[{"go-version":"1.26","project-suffix":"1-26","qm1-rest-port":"9445","qm2-rest-port":"9446"}]'
+      integration-matrix: '[{"go-version":"1.26","project-suffix":"1-26","qm1-rest-port":"9467","qm2-rest-port":"9468","qm1-mq-port":"1438","qm2-mq-port":"1439"}]'
       run-security: "false"
       run-release-gates: "false"
