@@ -93,8 +93,8 @@ func newAttributeMapperWithOverrides(overrides map[string]any, mode MappingOverr
 			mergeNestedStringMap(existing.RequestValueMap, override.RequestValueMap)
 			for key, valueEntries := range override.RequestKeyValueMap {
 				if existingEntries, exists := existing.RequestKeyValueMap[key]; exists {
-					for val, entry := range valueEntries {
-						existingEntries[val] = entry
+					for valueKey, entry := range valueEntries {
+						existingEntries[valueKey] = entry
 					}
 				} else {
 					existing.RequestKeyValueMap[key] = valueEntries
@@ -223,9 +223,9 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 
 		// Layer 1: Key-value map (request only)
 		if keyValueMap != nil {
-			if valueEntries, found := keyValueMap[lookupKey]; found {
+			if valueEntries, exists := keyValueMap[lookupKey]; exists {
 				if strValue, ok := value.(string); ok {
-					if entry, found := valueEntries[strValue]; found {
+					if entry, exists := valueEntries[strValue]; exists {
 						result[entry.Key] = entry.Value
 						continue
 					}
@@ -236,7 +236,7 @@ func (mapper *attributeMapper) mapAttributes(qualifier string,
 		// Layer 2: Key map
 		mappedKey := key
 		if keyMap != nil {
-			if mapped, found := keyMap[lookupKey]; found {
+			if mapped, exists := keyMap[lookupKey]; exists {
 				mappedKey = mapped
 			} else {
 				issue := MappingIssue{
@@ -277,7 +277,7 @@ func (mapper *attributeMapper) mapValue(key string, value any,
 
 	switch typedValue := value.(type) {
 	case string:
-		if mapped, found := keyValues[typedValue]; found {
+		if mapped, exists := keyValues[typedValue]; exists {
 			return mapped
 		}
 		issue := MappingIssue{
@@ -297,7 +297,7 @@ func (mapper *attributeMapper) mapValue(key string, value any,
 		mapped := make([]any, len(typedValue))
 		for idx, item := range typedValue {
 			if strItem, isStr := item.(string); isStr {
-				if mappedItem, found := keyValues[strItem]; found {
+				if mappedItem, exists := keyValues[strItem]; exists {
 					mapped[idx] = mappedItem
 				} else {
 					issue := MappingIssue{
