@@ -1,8 +1,10 @@
 # Examples
 
-The `examples/` directory contains practical scripts that demonstrate common
-MQ administration tasks using `mqrestadmin`. Each example is self-contained
-and can be run against the local Docker environment.
+Runnable example programs demonstrate common MQ administration tasks using
+`mqrestadmin`. Each example has a core function in the
+[`examples/`](https://github.com/wphillipmoore/mq-rest-admin-go/tree/main/examples)
+package and a standalone `main.go` entry point in
+[`examples/cmd/`](https://github.com/wphillipmoore/mq-rest-admin-go/tree/main/examples/cmd).
 
 ## Prerequisites
 
@@ -13,161 +15,84 @@ Start the multi-queue-manager Docker environment and seed both queue managers:
 ./scripts/dev/mq_seed.sh
 ```
 
-This starts two queue managers (`QM1` on port 9443, `QM2` on port 9444) on a
+This starts two queue managers (`QM1` on port 9463, `QM2` on port 9464) on a
 shared Docker network. See [local MQ container](development/local-mq-container.md) for details.
+
+## Environment variables
+
+| Variable               | Default                                | Description                   |
+|------------------------|----------------------------------------|-------------------------------|
+| `MQ_REST_BASE_URL`     | `https://localhost:9463/ibmmq/rest/v2` | QM1 REST endpoint             |
+| `MQ_REST_BASE_URL_QM2` | `https://localhost:9464/ibmmq/rest/v2` | QM2 REST endpoint             |
+| `MQ_QMGR_NAME`         | `QM1`                                  | Queue manager name            |
+| `MQ_ADMIN_USER`        | `mqadmin`                              | Admin username                |
+| `MQ_ADMIN_PASSWORD`    | `mqadmin`                              | Admin password                |
+| `DEPTH_THRESHOLD_PCT`  | `80`                                   | Queue depth warning threshold |
 
 ## Health check
 
-Connect to one or more queue managers and check:
+Connects to one or more queue managers and checks QMGR status,
+command server availability, and listener state. Produces a pass/fail
+summary for each queue manager.
 
-- Queue manager attributes via `DisplayQmgr()`
-- Running status via `DisplayQmstatus()`
-- Listener definitions via `DisplayListener()`
-
-```go
-ctx := context.Background()
-
-qmgr, err := session.DisplayQmgr(ctx)
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Println("Queue manager:", qmgr["queue_manager_name"])
-
-status, err := session.DisplayQmstatus(ctx)
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Println("Status:", status["channel_initiator_status"])
-
-listeners, err := session.DisplayListener(ctx, "*")
-if err != nil {
-    log.Fatal(err)
-}
-for _, listener := range listeners {
-    fmt.Printf("Listener: %s port=%v\n",
-        listener["listener_name"], listener["port"])
-}
+```bash
+go run ./examples/cmd/healthcheck
 ```
+
+See [`examples/healthcheck.go`](https://github.com/wphillipmoore/mq-rest-admin-go/blob/main/examples/healthcheck.go).
 
 ## Queue depth monitor
 
-Display all local queues with their current depth and flag queues
-approaching capacity:
+Displays local queues with their current depth, flags queues
+approaching capacity, and sorts by depth percentage.
 
-```go
-ctx := context.Background()
-
-queues, err := session.DisplayQueue(ctx, "*")
-if err != nil {
-    log.Fatal(err)
-}
-
-for _, queue := range queues {
-    depth, _ := strconv.Atoi(fmt.Sprint(queue["current_queue_depth"]))
-    maxDepth, _ := strconv.Atoi(fmt.Sprint(queue["max_queue_depth"]))
-    pct := 0
-    if maxDepth > 0 {
-        pct = depth * 100 / maxDepth
-    }
-    flag := ""
-    if pct > 80 {
-        flag = " *** HIGH ***"
-    }
-    fmt.Printf("%-40s %5d / %5d (%d%%)%s\n",
-        queue["queue_name"], depth, maxDepth, pct, flag)
-}
+```bash
+go run ./examples/cmd/depthmonitor
 ```
+
+See [`examples/depthmonitor.go`](https://github.com/wphillipmoore/mq-rest-admin-go/blob/main/examples/depthmonitor.go).
 
 ## Channel status report
 
-Cross-reference channel definitions with live channel status:
+Displays channel definitions alongside live channel status, identifies
+channels that are defined but not running, and shows connection details.
 
-```go
-ctx := context.Background()
-
-channels, err := session.DisplayChannel(ctx, "*")
-if err != nil {
-    log.Fatal(err)
-}
-
-statuses, err := session.DisplayChstatus(ctx, "*")
-if err != nil {
-    log.Fatal(err)
-}
-
-running := make(map[string]bool)
-for _, s := range statuses {
-    running[fmt.Sprint(s["channel_name"])] = true
-}
-
-for _, ch := range channels {
-    name := fmt.Sprint(ch["channel_name"])
-    state := "INACTIVE"
-    if running[name] {
-        state = "RUNNING"
-    }
-    fmt.Println(name + ": " + state)
-}
+```bash
+go run ./examples/cmd/channelstatus
 ```
+
+See [`examples/channelstatus.go`](https://github.com/wphillipmoore/mq-rest-admin-go/blob/main/examples/channelstatus.go).
 
 ## Environment provisioner
 
-Demonstrate bulk provisioning across two queue managers using ensure
-methods:
+Defines a complete set of queues, channels, and remote queue definitions
+across two queue managers, then verifies connectivity. Includes teardown.
 
-```go
-ctx := context.Background()
-
-// Ensure application queues exist on QM1
-_, err := session.EnsureQlocal(ctx, "APP.REQUESTS", map[string]any{
-    "max_queue_depth":     "50000",
-    "default_persistence": "persistent",
-})
-if err != nil {
-    log.Fatal(err)
-}
-
-_, err = session.EnsureQlocal(ctx, "APP.RESPONSES", map[string]any{
-    "max_queue_depth":     "50000",
-    "default_persistence": "persistent",
-})
-if err != nil {
-    log.Fatal(err)
-}
-
-// Ensure listeners are running
-config := mqrestadmin.SyncConfig{Timeout: 60 * time.Second}
-_, err = session.StartListenerSync(ctx, "TCP.LISTENER", config)
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Println("Environment provisioned")
+```bash
+go run ./examples/cmd/provisionenv
 ```
+
+See [`examples/provisionenv.go`](https://github.com/wphillipmoore/mq-rest-admin-go/blob/main/examples/provisionenv.go).
 
 ## Dead letter queue inspector
 
-Inspect the dead letter queue configuration:
+Checks the dead letter queue configuration, reports depth and capacity,
+and suggests actions when messages are present.
 
-```go
-ctx := context.Background()
-
-qmgr, err := session.DisplayQmgr(ctx)
-if err != nil {
-    log.Fatal(err)
-}
-
-dlqName, ok := qmgr["dead_letter_q_name"].(string)
-if ok && dlqName != "" {
-    dlq, err := session.DisplayQueue(ctx, dlqName)
-    if err != nil {
-        log.Fatal(err)
-    }
-    if len(dlq) > 0 {
-        fmt.Printf("DLQ: %s depth=%v max=%v\n",
-            dlqName, dlq[0]["current_queue_depth"], dlq[0]["max_queue_depth"])
-    }
-} else {
-    fmt.Println("No dead letter queue configured")
-}
+```bash
+go run ./examples/cmd/dlqinspector
 ```
+
+See [`examples/dlqinspector.go`](https://github.com/wphillipmoore/mq-rest-admin-go/blob/main/examples/dlqinspector.go).
+
+## Queue status and connection handles
+
+Demonstrates `DISPLAY QSTATUS TYPE(HANDLE)` and `DISPLAY CONN TYPE(HANDLE)`
+queries, showing how `mqrestadmin` flattens nested object response
+structures into uniform flat maps.
+
+```bash
+go run ./examples/cmd/queuestatus
+```
+
+See [`examples/queuestatus.go`](https://github.com/wphillipmoore/mq-rest-admin-go/blob/main/examples/queuestatus.go).
