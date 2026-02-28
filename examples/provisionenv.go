@@ -83,27 +83,19 @@ func Provision(ctx context.Context, qm1, qm2 *mqrestadmin.Session) ProvisionResu
 func Teardown(ctx context.Context, qm1, qm2 *mqrestadmin.Session) []string {
 	var failures []string
 
-	for _, session := range []*mqrestadmin.Session{qm1, qm2} {
-		label := session.QmgrName()
-		for _, name := range []string{prefix + ".QM1.TO.QM2", prefix + ".QM2.TO.QM1"} {
-			if err := session.DeleteChannel(ctx, name); err != nil {
-				failures = append(failures, label+"/"+name)
-			}
-		}
-		for _, name := range []string{prefix + ".REMOTE.TO.QM1", prefix + ".REMOTE.TO.QM2"} {
-			if err := session.DeleteQremote(ctx, name); err != nil {
-				failures = append(failures, label+"/"+name)
-			}
-		}
-		for _, name := range []string{
-			prefix + ".QM1.TO.QM2.XMITQ", prefix + ".QM2.TO.QM1.XMITQ",
-			prefix + ".QM1.LOCAL", prefix + ".QM2.LOCAL",
-		} {
-			if err := session.DeleteQlocal(ctx, name); err != nil {
-				failures = append(failures, label+"/"+name)
-			}
-		}
-	}
+	// QM1 objects
+	deleteObject(ctx, &failures, qm1, qm1.DeleteChannel, prefix+".QM1.TO.QM2")
+	deleteObject(ctx, &failures, qm1, qm1.DeleteChannel, prefix+".QM2.TO.QM1")
+	deleteObject(ctx, &failures, qm1, qm1.DeleteQremote, prefix+".REMOTE.TO.QM2")
+	deleteObject(ctx, &failures, qm1, qm1.DeleteQlocal, prefix+".QM1.TO.QM2.XMITQ")
+	deleteObject(ctx, &failures, qm1, qm1.DeleteQlocal, prefix+".QM1.LOCAL")
+
+	// QM2 objects
+	deleteObject(ctx, &failures, qm2, qm2.DeleteChannel, prefix+".QM1.TO.QM2")
+	deleteObject(ctx, &failures, qm2, qm2.DeleteChannel, prefix+".QM2.TO.QM1")
+	deleteObject(ctx, &failures, qm2, qm2.DeleteQremote, prefix+".REMOTE.TO.QM1")
+	deleteObject(ctx, &failures, qm2, qm2.DeleteQlocal, prefix+".QM2.TO.QM1.XMITQ")
+	deleteObject(ctx, &failures, qm2, qm2.DeleteQlocal, prefix+".QM2.LOCAL")
 
 	return failures
 }
@@ -136,24 +128,34 @@ func PrintProvision(ctx context.Context, qm1, qm2 *mqrestadmin.Session) Provisio
 	return result
 }
 
+type defineFunc func(ctx context.Context, name string, opts ...mqrestadmin.CommandOption) error
+type deleteFunc func(ctx context.Context, name string, opts ...mqrestadmin.CommandOption) error
+
 func defineObject(ctx context.Context, result *ProvisionResult, session *mqrestadmin.Session, method, name string, params map[string]any) {
 	label := session.QmgrName() + "/" + name
 
-	var err error
+	var fn defineFunc
 	switch method {
 	case "DefineQlocal":
-		err = session.DefineQlocal(ctx, name, mqrestadmin.WithRequestParameters(params))
+		fn = session.DefineQlocal
 	case "DefineQremote":
-		err = session.DefineQremote(ctx, name, mqrestadmin.WithRequestParameters(params))
+		fn = session.DefineQremote
 	case "DefineChannel":
-		err = session.DefineChannel(ctx, name, mqrestadmin.WithRequestParameters(params))
+		fn = session.DefineChannel
 	default:
-		err = fmt.Errorf("unknown method: %s", method)
+		result.ObjectsFailed = append(result.ObjectsFailed, label)
+		return
 	}
 
-	if err != nil {
+	if err := fn(ctx, name, mqrestadmin.WithRequestParameters(params)); err != nil {
 		result.ObjectsFailed = append(result.ObjectsFailed, label)
 	} else {
 		result.ObjectsCreated = append(result.ObjectsCreated, label)
+	}
+}
+
+func deleteObject(ctx context.Context, failures *[]string, session *mqrestadmin.Session, fn deleteFunc, name string) {
+	if err := fn(ctx, name); err != nil {
+		*failures = append(*failures, session.QmgrName()+"/"+name)
 	}
 }

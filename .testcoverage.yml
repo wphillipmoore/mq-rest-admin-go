@@ -3,3 +3,6 @@ threshold:
   file: 99
   package: 99
   total: 99
+exclude:
+  paths:
+    - examples
