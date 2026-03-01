@@ -34,8 +34,9 @@ type Session struct {
 	mappingStrict bool
 	csrfToken     *string
 	mapper        *attributeMapper
-	ltpaToken     string
-	clock         clock
+	ltpaCookieName string
+	ltpaToken      string
+	clock          clock
 
 	// LastHTTPStatus is the HTTP status code from the most recent command.
 	LastHTTPStatus int
@@ -456,16 +457,17 @@ func (session *Session) performLTPALogin(auth LTPAAuth) error {
 		return &AuthError{URL: loginURL, StatusCode: response.StatusCode}
 	}
 
-	token := extractLTPAToken(response.Headers)
+	cookieName, token := extractLTPAToken(response.Headers)
 	if token == "" {
 		return &AuthError{URL: loginURL, StatusCode: response.StatusCode}
 	}
 
+	session.ltpaCookieName = cookieName
 	session.ltpaToken = token
 	return nil
 }
 
-func extractLTPAToken(headers map[string]string) string {
+func extractLTPAToken(headers map[string]string) (cookieName, cookieValue string) {
 	for key, value := range headers {
 		// coverage-ignore -- Go 1.26 intermittently counts this branch differently
 		if !strings.EqualFold(key, "Set-Cookie") {
@@ -473,12 +475,15 @@ func extractLTPAToken(headers map[string]string) string {
 		}
 		for _, part := range strings.Split(value, ";") {
 			trimmed := strings.TrimSpace(part)
-			if strings.HasPrefix(trimmed, ltpaCookieName+"=") {
-				return strings.TrimPrefix(trimmed, ltpaCookieName+"=")
+			if strings.HasPrefix(trimmed, ltpaCookieName) {
+				eqIndex := strings.Index(trimmed, "=")
+				if eqIndex > 0 {
+					return trimmed[:eqIndex], trimmed[eqIndex+1:]
+				}
 			}
 		}
 	}
-	return ""
+	return "", ""
 }
 
 func parseResponsePayload(body string) (map[string]any, error) {

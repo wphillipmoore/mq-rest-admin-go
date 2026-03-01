@@ -42,7 +42,7 @@ type LTPAAuth struct {
 
 func (auth LTPAAuth) applyAuth(request *http.Request, session *Session) {
 	if session.ltpaToken != "" {
-		request.Header.Set("Cookie", "LtpaToken2="+session.ltpaToken)
+		request.Header.Set("Cookie", session.ltpaCookieName+"="+session.ltpaToken)
 	}
 }
 

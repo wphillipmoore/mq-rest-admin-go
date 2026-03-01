@@ -74,6 +74,9 @@ func TestNewSession_LTPAAuth(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
+	if session.ltpaCookieName != "LtpaToken2" {
+		t.Errorf("ltpaCookieName = %q, want %q", session.ltpaCookieName, "LtpaToken2")
+	}
 	if session.ltpaToken != "abc123token" {
 		t.Errorf("ltpaToken = %q, want %q", session.ltpaToken, "abc123token")
 	}
@@ -1113,9 +1116,12 @@ func TestExtractLTPAToken_MultipleHeaders(t *testing.T) {
 		"Content-Type": "application/json",
 		"Set-Cookie":   "LtpaToken2=abc123; Path=/; Secure",
 	}
-	result := extractLTPAToken(headers)
-	if result != "abc123" {
-		t.Errorf("extractLTPAToken() = %q, want abc123", result)
+	name, val := extractLTPAToken(headers)
+	if name != "LtpaToken2" {
+		t.Errorf("extractLTPAToken() name = %q, want LtpaToken2", name)
+	}
+	if val != "abc123" {
+		t.Errorf("extractLTPAToken() value = %q, want abc123", val)
 	}
 }
 

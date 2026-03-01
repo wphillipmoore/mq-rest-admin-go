@@ -30,7 +30,7 @@ func TestBasicAuth_ApplyAuth(t *testing.T) {
 
 func TestLTPAAuth_ApplyAuth_WithToken(t *testing.T) {
 	auth := LTPAAuth{Username: "admin", Password: "secret"}
-	session := &Session{ltpaToken: "test-token-123"}
+	session := &Session{ltpaCookieName: "LtpaToken2", ltpaToken: "test-token-123"}
 	request := &http.Request{Header: make(http.Header)}
 
 	auth.applyAuth(request, session)
@@ -38,6 +38,19 @@ func TestLTPAAuth_ApplyAuth_WithToken(t *testing.T) {
 	cookie := request.Header.Get("Cookie")
 	if cookie != "LtpaToken2=test-token-123" {
 		t.Errorf("Cookie = %q, want %q", cookie, "LtpaToken2=test-token-123")
+	}
+}
+
+func TestLTPAAuth_ApplyAuth_WithSuffixedCookieName(t *testing.T) {
+	auth := LTPAAuth{Username: "admin", Password: "secret"}
+	session := &Session{ltpaCookieName: "LtpaToken2_abcdef", ltpaToken: "test-token-123"}
+	request := &http.Request{Header: make(http.Header)}
+
+	auth.applyAuth(request, session)
+
+	cookie := request.Header.Get("Cookie")
+	if cookie != "LtpaToken2_abcdef=test-token-123" {
+		t.Errorf("Cookie = %q, want %q", cookie, "LtpaToken2_abcdef=test-token-123")
 	}
 }
 
@@ -68,42 +81,57 @@ func TestCertificateAuth_ApplyAuth_NoOp(t *testing.T) {
 
 func TestExtractLTPAToken(t *testing.T) {
 	tests := []struct {
-		name     string
-		headers  map[string]string
-		expected string
+		name         string
+		headers      map[string]string
+		expectedName string
+		expectedVal  string
 	}{
 		{
-			name:     "standard cookie",
-			headers:  map[string]string{"Set-Cookie": "LtpaToken2=abc123; Path=/; Secure"},
-			expected: "abc123",
+			name:         "standard cookie",
+			headers:      map[string]string{"Set-Cookie": "LtpaToken2=abc123; Path=/; Secure"},
+			expectedName: "LtpaToken2",
+			expectedVal:  "abc123",
 		},
 		{
-			name:     "case insensitive header",
-			headers:  map[string]string{"set-cookie": "LtpaToken2=abc123; Path=/"},
-			expected: "abc123",
+			name:         "suffixed cookie name",
+			headers:      map[string]string{"Set-Cookie": "LtpaToken2_xyz=sufftok; Path=/; Secure"},
+			expectedName: "LtpaToken2_xyz",
+			expectedVal:  "sufftok",
 		},
 		{
-			name:     "no cookie header",
-			headers:  map[string]string{},
-			expected: "",
+			name:         "case insensitive header",
+			headers:      map[string]string{"set-cookie": "LtpaToken2=abc123; Path=/"},
+			expectedName: "LtpaToken2",
+			expectedVal:  "abc123",
 		},
 		{
-			name:     "wrong cookie name",
-			headers:  map[string]string{"Set-Cookie": "SessionId=xyz; Path=/"},
-			expected: "",
+			name:         "no cookie header",
+			headers:      map[string]string{},
+			expectedName: "",
+			expectedVal:  "",
 		},
 		{
-			name:     "token only",
-			headers:  map[string]string{"Set-Cookie": "LtpaToken2=simple_token"},
-			expected: "simple_token",
+			name:         "wrong cookie name",
+			headers:      map[string]string{"Set-Cookie": "SessionId=xyz; Path=/"},
+			expectedName: "",
+			expectedVal:  "",
+		},
+		{
+			name:         "token only",
+			headers:      map[string]string{"Set-Cookie": "LtpaToken2=simple_token"},
+			expectedName: "LtpaToken2",
+			expectedVal:  "simple_token",
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result := extractLTPAToken(test.headers)
-			if result != test.expected {
-				t.Errorf("extractLTPAToken() = %q, want %q", result, test.expected)
+			name, val := extractLTPAToken(test.headers)
+			if name != test.expectedName {
+				t.Errorf("extractLTPAToken() name = %q, want %q", name, test.expectedName)
+			}
+			if val != test.expectedVal {
+				t.Errorf("extractLTPAToken() value = %q, want %q", val, test.expectedVal)
 			}
 		})
 	}
