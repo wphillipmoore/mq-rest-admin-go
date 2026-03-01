@@ -467,7 +467,7 @@ func (session *Session) performLTPALogin(auth LTPAAuth) error {
 	return nil
 }
 
-func extractLTPAToken(headers map[string]string) (string, string) {
+func extractLTPAToken(headers map[string]string) (cookieName string, cookieValue string) {
 	for key, value := range headers {
 		// coverage-ignore -- Go 1.26 intermittently counts this branch differently
 		if !strings.EqualFold(key, "Set-Cookie") {
