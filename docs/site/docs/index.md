@@ -33,3 +33,5 @@ tables, and return shapes are under active development.
 ## License
 
 GNU General Public License v3.0
+
+--8<-- "other-languages.md"
