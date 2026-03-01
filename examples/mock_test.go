@@ -105,6 +105,7 @@ func newTestSession(t *testing.T, transport *mockTransport) *mqrestadmin.Session
 		mqrestadmin.BasicAuth{Username: "admin", Password: "admin"},
 		mqrestadmin.WithTransport(transport),
 		mqrestadmin.WithCSRFToken(&token),
+		mqrestadmin.WithMapAttributes(false),
 	)
 	if err != nil {
 		t.Fatalf("newTestSession: %v", err)
