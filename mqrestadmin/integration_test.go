@@ -977,7 +977,7 @@ func TestSessionStatePopulatedAfterCommand(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// LTPA auth test (expected to fail on dev containers)
+// LTPA auth test
 // ---------------------------------------------------------------------------
 
 func TestLTPAAuthDisplayQmgr(t *testing.T) {
@@ -990,14 +990,12 @@ func TestLTPAAuthDisplayQmgr(t *testing.T) {
 		mqrestadmin.WithVerifyTLS(cfg.verifyTLS),
 	)
 	if err != nil {
-		t.Skipf("LTPA session creation failed (expected on dev containers): %v", err)
-		return
+		t.Fatalf("LTPA session creation failed: %v", err)
 	}
 
 	result, err := session.DisplayQmgr(context.Background())
 	if err != nil {
-		t.Skipf("LTPA DisplayQmgr failed (expected on dev containers): %v", err)
-		return
+		t.Fatalf("LTPA DisplayQmgr failed: %v", err)
 	}
 
 	if result == nil {
