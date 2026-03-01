@@ -3,6 +3,7 @@ package mqrestadmin
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -100,10 +101,13 @@ func (session *Session) RestartService(ctx context.Context, name string, config 
 func (session *Session) startAndPoll(ctx context.Context, name string,
 	objectConfig *objectTypeConfig, syncConfig SyncConfig,
 ) (SyncResult, error) {
-	syncConfig = normalizeSyncConfig(syncConfig)
+	syncConfig, err := normalizeSyncConfig(syncConfig)
+	if err != nil {
+		return SyncResult{}, err
+	}
 
 	// Issue START command
-	_, err := session.mqscCommand(ctx, "START", objectConfig.startQualifier, &name,
+	_, err = session.mqscCommand(ctx, "START", objectConfig.startQualifier, &name,
 		nil, nil, nil, false)
 	if err != nil {
 		return SyncResult{}, err
@@ -116,7 +120,8 @@ func (session *Session) startAndPoll(ctx context.Context, name string,
 	for {
 		session.clock.sleep(syncConfig.PollInterval)
 
-		statusRows, err := session.queryStatus(ctx, name, objectConfig)
+		var statusRows []map[string]any
+		statusRows, err = session.queryStatus(ctx, name, objectConfig)
 		if err != nil {
 			return SyncResult{}, err
 		}
@@ -141,10 +146,13 @@ func (session *Session) startAndPoll(ctx context.Context, name string,
 func (session *Session) stopAndPoll(ctx context.Context, name string,
 	objectConfig *objectTypeConfig, syncConfig SyncConfig,
 ) (SyncResult, error) {
-	syncConfig = normalizeSyncConfig(syncConfig)
+	syncConfig, err := normalizeSyncConfig(syncConfig)
+	if err != nil {
+		return SyncResult{}, err
+	}
 
 	// Issue STOP command
-	_, err := session.mqscCommand(ctx, "STOP", objectConfig.stopQualifier, &name,
+	_, err = session.mqscCommand(ctx, "STOP", objectConfig.stopQualifier, &name,
 		nil, nil, nil, false)
 	if err != nil {
 		return SyncResult{}, err
@@ -157,7 +165,8 @@ func (session *Session) stopAndPoll(ctx context.Context, name string,
 	for {
 		session.clock.sleep(syncConfig.PollInterval)
 
-		statusRows, err := session.queryStatus(ctx, name, objectConfig)
+		var statusRows []map[string]any
+		statusRows, err = session.queryStatus(ctx, name, objectConfig)
 		if err != nil {
 			return SyncResult{}, err
 		}
@@ -234,12 +243,18 @@ func hasStatus(rows []map[string]any, statusKeys []string, targetValues map[stri
 	return false
 }
 
-func normalizeSyncConfig(config SyncConfig) SyncConfig {
+func normalizeSyncConfig(config SyncConfig) (SyncConfig, error) {
+	if config.Timeout < 0 {
+		return SyncConfig{}, fmt.Errorf("Timeout must not be negative, got %v", config.Timeout)
+	}
+	if config.PollInterval < 0 {
+		return SyncConfig{}, fmt.Errorf("PollInterval must not be negative, got %v", config.PollInterval)
+	}
 	if config.Timeout == 0 {
 		config.Timeout = defaultSyncTimeout
 	}
 	if config.PollInterval == 0 {
 		config.PollInterval = defaultPollInterval
 	}
-	return config
+	return config, nil
 }

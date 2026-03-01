@@ -3,6 +3,7 @@ package mqrestadmin
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 )
@@ -152,7 +153,10 @@ func TestRestartChannel_Success(t *testing.T) {
 }
 
 func TestSyncConfig_Defaults(t *testing.T) {
-	config := normalizeSyncConfig(SyncConfig{})
+	config, err := normalizeSyncConfig(SyncConfig{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if config.Timeout != defaultSyncTimeout {
 		t.Errorf("Timeout = %v, want %v", config.Timeout, defaultSyncTimeout)
 	}
@@ -162,15 +166,50 @@ func TestSyncConfig_Defaults(t *testing.T) {
 }
 
 func TestSyncConfig_PreservesExplicitValues(t *testing.T) {
-	config := normalizeSyncConfig(SyncConfig{
+	config, err := normalizeSyncConfig(SyncConfig{
 		Timeout:      60 * time.Second,
 		PollInterval: 5 * time.Second,
 	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if config.Timeout != 60*time.Second {
 		t.Errorf("Timeout = %v, want 60s", config.Timeout)
 	}
 	if config.PollInterval != 5*time.Second {
 		t.Errorf("PollInterval = %v, want 5s", config.PollInterval)
+	}
+}
+
+func TestSyncConfig_NegativeTimeout(t *testing.T) {
+	_, err := normalizeSyncConfig(SyncConfig{Timeout: -1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error for negative Timeout")
+	}
+	if !strings.Contains(err.Error(), "Timeout must not be negative") {
+		t.Errorf("unexpected error message: %v", err)
+	}
+}
+
+func TestSyncConfig_NegativePollInterval(t *testing.T) {
+	_, err := normalizeSyncConfig(SyncConfig{PollInterval: -1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error for negative PollInterval")
+	}
+	if !strings.Contains(err.Error(), "PollInterval must not be negative") {
+		t.Errorf("unexpected error message: %v", err)
+	}
+}
+
+func TestStartChannelSync_NegativeConfigError(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.StartChannelSync(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: -1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error for negative Timeout")
 	}
 }
 
