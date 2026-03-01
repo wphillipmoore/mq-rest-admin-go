@@ -35,12 +35,11 @@ func TestResolveMappingQualifier(t *testing.T) {
 		{"ALTER", "QMGR", "qmgr"},
 		{"DEFINE", "CHANNEL", "channel"},
 		{"CLEAR", "QLOCAL", "queue"},
-		// Default qualifier fallback (DEFINE QLOCAL not in commands map)
-		{"DEFINE", "QLOCAL", "queue"},
-		{"DEFINE", "QREMOTE", "queue"},
-		{"DEFINE", "QALIAS", "queue"},
-		{"DEFINE", "QMODEL", "queue"},
-		{"ALTER", "QLOCAL", "queue"},
+		// Default qualifier fallback (NONEXISTENT verb not in commands map,
+		// falls back to defaultMappingQualifiers)
+		{"NONEXISTENT", "QUEUE", "queue"},
+		{"NONEXISTENT", "CHANNEL", "channel"},
+		{"NONEXISTENT", "QMGR", "qmgr"},
 		// Lowercase fallback for unknown MQSC qualifier
 		{"NONEXISTENT", "THING", "thing"},
 	}
@@ -55,16 +54,17 @@ func TestResolveMappingQualifier(t *testing.T) {
 }
 
 func TestResolveMappingQualifier_FallbackEnablesMapping(t *testing.T) {
-	// Verify that DEFINE QLOCAL (not in commands map) resolves to "queue"
-	// and the queue mapping data is applied to request attributes.
+	// Verify that an unknown verb with a known MQSC qualifier (QUEUE)
+	// falls back to defaultMappingQualifiers and the queue mapping data
+	// is applied to request attributes.
 	mapper, err := newAttributeMapper()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	qualifier := mapper.resolveMappingQualifier("DEFINE", "QLOCAL")
+	qualifier := mapper.resolveMappingQualifier("NONEXISTENT", "QUEUE")
 	if qualifier != "queue" {
-		t.Fatalf("DEFINE QLOCAL qualifier = %q, want %q", qualifier, "queue")
+		t.Fatalf("NONEXISTENT QUEUE qualifier = %q, want %q", qualifier, "queue")
 	}
 
 	// Map request attributes using the resolved qualifier
