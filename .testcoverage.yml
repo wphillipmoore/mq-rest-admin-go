@@ -5,4 +5,4 @@ threshold:
   total: 99
 exclude:
   paths:
-    - examples
+    - examples/cmd
