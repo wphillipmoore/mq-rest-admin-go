@@ -213,6 +213,18 @@ func TestStartChannelSync_NegativeConfigError(t *testing.T) {
 	}
 }
 
+func TestStopChannelSync_NegativeConfigError(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.StopChannelSync(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: -1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error for negative Timeout")
+	}
+}
+
 func TestHasStatus(t *testing.T) {
 	tests := []struct {
 		name     string
