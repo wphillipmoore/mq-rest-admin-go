@@ -245,10 +245,10 @@ func hasStatus(rows []map[string]any, statusKeys []string, targetValues map[stri
 
 func normalizeSyncConfig(config SyncConfig) (SyncConfig, error) {
 	if config.Timeout < 0 {
-		return SyncConfig{}, fmt.Errorf("Timeout must not be negative, got %v", config.Timeout)
+		return SyncConfig{}, fmt.Errorf("timeout must not be negative, got %v", config.Timeout)
 	}
 	if config.PollInterval < 0 {
-		return SyncConfig{}, fmt.Errorf("PollInterval must not be negative, got %v", config.PollInterval)
+		return SyncConfig{}, fmt.Errorf("poll interval must not be negative, got %v", config.PollInterval)
 	}
 	if config.Timeout == 0 {
 		config.Timeout = defaultSyncTimeout

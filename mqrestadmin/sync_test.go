@@ -186,7 +186,7 @@ func TestSyncConfig_NegativeTimeout(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for negative Timeout")
 	}
-	if !strings.Contains(err.Error(), "Timeout must not be negative") {
+	if !strings.Contains(err.Error(), "timeout must not be negative") {
 		t.Errorf("unexpected error message: %v", err)
 	}
 }
@@ -196,7 +196,7 @@ func TestSyncConfig_NegativePollInterval(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for negative PollInterval")
 	}
-	if !strings.Contains(err.Error(), "PollInterval must not be negative") {
+	if !strings.Contains(err.Error(), "poll interval must not be negative") {
 		t.Errorf("unexpected error message: %v", err)
 	}
 }
