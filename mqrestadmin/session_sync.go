@@ -116,7 +116,10 @@ func (session *Session) startAndPoll(ctx context.Context, name string,
 	for {
 		session.clock.sleep(syncConfig.PollInterval)
 
-		statusRows := session.queryStatus(ctx, name, objectConfig)
+		statusRows, err := session.queryStatus(ctx, name, objectConfig)
+		if err != nil {
+			return SyncResult{}, err
+		}
 		polls++
 
 		if hasStatus(statusRows, objectConfig.statusKeys, runningValues) {
@@ -154,7 +157,10 @@ func (session *Session) stopAndPoll(ctx context.Context, name string,
 	for {
 		session.clock.sleep(syncConfig.PollInterval)
 
-		statusRows := session.queryStatus(ctx, name, objectConfig)
+		statusRows, err := session.queryStatus(ctx, name, objectConfig)
+		if err != nil {
+			return SyncResult{}, err
+		}
 		polls++
 
 		// Empty status means stopped for channels
@@ -199,18 +205,18 @@ func (session *Session) restartObject(ctx context.Context, name string,
 	}, nil
 }
 
-func (session *Session) queryStatus(ctx context.Context, name string, objectConfig *objectTypeConfig) []map[string]any {
+func (session *Session) queryStatus(ctx context.Context, name string, objectConfig *objectTypeConfig) ([]map[string]any, error) {
 	rows, err := session.mqscCommand(ctx, "DISPLAY", objectConfig.statusQualifier, &name,
 		nil, []string{"all"}, nil, true)
 	if err != nil {
-		// Swallow command errors — treat as empty
+		// Swallow command errors — object not found during polling is expected
 		var cmdErr *CommandError
 		if errors.As(err, &cmdErr) {
-			return nil
+			return nil, nil
 		}
-		return nil
+		return nil, err
 	}
-	return rows
+	return rows, nil
 }
 
 func hasStatus(rows []map[string]any, statusKeys []string, targetValues map[string]bool) bool {
