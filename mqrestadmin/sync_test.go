@@ -516,32 +516,55 @@ func TestRestartChannel_StartPhaseError(t *testing.T) {
 	}
 }
 
-func TestQueryStatus_NonCommandError(t *testing.T) {
+func TestQueryStatus_NonCommandError_StartPoll(t *testing.T) {
 	transport := newMockTransport()
 	clock := newMockClock()
 
 	// START succeeds
 	transport.addSuccessResponse()
-	// Status poll returns transport error (non-command)
+	// Status poll returns transport error (non-command) — must propagate
 	transport.addErrorResponse(&TransportError{
 		URL: "https://localhost:9443",
 		Err: errors.New("connection refused"),
 	})
-	// Next poll returns running
-	transport.addSuccessResponse(map[string]any{
-		"CHANNEL": "TO.REMOTE",
-		"STATUS":  "RUNNING",
+
+	session := newTestSessionWithClock(transport, clock)
+
+	_, err := session.StartChannelSync(context.Background(), "TO.REMOTE",
+		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
+	if err == nil {
+		t.Fatal("expected error when transport fails during polling")
+	}
+
+	var transportErr *TransportError
+	if !errors.As(err, &transportErr) {
+		t.Fatalf("expected TransportError, got %T: %v", err, err)
+	}
+}
+
+func TestQueryStatus_NonCommandError_StopPoll(t *testing.T) {
+	transport := newMockTransport()
+	clock := newMockClock()
+
+	// STOP succeeds
+	transport.addSuccessResponse()
+	// Status poll returns auth error (non-command) — must propagate
+	transport.addErrorResponse(&AuthError{
+		URL:        "https://localhost:9443",
+		StatusCode: 401,
 	})
 
 	session := newTestSessionWithClock(transport, clock)
 
-	result, err := session.StartChannelSync(context.Background(), "TO.REMOTE",
+	_, err := session.StopChannelSync(context.Background(), "TO.REMOTE",
 		SyncConfig{Timeout: 30 * time.Second, PollInterval: 1 * time.Second})
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+	if err == nil {
+		t.Fatal("expected error when auth fails during polling")
 	}
-	if result.Operation != SyncStarted {
-		t.Errorf("Operation = %v, want SyncStarted", result.Operation)
+
+	var authErr *AuthError
+	if !errors.As(err, &authErr) {
+		t.Fatalf("expected AuthError, got %T: %v", err, err)
 	}
 }
 
